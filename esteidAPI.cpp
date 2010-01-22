@@ -1,18 +1,3 @@
-/**********************************************************\
-Original Author: Richard Bateman and Georg Fritzsche
-
-Created:    December 3, 2009
-License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
-            - or -
-            GNU Lesser General Public License, version 2.1
-            http://www.gnu.org/licenses/lgpl-2.1.html
-
-Copyright 2009 PacketPass Inc, Georg Fritzsche,
-               Firebreath development team
-\**********************************************************/
-
 #include "BrowserObjectAPI.h"
 #include "variant_list.h"
 #include "DOM/JSAPI_DOMDocument.h"
@@ -21,42 +6,27 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : m_host(host)
 {
-    registerMethod("echo",  make_method(this, &esteidAPI::echo));
-
-    // Read-write property
-    registerProperty("testString",
-                     make_property(this,
-                        &esteidAPI::get_testString,
-                        &esteidAPI::set_testString));
-
-    // Read-only property
-    registerProperty("version",
-                     make_property(this,
-                        &esteidAPI::get_version));
+    // Methods
+    registerMethod("getVersion",  make_method(this, &esteidAPI::getVersion));
+    //registerMethod("sign",        make_method(this, &esteidAPI::sign));
+    
+    // Read-only properties
+    registerProperty("lastName",
+                     make_property(this, &esteidAPI::get_lastName));
+    //registerProperty("residencePermit",
+    //                 make_property(this, &esteidAPI::get_residencePermit));
 }
 
 esteidAPI::~esteidAPI()
 {
 }
 
-// Read/Write property testString
-std::string esteidAPI::get_testString()
+std::string esteidAPI::get_lastName()
 {
-    return m_testString;
-}
-void esteidAPI::set_testString(std::string val)
-{
-    m_testString = val;
+    return "Pakiraam";
 }
 
-// Read-only property version
-std::string esteidAPI::get_version()
+std::string esteidAPI::getVersion()
 {
-    return "CURRENT_VERSION";
-}
-
-// Method echo
-FB::variant esteidAPI::echo(FB::variant msg)
-{
-    return msg;
+    return "0.x.y";
 }
