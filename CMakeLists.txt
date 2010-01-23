@@ -12,6 +12,12 @@ set (PROJNAME ${PLUGIN_NAME})
 
 browserplugin_project(${PROJNAME})
 
+# Custom cmake modules
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+find_package(SmartCardpp REQUIRED)
+
+include_directories(${SMARTCARDPP_INCLUDE_DIR})
+
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
     *.h

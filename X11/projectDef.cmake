@@ -31,6 +31,7 @@ set_target_properties (${PROJNAME} PROPERTIES
     OUTPUT_NAME np${PLUGIN_NAME}
     PROJECT_LABEL ${PROJNAME}
     LINK_FLAGS ${NPAPI_LINK_FLAGS}
+    PREFIX ""
     RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     )
@@ -38,6 +39,7 @@ set_target_properties (${PROJNAME} PROPERTIES
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
+    ${SMARTCARDPP_LIBRARIES}
     )
 
 add_dependencies(${PROJNAME}

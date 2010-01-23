@@ -37,6 +37,8 @@ set_target_properties (${PROJNAME} PROPERTIES
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
+    ${SMARTCARDPP_LIBRARIES}
+    ws2_32
     )
 
 add_dependencies(${PROJNAME}
