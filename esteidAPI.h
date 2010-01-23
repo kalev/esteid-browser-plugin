@@ -2,6 +2,7 @@
 #include <sstream>
 #include "JSAPIAuto.h"
 #include "BrowserHostWrapper.h"
+#include "CertificateAPI.h"
 
 class esteidAPI : public FB::JSAPIAuto
 {
@@ -24,10 +25,8 @@ public:
 */
 
     /** Certificates (read-only properties) */
-/*
-    esteidAPI::Certificate get_authCert();
-    esteidAPI::Certificate get_signCert();
-*/
+    FB::JSOutObject get_authCert();
+    //FB::JSOutObject get_signCert();
 
     /** Personal data file attributes (read-only properties) */
     std::string get_lastName();
@@ -57,4 +56,6 @@ public:
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::JSOutObject m_authCert;
+    FB::JSOutObject m_signCert;
 };
