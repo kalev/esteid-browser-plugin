@@ -12,16 +12,16 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     m_host(host), m_authCert(NULL), m_signCert(NULL)
 {
     REGISTER_METHOD(getVersion);
-/*
     REGISTER_METHOD(sign);
+/*
     REGISTER_METHOD(addEventListener);
     REGISTER_METHOD(removeEventListener);
 */
     REGISTER_RO_PROPERTY(authCert);
 //    REGISTER_RO_PROPERTY(signCert);
     REGISTER_RO_PROPERTY(lastName);
-/*
     REGISTER_RO_PROPERTY(firstName);
+/*
     REGISTER_RO_PROPERTY(middleName);
     REGISTER_RO_PROPERTY(sex);
     REGISTER_RO_PROPERTY(citizenship);
@@ -45,12 +45,11 @@ esteidAPI::~esteidAPI()
 
 std::string esteidAPI::get_lastName()
 {
-    return "Pakiraam";
+    throw FB::script_error("Ikaldus");
 }
-
-std::string esteidAPI::getVersion()
+std::string esteidAPI::get_firstName()
 {
-    return "0.x.y";
+    return "Peeter";
 }
 
 FB::JSOutObject esteidAPI::get_authCert()
@@ -59,4 +58,13 @@ FB::JSOutObject esteidAPI::get_authCert()
         m_authCert = new CertificateAPI(m_host);
 
     return m_authCert;
+}
+
+std::string esteidAPI::getVersion()
+{
+    return "0.x.y";
+}
+
+std::string esteidAPI::sign(std::string hash, std::string url) {
+    throw FB::script_error("Ei oska veel signeerida");
 }

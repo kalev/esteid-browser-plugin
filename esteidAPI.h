@@ -20,9 +20,7 @@ public:
      * @param hash HEX encoded document hash to sign
      * @param url an URL to the document itself
      */
-/*
     std::string sign(std::string hash, std::string url);
-*/
 
     /** Certificates (read-only properties) */
     FB::JSOutObject get_authCert();
@@ -30,8 +28,8 @@ public:
 
     /** Personal data file attributes (read-only properties) */
     std::string get_lastName();
-/*
     std::string get_firstName();
+/*
     std::string get_middleName();
     std::string get_sex();
     std::string get_citizenship();
