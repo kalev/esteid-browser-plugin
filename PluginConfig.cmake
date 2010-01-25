@@ -30,10 +30,10 @@ set(ACTIVEX_PROGID "EE.esteid")
 set(MOZILLA_PLUGINID "id.eesti.ee/esteid")
 
 # strings
-set(FBSTRING_CompanyName "Riigi Infosüsteemide Arenduskeskus")
+set(FBSTRING_CompanyName "Estonian Informatics Centre")
 set(FBSTRING_FileDescription "Estonian ID-Card Plugin")
 set(FBSTRING_PLUGIN_VERSION "1.0.0")
-set(FBSTRING_LegalCopyright "Copyright 2010 Riigi Infosüsteemide Arenduskeskus")
+set(FBSTRING_LegalCopyright "Copyright 2010 Estonian Informatics Centre")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "esteid")
 set(FBSTRING_FileExtents "")
