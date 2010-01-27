@@ -41,7 +41,6 @@ target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     ${GTK_LIBRARIES}
     ${SMARTCARDPP_LIBRARIES}
-    ${BUILD_DIR}/MozillaUI.o
     )
 
 add_dependencies(${PROJNAME}

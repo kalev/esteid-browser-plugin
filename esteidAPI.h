@@ -5,6 +5,7 @@
 #include "NpapiBrowserHost.h"
 #include "CertificateAPI.h"
 #include "PluginUI.h"
+#include "EstEIDService.h"
 
 class esteidAPI : public FB::JSAPIAuto
 {
@@ -31,7 +32,6 @@ public:
     /** Personal data file attributes (read-only properties) */
     std::string get_lastName();
     std::string get_firstName();
-/*
     std::string get_middleName();
     std::string get_sex();
     std::string get_citizenship();
@@ -46,7 +46,6 @@ public:
     std::string get_comment2();
     std::string get_comment3();
     std::string get_comment4();
-*/
 
    /*  Event handlers
    *        - OnCardInserted
@@ -59,6 +58,9 @@ private:
     FB::JSOutObject m_authCert;
     FB::JSOutObject m_signCert;
     FB::AutoPtr<PluginUI> m_UI;
+    EstEIDService *m_service;
+    vector <std::string> m_pdata;
 
-    PluginUI* getMozillaUI(void);
+    PluginUI* GetMozillaUI(void);
+    void UpdatePersonalData(void);
 };

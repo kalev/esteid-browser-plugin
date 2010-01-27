@@ -16,11 +16,25 @@ browserplugin_project(${PROJNAME})
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 find_package(SmartCardpp REQUIRED)
 
+# Utility classes (FIXME: Move those to smartcardpp)
+set(UTIL_DIR utility)
+set(UTILITY_SOURCES
+    ${UTIL_DIR}/threadObj.cpp
+    ${UTIL_DIR}/converters.cpp
+)
+
+# Pthread is needed to link utility classes on UNIX-like OS-es
+if(UNIX)
+  link_libraries (pthread)
+endif(UNIX)
+
 include_directories(
     ${SMARTCARDPP_INCLUDE_DIR}
-    /home/anttix/products/id.eesti.ee/plugins/firefox/trunk/build
-    /usr/include/xulrunner-sdk-1.9.1/stable
+    ${UTIL_DIR}
 )
+
+# Ugly hack to include Mozilla UI
+link_libraries(${BUILD_DIR}/MozillaUI.o)
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
@@ -42,6 +56,7 @@ SOURCE_GROUP(Generated FILES
 SET( SOURCES
     ${GENERAL}
     ${GENERATED}
+    ${UTILITY_SOURCES}
     )
 
 # This will include Win/projectDef.cmake, Linux/projectDef.cmake, etc

@@ -13,7 +13,8 @@
 #define ESTEID_DEBUG printf
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
-    m_host(host), m_authCert(NULL), m_signCert(NULL)
+    m_host(host), m_authCert(NULL), m_signCert(NULL),
+    m_service(EstEIDService::getInstance())
 {
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(sign);
@@ -25,7 +26,6 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 //    REGISTER_RO_PROPERTY(signCert);
     REGISTER_RO_PROPERTY(lastName);
     REGISTER_RO_PROPERTY(firstName);
-/*
     REGISTER_RO_PROPERTY(middleName);
     REGISTER_RO_PROPERTY(sex);
     REGISTER_RO_PROPERTY(citizenship);
@@ -40,11 +40,9 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_RO_PROPERTY(comment2);
     REGISTER_RO_PROPERTY(comment3);
     REGISTER_RO_PROPERTY(comment4);
-*/
-
 
     /* Try to access Mozilla UI */
-    m_UI = getMozillaUI();
+    m_UI = GetMozillaUI();
 
     /* Use platform specific UI if browser specific is not found */
     if(!m_UI) {
@@ -70,7 +68,7 @@ esteidAPI::~esteidAPI()
 {
 }
 
-PluginUI* esteidAPI::getMozillaUI()
+PluginUI* esteidAPI::GetMozillaUI()
 {
     if(!m_host) return NULL;
 
@@ -99,14 +97,16 @@ PluginUI* esteidAPI::getMozillaUI()
     return NULL;
 }
 
-std::string esteidAPI::get_lastName()
+void esteidAPI::UpdatePersonalData()
 {
-    throw FB::script_error("Ikaldus");
+    try {
+        m_service->readPersonalData(m_pdata);
+    }
+    catch(std::runtime_error &err) {
+        throw FB::script_error(err.what());
+    }
 }
-std::string esteidAPI::get_firstName()
-{
-    return "Peeter";
-}
+
 
 FB::JSOutObject esteidAPI::get_authCert()
 {
@@ -128,3 +128,31 @@ std::string esteidAPI::sign(std::string hash, std::string url) {
 
     return "Jee";
 }
+
+#define ESTEID_WHITELIST_REQUIRED 
+
+#define ESTEID_PD_GETTER_IMP(index, attr) \
+    std::string esteidAPI::get_##attr() { \
+            ESTEID_WHITELIST_REQUIRED; \
+        UpdatePersonalData(); \
+        if(m_pdata.size() <= index) \
+            throw FB::script_error("PD index out of range"); \
+        return m_pdata[index]; \
+    }
+
+ESTEID_PD_GETTER_IMP(EstEidCard::SURNAME,         lastName)
+ESTEID_PD_GETTER_IMP(EstEidCard::FIRSTNAME,       firstName);
+ESTEID_PD_GETTER_IMP(EstEidCard::MIDDLENAME,      middleName);
+ESTEID_PD_GETTER_IMP(EstEidCard::SEX,             sex);
+ESTEID_PD_GETTER_IMP(EstEidCard::CITIZEN,         citizenship);
+ESTEID_PD_GETTER_IMP(EstEidCard::BIRTHDATE,       birthDate);
+ESTEID_PD_GETTER_IMP(EstEidCard::ID,              personalID);
+ESTEID_PD_GETTER_IMP(EstEidCard::DOCUMENTID,      documentID);
+ESTEID_PD_GETTER_IMP(EstEidCard::EXPIRY,          expiryDate);
+ESTEID_PD_GETTER_IMP(EstEidCard::BIRTHPLACE,      placeOfBirth);
+ESTEID_PD_GETTER_IMP(EstEidCard::ISSUEDATE,       issuedDate);
+ESTEID_PD_GETTER_IMP(EstEidCard::RESIDENCEPERMIT, residencePermit);
+ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT1,        comment1);
+ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT2,        comment2);
+ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT3,        comment3);
+ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT4,        comment4);
