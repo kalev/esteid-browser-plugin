@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://esteid/skin/" type="text/css"?>
+
+<overlay id="esteid" 
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <statusbar id="status-bar">
+        <!-- NB! this ID is used to detect if we run in mail or browser -->
+        <statusbarpanel id="esteidmailpanel"
+                        onclick="eidui.showSettings(window, null);">
+          <image id="eidicon" src="chrome://global/skin/icons/loading_16.png" />
+        </statusbarpanel>
+    </statusbar>
+    <!-- <window></window> -->
+    <script src="config.js"/>
+    <script src="esteid.js"/>
+</overlay>

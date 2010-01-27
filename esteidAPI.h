@@ -2,7 +2,9 @@
 #include <sstream>
 #include "JSAPIAuto.h"
 #include "BrowserHostWrapper.h"
+#include "NpapiBrowserHost.h"
 #include "CertificateAPI.h"
+#include "PluginUI.h"
 
 class esteidAPI : public FB::JSAPIAuto
 {
@@ -56,4 +58,7 @@ private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
     FB::JSOutObject m_authCert;
     FB::JSOutObject m_signCert;
+    FB::AutoPtr<PluginUI> m_UI;
+
+    PluginUI* getMozillaUI(void);
 };

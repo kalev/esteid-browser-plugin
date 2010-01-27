@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<!-- Documentation about the format of this file is located here:
+     https://developer.mozilla.org/en/Install_Manifests -->
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+        <em:id>{aa84ce40-4253-11da-8cd6-0800200c9a66}</em:id>
+        <em:name>Estonian ID Card</em:name>
+        <em:version>@PROJECT_VERSION@</em:version>
+        <em:description>Estonian ID Card support</em:description>
+        <em:iconURL>chrome://esteid/skin/id-32.png</em:iconURL>
+        <em:optionsURL>chrome://esteid/content/prefs.xul</em:optionsURL>
+        <!--
+        <em:updateURL>https://id.eesti.ee/firefox/update.rdf</em:updateURL>
+        -->
+
+        <!-- Firefox -->
+        <em:targetApplication>
+            <Description>
+                <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+                <em:minVersion>2.0</em:minVersion>
+                <em:maxVersion>3.6.*</em:maxVersion>
+            </Description>
+        </em:targetApplication>
+
+        <!-- SeaMonkey -->
+        <em:targetApplication>
+            <Description>
+                <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
+                <em:minVersion>1.1</em:minVersion>
+                <em:maxVersion>2.0.*</em:maxVersion>
+            </Description>
+        </em:targetApplication>
+
+        <!-- Thunderbird -->
+        <em:targetApplication>
+            <Description>
+                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
+                <em:minVersion>1.5</em:minVersion>
+                <em:maxVersion>3.0.*</em:maxVersion>
+            </Description>
+         </em:targetApplication>
+
+    </Description>
+</RDF>

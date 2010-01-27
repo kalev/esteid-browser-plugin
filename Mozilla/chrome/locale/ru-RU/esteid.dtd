@@ -1,0 +1,17 @@
+<!ENTITY esteid.SignPromptTitle "Подпись обязательна">
+<!ENTITY esteid.SignDetailsTitle "Детали по запросу подписи">
+<!ENTITY esteid.SignDetailsHeader "Эта веб-страница нуждается в Вашей дигитальной подписи.">
+<!ENTITY esteid.SignDetailsText "Содержание веб-страницы должно Вам полностью объяснить, что Вы подписываете. Если у вас есть сомнения, щёлкните на линк, чтобы проверить документ.">
+<!ENTITY esteid.SignDetailsWarning "NB! Дигитальная подпись юридически  связана">
+<!ENTITY esteid.SignDetailsDocLabel "Документ: ">
+<!ENTITY esteid.SignDetailsHashLabel "Хэш: ">
+<!ENTITY esteid.PrefsTitle "Предпочтения подписывающего ID-картой">
+<!ENTITY esteid.WrongPin "Неправильный PIN!">
+<!ENTITY esteid.TriesLeft "Попыток осталось: ">
+<!ENTITY esteid.AddHost "Добавить">
+<!ENTITY esteid.RemoveHost "Удалить">
+<!ENTITY esteid.Whitelist "Список разрешенных веб-страниц">
+<!ENTITY esteid.Log "Лог">
+<!ENTITY esteid.WhiteListCaption "Веб-страницы, которые ID-карта может использовать">
+<!ENTITY esteid.UsePinPad "Please enter PIN from PinPad in">
+<!ENTITY esteid.seconds "seconds">

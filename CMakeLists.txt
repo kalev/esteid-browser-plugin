@@ -16,7 +16,11 @@ browserplugin_project(${PROJNAME})
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 find_package(SmartCardpp REQUIRED)
 
-include_directories(${SMARTCARDPP_INCLUDE_DIR})
+include_directories(
+    ${SMARTCARDPP_INCLUDE_DIR}
+    /home/anttix/products/id.eesti.ee/plugins/firefox/trunk/build
+    /usr/include/xulrunner-sdk-1.9.1/stable
+)
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp

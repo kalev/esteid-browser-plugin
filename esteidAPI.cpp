@@ -2,11 +2,15 @@
 #include "variant_list.h"
 #include "DOM/JSAPI_DOMDocument.h"
 
+#include "Mozilla/MozillaUI.h"
+
 #include "esteidAPI.h"
 #include "JSUtil.h"
 
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(esteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(esteidAPI, a)
+
+#define ESTEID_DEBUG printf
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
     m_host(host), m_authCert(NULL), m_signCert(NULL)
@@ -37,10 +41,62 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_RO_PROPERTY(comment3);
     REGISTER_RO_PROPERTY(comment4);
 */
+
+
+    /* Try to access Mozilla UI */
+    m_UI = getMozillaUI();
+
+    /* Use platform specific UI if browser specific is not found */
+    if(!m_UI) {
+#ifdef WINDOOZ
+        m_UI = new WindowsUI();
+#endif
+#ifdef SUCKOSX
+        m_UI = new MacUI();
+#endif
+#ifdef UNIX_MUFF
+       m_UI = new GtkUI();
+#endif
+    }
+
+#if 0
+    /* Die if UI initialization fails */
+    if(!m_UI)
+        throw FB::script_error("Unable to load plugin user interface");
+#endif
 }
 
 esteidAPI::~esteidAPI()
 {
+}
+
+PluginUI* esteidAPI::getMozillaUI()
+{
+    if(!m_host) return NULL;
+
+    /* Check if we are running under NPAPI */
+    FB::Npapi::NpapiBrowserHost *nphost = \
+      dynamic_cast<FB::Npapi::NpapiBrowserHost*> (m_host.ptr());
+
+    if(!nphost) return NULL;
+
+    ESTEID_DEBUG("findUI: detected NPAPI\n");
+
+    /* Check for Mozilla */
+    void * sm = NULL, * dw = NULL;
+    nphost->GetValue(NPNVserviceManager, &sm);
+    nphost->GetValue(NPNVDOMWindow, &dw);
+    if(sm && dw) {
+        try {
+            return new MozillaUI(sm, dw);
+        }
+        catch(std::runtime_error &e) {
+            ESTEID_DEBUG("%s\n", e.what());
+            return NULL;
+        }
+    }
+
+    return NULL;
 }
 
 std::string esteidAPI::get_lastName()
@@ -66,5 +122,9 @@ std::string esteidAPI::getVersion()
 }
 
 std::string esteidAPI::sign(std::string hash, std::string url) {
-    throw FB::script_error("Ei oska veel signeerida");
+
+    m_UI->ShowPinBlockedMessage(2);
+    throw FB::script_error("PIN2 is blocked");
+
+    return "Jee";
 }

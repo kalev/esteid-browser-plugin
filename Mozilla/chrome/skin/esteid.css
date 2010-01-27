@@ -1,0 +1,49 @@
+#page {
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+#url {
+  color: blue;
+}
+
+.warn {
+  font-weight: bold;
+}
+
+#wrongpin {
+  font-weight: bold;
+  color: red;
+}
+
+#retrybox {
+  font-size: 125%;
+}
+
+#subjectContainer {
+  text-align: center;
+  font-size: 110%;
+}
+
+#compose-toolbar-button
+{
+  list-style-image: url("chrome://esteid/skin/id-32.png");
+  -moz-image-region: rect(0px 24px 24px 0px);
+}
+[iconsize="small"] #compose-toolbar-button
+{
+  list-style-image: url("chrome://esteid/skin/id-16.png");
+  -moz-image-region: rect( 0px 16px 16px 0px);
+/*  -moz-image-region: rect( 0px 42px 16px 26px); */
+}
+
+/*
+#compose-toolbar-button:hover
+{
+  -moz-image-region: rect(24px 24px 48px  0px);
+}
+[iconsize="small"] #compose-toolbar-button:hover
+{
+  -moz-image-region: rect(18px 42px 34px 26px);
+}
+*/

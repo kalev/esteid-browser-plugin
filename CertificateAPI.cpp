@@ -25,7 +25,7 @@ CertificateAPI::~CertificateAPI()
 
 std::string CertificateAPI::get_CN() { return "Pakiraam,Peeter,34512220463"; }
 std::string CertificateAPI::get_validFrom() { return "validFrom"; }
-std::string CertificateAPI::get_validTo() { return "validTo"; }
+std::string CertificateAPI::get_validTo() { return "validToÜ"; }
 std::string CertificateAPI::get_issuerCN() { return "issuerCN"; }
 std::string CertificateAPI::get_keyUsage() { return "keyUsage"; }
 std::string CertificateAPI::get_cert() { return "---- BEGIN CERTIFICATE ---..."; }
