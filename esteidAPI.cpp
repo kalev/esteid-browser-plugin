@@ -81,7 +81,7 @@ PluginUI* esteidAPI::GetMozillaUI()
     ESTEID_DEBUG("findUI: detected NPAPI\n");
 
     /* Check for Mozilla */
-    void * sm = NULL, * dw = NULL;
+    nsISupports *sm = NULL, *dw = NULL;
     nphost->GetValue(NPNVserviceManager, &sm);
     nphost->GetValue(NPNVDOMWindow, &dw);
     if(sm && dw) {

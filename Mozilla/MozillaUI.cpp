@@ -13,28 +13,26 @@
 } */
 typedef std::basic_string<PRUnichar,std::char_traits<PRUnichar> > PRUString;
 
-MozillaUI::MozillaUI(void *smp, void *dwp)
+MozillaUI::MozillaUI(nsISupports *smp, nsISupports *dwp)
 {
     nsIEstEIDPrivate  * eidp = NULL;
     nsIServiceManager * sm = NULL;
     nsIDOMWindow      * dw = NULL;
-    nsISupports       * smiip = static_cast<nsISupports*>(smp);
-    nsISupports       * dwiip = static_cast<nsISupports*>(dwp);
 
     if(!smp ||  !dwp)
         throw std::runtime_error("MozillaUI(): invalid arguments");
 
     /* Get nsIServiceManager */
-    smiip->QueryInterface(NS_GET_IID(nsIServiceManager), (void**)&sm);
-    NS_RELEASE(smiip);
+    smp->QueryInterface(NS_GET_IID(nsIServiceManager), (void**)&sm);
+    NS_RELEASE(smp);
     if(!sm) {
-        NS_RELEASE(dwiip);
+        NS_RELEASE(dwp);
         throw std::runtime_error("MozillaUI(): QI(nsIServiceManager) failed");
     }
 
     /* Get nsIDOMWindow */
-    dwiip->QueryInterface(NS_GET_IID(nsIDOMWindow), (void**)&dw);
-    NS_RELEASE(dwiip);
+    dwp->QueryInterface(NS_GET_IID(nsIDOMWindow), (void**)&dw);
+    NS_RELEASE(dwp);
     if(!dw) {
         NS_RELEASE(sm);
         throw std::runtime_error("MozillaUI(): QI(nsIDOMWindow) failed");
@@ -57,12 +55,8 @@ MozillaUI::MozillaUI(void *smp, void *dwp)
 
 MozillaUI::~MozillaUI()
 {
-    nsISupports *tmp;
-
-    tmp = static_cast<nsISupports *>(m_dw);
-    NS_IF_RELEASE(tmp);
-    tmp = static_cast<nsISupports *>(m_eid);
-    NS_IF_RELEASE(tmp);
+    NS_IF_RELEASE(m_dw);
+    NS_IF_RELEASE(m_eid);
     ESTEID_DEBUG("~MozillaUI()\n");
 }
 
@@ -71,10 +65,8 @@ std::string MozillaUI::PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout, bool retry, int tries)
 {
-    nsIEstEIDPrivate *eidp = static_cast<nsIEstEIDPrivate *>(m_eid);
-    nsIDOMWindow     *dw   = static_cast<nsIDOMWindow *>(m_dw);
 #if 0
-    eidp->PromptForSignPIN(dw,
+    m_eid->PromptForSignPIN(m_dw,
         reinterpret_cast<const PRUnichar *>(L"Peeter Pakiraam"),
         (const char *)"http://www.kala.ee", (const char *)"hash: 1234567890",
         reinterpret_cast<const PRUnichar *>(L"https://www.pähh.com"),
@@ -84,29 +76,20 @@ std::string MozillaUI::PromptForSignPIN(std::string subject,
 
 void MozillaUI::ClosePinPrompt()
 {
-    nsIEstEIDPrivate *eidp = static_cast<nsIEstEIDPrivate *>(m_eid);
-    nsIDOMWindow     *dw   = static_cast<nsIDOMWindow *>(m_dw);
-
-    eidp->ClosePinPrompt(dw);
+    m_eid->ClosePinPrompt(m_dw);
 }
 
 void MozillaUI::ShowPinBlockedMessage(int pin)
 {
-    nsIEstEIDPrivate *eidp = static_cast<nsIEstEIDPrivate *>(m_eid);
-    nsIDOMWindow     *dw   = static_cast<nsIDOMWindow *>(m_dw);
-
-    eidp->ShowPinBlockedMessage(dw, pin);
+    m_eid->ShowPinBlockedMessage(m_dw, pin);
 }
 
 void MozillaUI::ShowSettings(std::string pageUrl)
 {
-    nsIEstEIDPrivate *eidp = static_cast<nsIEstEIDPrivate *>(m_eid);
-    nsIDOMWindow     *dw   = static_cast<nsIDOMWindow *>(m_dw);
-
     // FIXME: Proper UTF-8 to UTF-16 conversion required
     PRUString tmp(pageUrl.length(),0);
     std::copy(pageUrl.begin(), pageUrl.end(), tmp.begin());
-    eidp->ShowSettings(dw, tmp.c_str());
+    m_eid->ShowSettings(m_dw, tmp.c_str());
 }
 
 #if 0
