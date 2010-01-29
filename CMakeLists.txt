@@ -39,7 +39,6 @@ include_directories(
 # Need to include Gecko directories before Firebreath's bundled headers
 include_directories(
     BEFORE
-    ${GECKO_SDK_DIR}
     ${GECKO_INCLUDE_DIR}
 )
 

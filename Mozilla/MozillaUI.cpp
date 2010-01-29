@@ -71,6 +71,9 @@ std::string MozillaUI::PromptForSignPIN(std::string subject,
         (const char *)"http://www.kala.ee", (const char *)"hash: 1234567890",
         reinterpret_cast<const PRUnichar *>(L"https://www.pähh.com"),
         0, false, 3, (char **)&pin);
+#else
+    // Dummy return value to make MSVC happy
+    return "";
 #endif
 }
 
