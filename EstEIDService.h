@@ -18,15 +18,22 @@
 #define PDATA_MIN EstEidCard::SURNAME
 #define PDATA_MAX EstEidCard::COMMENT4
 
-/* Use mutex implementation in threadObj */
-#include "monitorThread.h"
-//#include "threadObj.h"
+/* Use mutex and thread abstraction in threadObj */
+#include "threadObj.h"
 typedef mutexObj idLockObj;
 typedef mutexObjLocker idAutoLock;
+typedef threadObj idThread;
 
 typedef unsigned int readerID;
 
-class EstEIDService : public monitorObserver {
+struct idCardCacheEntry {
+    bool cardPresent;
+    vector <std::string> pdata;
+    void purge() { cardPresent = false; pdata.clear(); }
+};
+typedef vector <idCardCacheEntry> idCardCache;
+
+class EstEIDService : public idThread {
 public:
     /**
      * Get service instance
@@ -94,6 +101,9 @@ protected:
     EstEIDService();
     virtual ~EstEIDService();
 
+    /* Get access to smartcard manager instance */
+    virtual ManagerInterface & getManager();
+
     /* Singleton instance variable */
     static EstEIDService* sEstEIDService;
 
@@ -112,25 +122,21 @@ protected:
     virtual void PostMessage(msgType type, readerID reader,
                              std::string msg = "") {};
 
-    /** Callback defined in monitorObserver to be executed by monitorThread */
-    virtual void onEvent(monitorEvent eType,int param);
-
 private:
     //! Copy constructor.
-    EstEIDService(const EstEIDService& source) : m_lock(source.m_lock) {};
+    EstEIDService(const EstEIDService& source) : 
+        m_lock(source.m_lock), idThread(source) {};
 
     void findEstEID();
     void Poll();
-    void _Poll(EstEidCard & card);
+    bool readerHasCard(EstEidCard &card,readerID i);
 
-    struct CardCacheEntry {
-        bool cardPresent;
-        vector <std::string> pdata;
-    };
-
-    vector <CardCacheEntry> m_cache;
+    idCardCache m_cache;
     idLockObj m_lock;
-    monitorThread *m_monitorThread;
+    ManagerInterface *m_manager;
+
+    /* Card monitor thread implementation */
+    virtual void execute();
 };
 
 #endif /* ESTEIDSERVICE_H_ */

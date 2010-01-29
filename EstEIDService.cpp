@@ -13,21 +13,18 @@ EstEIDService* EstEIDService::sEstEIDService = NULL;
  * to SmartCard manager service.
  * We might reconsider when times change :P
  */
-EstEIDService::EstEIDService() : m_lock("EstEIDService"),
-                                 m_monitorThread(NULL)
+EstEIDService::EstEIDService() : m_lock("EstEIDService"), m_manager(NULL),
+                                 idThread("EstEIDService card monitor")
 {
     if(sEstEIDService)
         throw std::runtime_error(">1 EstEIDService object created");
 
     sEstEIDService = this;
-    m_monitorThread = new monitorThread(*this, m_lock);
-    m_monitorThread->start();
+    this->start();
 }
 
 EstEIDService::~EstEIDService() {
-    if (m_monitorThread)
-        delete m_monitorThread;
-
+    if(m_manager) delete m_manager;
     sEstEIDService = NULL;
 }
 
@@ -49,7 +46,6 @@ EstEIDService* EstEIDService::getInstance() {
 
 void EstEIDService::FindEstEID(vector <readerID> & readers) {
     readers.clear();
-    //Poll();
 
     for (readerID i = 0; i < m_cache.size(); i++ )
         if(m_cache[i].cardPresent) readers.push_back(i);
@@ -66,69 +62,86 @@ readerID EstEIDService::findFirstEstEID() {
         return readers[0];
 }
 
-void EstEIDService::Worker() {
-    try {
-        Poll();
-    }
-    catch(std::runtime_error &err) {
-        PostMessage(MSG_CARD_ERROR, 0, err.what());
-        return;
+/* Card monitor thread implementation */
+void EstEIDService::execute() {
+    for(;;) {
+        try {
+            threadObj::wait(500);
+            Poll();
+        } catch(std::runtime_error &e) {
+            //PostMessage(MSG_CARD_ERROR, 0, e.what());
+        }
     }
 }
 
-void EstEIDService::onEvent(monitorEvent eType,int param) {
-    printf("onEvent: %d - %d\n", eType, param);
-    Worker();
+ManagerInterface &EstEIDService::getManager() {
+    if(!m_manager)
+        m_manager = new SmartCardManager();
+
+    return *m_manager;
 }
 
 void EstEIDService::Poll() {
     size_t nReaders;
 
-    SmartCardManager mgr;
+    ManagerInterface &mgr = getManager();
 
     {   idAutoLock lock(m_lock);
         nReaders = mgr.getReaderCount();
     }
 
-    EstEidCard card(mgr);
+    /* See if the list of readers has been changed */
     if(m_cache.size() != nReaders) {
         /* We have no way of knowing which reader was
            removed, so it's safe to send card removed event to
            all readers and purge all cached data */
         for (unsigned int i = 0; i < m_cache.size(); i++ ) {
-            PostMessage(MSG_CARD_REMOVED, i);
-            m_cache[i].pdata.clear();
+            if(m_cache[i].cardPresent) {
+                m_cache[i].purge();
+                PostMessage(MSG_CARD_REMOVED, i);
+            }
         }
         m_cache.resize(nReaders);
         PostMessage(MSG_READERS_CHANGED, nReaders);
     }
-    _Poll(card);
-}
 
-void EstEIDService::_Poll(EstEidCard & card) {
+    /* Check for card status changes */
+    EstEidCard card(mgr);
     for (unsigned int i = 0; i < m_cache.size(); i++ ) {
-        try {
-            bool inReader;
+        bool inReader = readerHasCard(card, i);
 
-            {   idAutoLock lock(m_lock);
-                inReader = card.isInReader(i);
-            }
-
-            if (inReader && !m_cache[i].cardPresent) {
-                m_cache[i].cardPresent = true;
-                PostMessage(MSG_CARD_INSERTED, i);
-            }
-            else if (!inReader && m_cache[i].cardPresent) {
-                m_cache[i].cardPresent = false;
-                PostMessage(MSG_CARD_REMOVED, i);
-            }
+        if (inReader && !m_cache[i].cardPresent) {
+            m_cache[i].cardPresent = true;
+            PostMessage(MSG_CARD_INSERTED, i);
         }
-        catch(std::runtime_error &err) {
-            PostMessage(MSG_CARD_ERROR, i, err.what());
+        else if (!inReader && m_cache[i].cardPresent) {
+            m_cache[i].purge();
+            PostMessage(MSG_CARD_REMOVED, i);
         }
     }
 }
 
+bool EstEIDService::readerHasCard(EstEidCard &card,readerID i) {
+    idAutoLock lock(m_lock);
+    ManagerInterface &mgr = getManager();
+
+    /* Ask manager if a token is inserted into that slot */
+    std::string state = mgr.getReaderState(i);
+    if (state.find("PRESENT") == std::string::npos ) return false;
+
+    /* TODO: Investigate if this caching is actually needed */
+    if (m_cache[i].cardPresent)
+        return true;
+
+    /* See if it's EstEID */
+    return card.isInReader(i);
+}
+
+#define CREATE_LOCKED_ESTEID_INSTANCE \
+    idAutoLock lock(m_lock); \
+    ManagerInterface &mgr = getManager(); \
+    EstEidCard card(mgr, reader);
+    
 void EstEIDService::readPersonalData(vector <std::string> & data) {
     readPersonalData(data, findFirstEstEID());
 }
@@ -136,34 +149,25 @@ void EstEIDService::readPersonalData(vector <std::string> & data) {
 void EstEIDService::readPersonalData(vector <std::string> & data,
                                            readerID reader) {
     /* Populate cache if needed */
-    printf("kala: %d\n", m_cache[reader].pdata.size());
-
     if(m_cache[reader].pdata.size() <= 0) {
-        printf("Reading ....\n");
-
-        idAutoLock lock(m_lock);
-
-        SmartCardManager mgr;
-        EstEidCard card(mgr, reader);
+        CREATE_LOCKED_ESTEID_INSTANCE
         card.readPersonalData(m_cache[reader].pdata, PDATA_MIN, PDATA_MAX);
     }
     data = m_cache[reader].pdata;
 }
 
-#define ESTEIDSERVICEBASE_GETCERTIMPL(id) \
+#define ESTEIDSERVICE_GETCERTIMPL(id) \
     ByteVec EstEIDService::get##id##Cert() { \
         return get##id##Cert(findFirstEstEID()); \
     }\
     \
     ByteVec EstEIDService::get##id##Cert(readerID reader) { \
-        idAutoLock lock(m_lock); \
-        SmartCardManager mgr; \
-        EstEidCard card(mgr, reader); \
+        CREATE_LOCKED_ESTEID_INSTANCE \
         return card.get##id##Cert(); \
     }
 
-ESTEIDSERVICEBASE_GETCERTIMPL(Auth)
-ESTEIDSERVICEBASE_GETCERTIMPL(Sign)
+ESTEIDSERVICE_GETCERTIMPL(Auth)
+ESTEIDSERVICE_GETCERTIMPL(Sign)
 
 std::string EstEIDService::signSHA1(std::string hash,
                 EstEidCard::KeyType keyId, std::string pin) {
@@ -172,15 +176,13 @@ std::string EstEIDService::signSHA1(std::string hash,
 
 std::string EstEIDService::signSHA1(std::string hash,
                 EstEidCard::KeyType keyId, std::string pin, readerID reader) {
-    idAutoLock lock(m_lock);
 
     ByteVec bhash = fromHex(hash);
     if (bhash.size() != 20) {
         throw std::runtime_error("Invalid SHA1 hash");
     }
 
-    SmartCardManager mgr;
-    EstEidCard card(mgr, reader);
+    CREATE_LOCKED_ESTEID_INSTANCE
 
     // FIXME: Ugly, ugly hack! This needs to be implemented correctly
     //        in order to protect PIN codes in program memory.
@@ -191,13 +193,11 @@ bool EstEIDService::getRetryCounts(byte &puk,
     byte &pinAuth,byte &pinSign) {
     return getRetryCounts(puk, pinAuth, pinSign, findFirstEstEID());
 }
+
 bool EstEIDService::getRetryCounts(byte &puk,
     byte &pinAuth,byte &pinSign, readerID reader) {
 
-    idAutoLock lock(m_lock);
-
-    SmartCardManager mgr;
-    EstEidCard card(mgr, reader);
+    CREATE_LOCKED_ESTEID_INSTANCE
     return card.getRetryCounts(puk, pinAuth, pinSign);
 }
 
@@ -206,9 +206,6 @@ bool EstEIDService::hasSecurePinEntry() {
 }
 
 bool EstEIDService::hasSecurePinEntry(readerID reader) {
-    idAutoLock lock(m_lock);
-
-    SmartCardManager mgr;
-    EstEidCard card(mgr, reader);
+    CREATE_LOCKED_ESTEID_INSTANCE
     return card.hasSecurePinEntry();
 }
