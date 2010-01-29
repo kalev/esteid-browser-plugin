@@ -13,15 +13,21 @@ EstEIDService* EstEIDService::sEstEIDService = NULL;
  * to SmartCard manager service.
  * We might reconsider when times change :P
  */
-EstEIDService::EstEIDService() : m_lock("EstEIDService")
+EstEIDService::EstEIDService() : m_lock("EstEIDService"),
+                                 m_monitorThread(NULL)
 {
     if(sEstEIDService)
         throw std::runtime_error(">1 EstEIDService object created");
 
     sEstEIDService = this;
+    m_monitorThread = new monitorThread(*this, m_lock);
+    m_monitorThread->start();
 }
 
 EstEIDService::~EstEIDService() {
+    if (m_monitorThread)
+        delete m_monitorThread;
+
     sEstEIDService = NULL;
 }
 
@@ -43,7 +49,7 @@ EstEIDService* EstEIDService::getInstance() {
 
 void EstEIDService::FindEstEID(vector <readerID> & readers) {
     readers.clear();
-    Poll();
+    //Poll();
 
     for (readerID i = 0; i < m_cache.size(); i++ )
         if(m_cache[i].cardPresent) readers.push_back(i);
@@ -68,6 +74,11 @@ void EstEIDService::Worker() {
         PostMessage(MSG_CARD_ERROR, 0, err.what());
         return;
     }
+}
+
+void EstEIDService::onEvent(monitorEvent eType,int param) {
+    printf("onEvent: %d - %d\n", eType, param);
+    Worker();
 }
 
 void EstEIDService::Poll() {

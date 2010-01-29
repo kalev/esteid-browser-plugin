@@ -19,13 +19,14 @@
 #define PDATA_MAX EstEidCard::COMMENT4
 
 /* Use mutex implementation in threadObj */
-#include "threadObj.h"
+#include "monitorThread.h"
+//#include "threadObj.h"
 typedef mutexObj idLockObj;
 typedef mutexObjLocker idAutoLock;
 
 typedef unsigned int readerID;
 
-class EstEIDService {
+class EstEIDService : public monitorObserver {
 public:
     /**
      * Get service instance
@@ -111,6 +112,9 @@ protected:
     virtual void PostMessage(msgType type, readerID reader,
                              std::string msg = "") {};
 
+    /** Callback defined in monitorObserver to be executed by monitorThread */
+    virtual void onEvent(monitorEvent eType,int param);
+
 private:
     //! Copy constructor.
     EstEIDService(const EstEIDService& source) : m_lock(source.m_lock) {};
@@ -126,6 +130,7 @@ private:
 
     vector <CardCacheEntry> m_cache;
     idLockObj m_lock;
+    monitorThread *m_monitorThread;
 };
 
 #endif /* ESTEIDSERVICE_H_ */
