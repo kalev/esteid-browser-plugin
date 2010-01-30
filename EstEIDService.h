@@ -6,7 +6,7 @@
  * Typical usage:
  *
  * EstEIDService *service = EstEIDService::getInstance();
- * service->addEventListener(...);
+ * service->AddObserver(this);
  *
  */
 
@@ -26,12 +26,6 @@ typedef threadObj idThread;
 
 typedef unsigned int readerID;
 
-struct idCardCacheEntry {
-    bool cardPresent;
-    vector <std::string> pdata;
-    void purge() { cardPresent = false; pdata.clear(); }
-};
-typedef vector <idCardCacheEntry> idCardCache;
 
 class EstEIDService : public idThread {
 public:
@@ -97,6 +91,22 @@ public:
      */
     std::string signSHA1(std::string hash, EstEidCard::KeyType keyId,
     		std::string pin, readerID);
+
+    /* Message observer interface */
+    enum msgType {
+	CARD_INSERTED,
+	CARD_REMOVED,
+	READERS_CHANGED,
+	CARD_ERROR
+    };
+    class messageObserver {
+        friend class EstEIDService;
+
+        virtual void onMessage(msgType e, readerID i) = 0;
+    };
+    virtual void AddObserver(messageObserver *obs);
+    virtual void RemoveObserver(messageObserver *obs);
+
 protected:
     EstEIDService();
     virtual ~EstEIDService();
@@ -107,20 +117,18 @@ protected:
     /* Singleton instance variable */
     static EstEIDService* sEstEIDService;
 
-    enum msgType {
-	MSG_CARD_INSERTED,
-	MSG_CARD_REMOVED,
-	MSG_READERS_CHANGED,
-	MSG_CARD_ERROR };
+    class idCardCacheEntry {
+    public:
+        bool cardPresent;
+        vector <std::string> pdata;
+        void purge() { cardPresent = false; pdata.clear(); }
+        idCardCacheEntry() : cardPresent(false) {}
+    };
+    typedef vector <idCardCacheEntry> idCardCache;
 
-    /** Must be called from a background Thread once
-     * in every 500ms for card events to work */
-    void Worker();
-
-    /** Callback for the watcher thread. Will be called when
-     * a card event (insertion, removal) is detected. */
-    virtual void PostMessage(msgType type, readerID reader,
-                             std::string msg = "") {};
+    idCardCache m_cache;
+    vector <messageObserver *> m_observers;
+    virtual void PostMessage(msgType e, readerID i);
 
 private:
     //! Copy constructor.
@@ -131,7 +139,6 @@ private:
     void Poll();
     bool readerHasCard(EstEidCard &card,readerID i);
 
-    idCardCache m_cache;
     idLockObj m_lock;
     ManagerInterface *m_manager;
 

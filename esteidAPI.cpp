@@ -18,12 +18,21 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 {
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(sign);
-/*
+
+/*  FIXME: Investigate if this is needed at all?
+    registerEvent("OnCardInserted");
+    registerEvent("OnCardRemoved");
+    registerEvent("OnReadersChanged");
+*/
+
+/*  FIXME: Those will be catched by firebreath itself for
+           NPAPI plugins, but how about ActiveX?
     REGISTER_METHOD(addEventListener);
     REGISTER_METHOD(removeEventListener);
 */
+
     REGISTER_RO_PROPERTY(authCert);
-//    REGISTER_RO_PROPERTY(signCert);
+    REGISTER_RO_PROPERTY(signCert);
     REGISTER_RO_PROPERTY(lastName);
     REGISTER_RO_PROPERTY(firstName);
     REGISTER_RO_PROPERTY(middleName);
@@ -62,10 +71,13 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     if(!m_UI)
         throw FB::script_error("Unable to load plugin user interface");
 #endif
+
+    m_service->AddObserver(this);
 }
 
 esteidAPI::~esteidAPI()
 {
+    m_service->RemoveObserver(this);
 }
 
 PluginUI* esteidAPI::GetMozillaUI()
@@ -97,6 +109,23 @@ PluginUI* esteidAPI::GetMozillaUI()
     return NULL;
 }
 
+void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
+    //const char *evtname;
+    std::string evtname;
+
+    switch(e) {
+        case EstEIDService::CARD_INSERTED:   evtname = "OnCardInserted";  break;
+        case EstEIDService::CARD_REMOVED:    evtname = "OnCardRemoved";   break;
+        case EstEIDService::READERS_CHANGED: evtname = "OnReadersChanged";break;
+        default: throw std::runtime_error("Invalid message type"); break;
+    }
+    ESTEID_DEBUG("onMessage: %s %d\n", evtname.c_str(), i);
+
+    /* FIXME: Prefixing every event name with an additional "on" is a bloody
+              hack. We either need to fix firebreath or our JS API spec. */
+    FireEvent("on" + evtname, FB::variant_list_of(i));
+}
+
 void esteidAPI::UpdatePersonalData()
 {
     try {
@@ -114,6 +143,14 @@ FB::JSOutObject esteidAPI::get_authCert()
         m_authCert = new CertificateAPI(m_host);
 
     return m_authCert;
+}
+
+FB::JSOutObject esteidAPI::get_signCert()
+{
+    if(m_signCert == NULL)
+        m_signCert = new CertificateAPI(m_host);
+
+    return m_signCert;
 }
 
 std::string esteidAPI::getVersion()

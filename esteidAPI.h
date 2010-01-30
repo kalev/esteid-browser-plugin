@@ -7,7 +7,7 @@
 #include "PluginUI.h"
 #include "EstEIDService.h"
 
-class esteidAPI : public FB::JSAPIAuto
+class esteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
 {
 public:
     esteidAPI(FB::BrowserHostWrapper *host);
@@ -27,7 +27,7 @@ public:
 
     /** Certificates (read-only properties) */
     FB::JSOutObject get_authCert();
-    //FB::JSOutObject get_signCert();
+    FB::JSOutObject get_signCert();
 
     /** Personal data file attributes (read-only properties) */
     std::string get_lastName();
@@ -47,11 +47,12 @@ public:
     std::string get_comment3();
     std::string get_comment4();
 
-   /*  Event handlers
+   /**  Will fire event handlers
    *        - OnCardInserted
    *        - OnCardRemoved
    *        - OnReadersChanged
    */
+   virtual void onMessage(EstEIDService::msgType, readerID);
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;

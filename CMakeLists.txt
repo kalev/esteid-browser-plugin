@@ -22,7 +22,6 @@ set(UTIL_DIR utility)
 set(UTILITY_SOURCES
     ${UTIL_DIR}/threadObj.cpp
     ${UTIL_DIR}/converters.cpp
-    ${UTIL_DIR}/monitorThread.cpp
 )
 
 # Pthread is needed to link utility classes on UNIX-like OS-es

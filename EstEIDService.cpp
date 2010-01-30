@@ -68,9 +68,7 @@ void EstEIDService::execute() {
         try {
             threadObj::wait(500);
             Poll();
-        } catch(std::runtime_error &e) {
-            //PostMessage(MSG_CARD_ERROR, 0, e.what());
-        }
+        } catch(std::runtime_error &e) { }
     }
 }
 
@@ -79,6 +77,26 @@ ManagerInterface &EstEIDService::getManager() {
         m_manager = new SmartCardManager();
 
     return *m_manager;
+}
+
+void EstEIDService::AddObserver(messageObserver *obs) {
+    idAutoLock lock(m_lock); // TODO: Maybe use a different lock?
+
+    m_observers.push_back(obs);
+}
+
+void EstEIDService::RemoveObserver(messageObserver *obs) {
+    idAutoLock lock(m_lock);
+
+    vector <messageObserver *>::iterator i;
+    for (i = m_observers.begin(); i != m_observers.end(); i++)
+        if(*i == obs) { m_observers.erase(i); break; }
+}
+
+void EstEIDService::PostMessage(msgType m, readerID r) {
+    vector <messageObserver *>::iterator i;
+    for (i = m_observers.begin(); i != m_observers.end(); i++ )
+        (*i)->onMessage(m, r);
 }
 
 void EstEIDService::Poll() {
@@ -98,11 +116,11 @@ void EstEIDService::Poll() {
         for (unsigned int i = 0; i < m_cache.size(); i++ ) {
             if(m_cache[i].cardPresent) {
                 m_cache[i].purge();
-                PostMessage(MSG_CARD_REMOVED, i);
+                PostMessage(CARD_REMOVED, i);
             }
         }
         m_cache.resize(nReaders);
-        PostMessage(MSG_READERS_CHANGED, nReaders);
+        PostMessage(READERS_CHANGED, nReaders);
     }
 
     /* Check for card status changes */
@@ -112,11 +130,11 @@ void EstEIDService::Poll() {
 
         if (inReader && !m_cache[i].cardPresent) {
             m_cache[i].cardPresent = true;
-            PostMessage(MSG_CARD_INSERTED, i);
+            PostMessage(CARD_INSERTED, i);
         }
         else if (!inReader && m_cache[i].cardPresent) {
             m_cache[i].purge();
-            PostMessage(MSG_CARD_REMOVED, i);
+            PostMessage(CARD_REMOVED, i);
         }
     }
 }
