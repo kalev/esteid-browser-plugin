@@ -64,4 +64,5 @@ private:
 
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
+    int getPin2RetryCount();
 };

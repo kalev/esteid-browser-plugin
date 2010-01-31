@@ -8,10 +8,16 @@
 #include <stdio.h>
 #define ESTEID_DEBUG printf
 
-/*class PRUString : public std::basic_string<PRUnichar,std::char_traits<PRUnichar> >
-{
-} */
-typedef std::basic_string<PRUnichar,std::char_traits<PRUnichar> > PRUString;
+typedef std::basic_string<PRUnichar,std::char_traits<PRUnichar> > PRUStr;
+
+/** String composed of 16bit PRUnichars */
+class PRUString : public PRUStr {
+public:
+    PRUString(std::string utf8str) : PRUStr(utf8str.length(), 0) {
+        // FIXME: Proper UTF-8 to UTF-16 conversion required
+        std::copy(utf8str.begin(), utf8str.end(), this->begin());
+    }
+};
 
 MozillaUI::MozillaUI(nsISupports *smp, nsISupports *dwp)
 {
@@ -65,16 +71,15 @@ std::string MozillaUI::PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout, bool retry, int tries)
 {
-#if 0
-    m_eid->PromptForSignPIN(m_dw,
-        reinterpret_cast<const PRUnichar *>(L"Peeter Pakiraam"),
-        (const char *)"http://www.kala.ee", (const char *)"hash: 1234567890",
-        reinterpret_cast<const PRUnichar *>(L"https://www.pähh.com"),
-        0, false, 3, (char **)&pin);
-#else
-    // Dummy return value to make MSVC happy
-    return "";
-#endif
+    PRUString t_subject(subject);
+    PRUString t_pageUrl(pageUrl);
+    char *pin;
+
+    m_eid->PromptForSignPIN(m_dw, t_subject.c_str(), docUrl.c_str(),
+                            docHash.c_str(), t_pageUrl.c_str(),
+                            pinPadTimeout, retry, tries, (char **)&pin);
+
+    return (pin) ? pin : "";
 }
 
 void MozillaUI::ClosePinPrompt()
@@ -89,9 +94,7 @@ void MozillaUI::ShowPinBlockedMessage(int pin)
 
 void MozillaUI::ShowSettings(std::string pageUrl)
 {
-    // FIXME: Proper UTF-8 to UTF-16 conversion required
-    PRUString tmp(pageUrl.length(),0);
-    std::copy(pageUrl.begin(), pageUrl.end(), tmp.begin());
+    PRUString tmp(pageUrl);
     m_eid->ShowSettings(m_dw, tmp.c_str());
 }
 

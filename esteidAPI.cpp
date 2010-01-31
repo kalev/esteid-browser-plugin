@@ -12,6 +12,18 @@
 
 #define ESTEID_DEBUG printf
 
+// FIXME: Set error codes
+#define ESTEID_ERROR_FROMCARD(e) { \
+    ESTEID_DEBUG("Card error: %s\n", e.what()); \
+    throw FB::script_error(e.what()); }
+#define ESTEID_ERROR_CARD_ERROR(m) { \
+    ESTEID_DEBUG("Card error: %s\n", m); \
+    throw FB::script_error(m); }
+#define ESTEID_ERROR_INVALID_ARG { \
+    throw FB::script_error("Invalid argument"); }
+#define ESTEID_ERROR_USER_ABORT { \
+    throw FB::script_error("User cancelled operation"); }
+
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
     m_host(host), m_authCert(NULL), m_signCert(NULL),
     m_service(EstEIDService::getInstance())
@@ -159,11 +171,77 @@ std::string esteidAPI::getVersion()
 }
 
 std::string esteidAPI::sign(std::string hash, std::string url) {
+    int tries;
+    bool retrying = false, pinpad;
 
-    m_UI->ShowPinBlockedMessage(2);
-    throw FB::script_error("PIN2 is blocked");
+    // FIXME: This shouldn't happen. Remove this line after constructor is fixed
+    if(!m_UI) throw FB::script_error("No UI, can't prompt for PIN");
 
-    return "Jee";
+    /* Extract subject line from Certificate */
+    std::string subject = \
+        static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
+
+    try {
+        pinpad = m_service->hasSecurePinEntry();
+    } catch(std::runtime_error &e) { 
+        ESTEID_ERROR_FROMCARD(e);
+    }
+
+    // FIXME: Implement!
+    std::string pageUrl = "";
+
+    // FIXME: Hardcoded SHA1 support
+    if(hash.length() != 40)
+        ESTEID_ERROR_INVALID_ARG("Invalid hash");
+
+    if(!url.length())
+        ESTEID_ERROR_INVALID_ARG("Partial document URL must be specified");
+
+    while(true) {
+        std::string pin;
+
+        tries = getPin2RetryCount();
+
+        if(tries <= 0) {
+            // This card is locked!
+            m_UI->ShowPinBlockedMessage(2);
+            ESTEID_ERROR_CARD_ERROR("PIN2 locked");
+        }
+
+        if(pinpad) {
+            // FIXME: Implement
+            throw FB::script_error("Unable to use PinPAD (yet)");
+        } else {
+            pin = m_UI->PromptForSignPIN(subject, url, hash, pageUrl,
+                                         pinpad, retrying, tries);
+            if(!pin.length()) {
+                ESTEID_DEBUG("sign: got empty PIN from UI\n");
+                ESTEID_ERROR_USER_ABORT;
+            }
+
+            try {
+                return m_service->signSHA1(hash, EstEidCard::SIGN, pin);
+            } catch(AuthError &e) {
+                if(e.m_aborted) {
+                    ESTEID_DEBUG("sign: cancel pressed on PinPAD\n");
+                    ESTEID_ERROR_USER_ABORT;
+                }
+            } catch(std::runtime_error &e) {
+                ESTEID_ERROR_FROMCARD(e);
+            }
+        }
+        retrying = true;
+    }
+}
+
+int esteidAPI::getPin2RetryCount() {
+    try {
+        byte puk, pin1, pin2;
+        m_service->getRetryCounts(puk, pin1, pin2);
+        return pin2;
+    } catch(std::runtime_error &e) {
+        ESTEID_ERROR_FROMCARD(e);
+    }
 }
 
 #define ESTEID_WHITELIST_REQUIRED 
