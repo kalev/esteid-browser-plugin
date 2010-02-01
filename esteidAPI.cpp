@@ -1,6 +1,7 @@
 #include "BrowserObjectAPI.h"
 #include "variant_list.h"
 #include "DOM/JSAPI_DOMDocument.h"
+#include "config.h"
 
 #include "Mozilla/MozillaUI.h"
 #ifdef _WIN32
@@ -166,7 +167,7 @@ FB::JSOutObject esteidAPI::get_signCert()
 
 std::string esteidAPI::getVersion()
 {
-    return "0.x.y";
+    return FBSTRING_PLUGIN_VERSION;
 }
 
 std::string esteidAPI::sign(std::string hash, std::string url) {
