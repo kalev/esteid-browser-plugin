@@ -40,6 +40,7 @@ set_target_properties (${PROJNAME} PROPERTIES
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     ${GTK_LIBRARIES}
+    ${ICONV_LIBRARIES}
     ${OPENSSLCRYPTO_LIBRARIES}
     ${SMARTCARDPP_LIBRARIES}
     )

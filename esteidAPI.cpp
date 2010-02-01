@@ -11,6 +11,14 @@
 #include "esteidAPI.h"
 #include "JSUtil.h"
 
+#include <iconv.h>
+
+#ifdef ICONV_SECOND_ARGUMENT_IS_CONST
+    #define ICONV_CONST const
+#else
+    #define ICONV_CONST
+#endif
+
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(esteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(esteidAPI, a)
 
@@ -244,6 +252,48 @@ int esteidAPI::getPin2RetryCount() {
     }
 }
 
+
+std::string esteidAPI::iconvConvert(const std::string &str_in, const char *tocode, const char *fromcode)
+{
+    iconv_t iso_utf;
+    ICONV_CONST char *inptr;
+    char *outptr;
+    size_t inbytes, outbytes, result;
+    char outbuf[128];
+    std::string out;
+
+    iso_utf = iconv_open(tocode, fromcode);
+    if (iso_utf == (iconv_t)-1) {
+        ESTEID_DEBUG("error in iconv_open");
+        return str_in;
+    }
+
+    inptr = (ICONV_CONST char*)str_in.c_str();
+    inbytes = str_in.size();
+
+    outptr = outbuf;
+    outbytes = sizeof(outbuf) - 1;
+
+    result = iconv(iso_utf, &inptr, &inbytes, &outptr, &outbytes);
+    if (result == (size_t)-1) {
+        ESTEID_DEBUG("error converting with iconv");
+        return str_in;
+    }
+    *outptr = '\0';
+
+    iconv_close(iso_utf);
+
+    out += outbuf;
+    return out;
+}
+
+
+std::string esteidAPI::CP1252_to_UTF8(const std::string &str_in)
+{
+    return iconvConvert(str_in, "UTF-8", "CP1252");
+}
+
+
 #define ESTEID_WHITELIST_REQUIRED 
 
 #define ESTEID_PD_GETTER_IMP(index, attr) \
@@ -252,7 +302,7 @@ int esteidAPI::getPin2RetryCount() {
         UpdatePersonalData(); \
         if(m_pdata.size() <= index) \
             throw FB::script_error("PD index out of range"); \
-        return m_pdata[index]; \
+        return CP1252_to_UTF8(m_pdata[index]); \
     }
 
 ESTEID_PD_GETTER_IMP(EstEidCard::SURNAME,         lastName)

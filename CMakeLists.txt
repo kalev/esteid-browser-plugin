@@ -24,6 +24,7 @@ browserplugin_project(${PROJNAME})
 # Custom cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 find_package(Gecko REQUIRED)
+find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
 
@@ -39,8 +40,13 @@ if(UNIX)
   link_libraries (pthread)
 endif(UNIX)
 
+if(ICONV_SECOND_ARGUMENT_IS_CONST)
+    add_definitions( -DICONV_SECOND_ARGUMENT_IS_CONST )
+endif(ICONV_SECOND_ARGUMENT_IS_CONST)
+
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${ICONV_INCLUDE_DIR}
     ${OPENSSLCRYPTO_INCLUDE_DIR}
     ${SMARTCARDPP_INCLUDE_DIR}
     ${UTIL_DIR}
@@ -91,7 +97,7 @@ set(mozilla_ui_SRCS
 set_source_files_properties(${mozilla_ui_SRCS} PROPERTIES
     COMPILE_FLAGS "${GECKO_DEFINITIONS}"
     )
-    
+
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
