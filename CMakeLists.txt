@@ -14,8 +14,9 @@ browserplugin_project(${PROJNAME})
 
 # Custom cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
-find_package(SmartCardpp REQUIRED)
 find_package(Gecko REQUIRED)
+find_package(OpenSSLCrypto REQUIRED)
+find_package(SmartCardpp REQUIRED)
 
 # Utility classes (FIXME: Move those to smartcardpp)
 set(UTIL_DIR utility)
@@ -29,10 +30,9 @@ if(UNIX)
   link_libraries (pthread)
 endif(UNIX)
 
-link_libraries(crypto)
-
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${OPENSSLCRYPTO_INCLUDE_DIR}
     ${SMARTCARDPP_INCLUDE_DIR}
     ${UTIL_DIR}
 )
