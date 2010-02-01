@@ -28,7 +28,7 @@
     throw FB::script_error("User cancelled operation"); }
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
-    m_host(host), m_authCertAPI(NULL), m_signCertAPI(NULL),
+    m_host(host), m_authCert(NULL), m_signCert(NULL),
     m_service(EstEIDService::getInstance())
 {
     ESTEID_DEBUG("esteidAPI::esteidAPI()\n");
@@ -151,7 +151,7 @@ void esteidAPI::UpdatePersonalData()
     RTERROR_TO_SCRIPT(m_service->readPersonalData(m_pdata));
 }
 
-
+// TODO: Optimize memory usage. Don't create new object if cert hasn't changed.
 FB::JSOutObject esteidAPI::get_authCert()
 {
     RTERROR_TO_SCRIPT(
