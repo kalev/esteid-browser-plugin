@@ -3,6 +3,9 @@
 #include "DOM/JSAPI_DOMDocument.h"
 
 #include "Mozilla/MozillaUI.h"
+#ifdef _WIN32
+#include "Win/WindowsUI.h"
+#endif
 
 #include "esteidAPI.h"
 #include "JSUtil.h"
@@ -28,6 +31,8 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     m_host(host), m_authCert(NULL), m_signCert(NULL),
     m_service(EstEIDService::getInstance())
 {
+    ESTEID_DEBUG("esteidAPI::esteidAPI()\n");
+
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(sign);
 
@@ -67,7 +72,8 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 
     /* Use platform specific UI if browser specific is not found */
     if(!m_UI) {
-#ifdef WINDOOZ
+#ifdef _WIN32
+        ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI\n");
         m_UI = new WindowsUI();
 #endif
 #ifdef SUCKOSX
@@ -89,6 +95,8 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 
 esteidAPI::~esteidAPI()
 {
+    ESTEID_DEBUG("esteidAPI::~esteidAPI()\n");
+
     m_service->RemoveObserver(this);
 }
 
