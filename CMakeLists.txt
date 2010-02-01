@@ -29,6 +29,8 @@ if(UNIX)
   link_libraries (pthread)
 endif(UNIX)
 
+link_libraries(crypto)
+
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${SMARTCARDPP_INCLUDE_DIR}

@@ -167,11 +167,11 @@ void EstEIDService::readPersonalData(vector <std::string> & data) {
 void EstEIDService::readPersonalData(vector <std::string> & data,
                                            readerID reader) {
     /* Populate cache if needed */
-    if(m_cache[reader].pdata.size() <= 0) {
+    if(m_cache[reader].mPData.size() <= 0) {
         CREATE_LOCKED_ESTEID_INSTANCE
-        card.readPersonalData(m_cache[reader].pdata, PDATA_MIN, PDATA_MAX);
+        card.readPersonalData(m_cache[reader].mPData, PDATA_MIN, PDATA_MAX);
     }
-    data = m_cache[reader].pdata;
+    data = m_cache[reader].mPData;
 }
 
 #define ESTEIDSERVICE_GETCERTIMPL(id) \
@@ -180,8 +180,11 @@ void EstEIDService::readPersonalData(vector <std::string> & data,
     }\
     \
     ByteVec EstEIDService::get##id##Cert(readerID reader) { \
-        CREATE_LOCKED_ESTEID_INSTANCE \
-        return card.get##id##Cert(); \
+        if(m_cache[reader].m##id##Cert.size() <= 0) { \
+            CREATE_LOCKED_ESTEID_INSTANCE \
+            m_cache[reader].m##id##Cert = card.get##id##Cert(); \
+        } \
+        return m_cache[reader].m##id##Cert; \
     }
 
 ESTEIDSERVICE_GETCERTIMPL(Auth)

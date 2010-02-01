@@ -28,7 +28,7 @@
     throw FB::script_error("User cancelled operation"); }
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
-    m_host(host), m_authCert(NULL), m_signCert(NULL),
+    m_host(host), m_authCertAPI(NULL), m_signCertAPI(NULL),
     m_service(EstEIDService::getInstance())
 {
     ESTEID_DEBUG("esteidAPI::esteidAPI()\n");
@@ -148,29 +148,20 @@ void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
 
 void esteidAPI::UpdatePersonalData()
 {
-    try {
-        m_service->readPersonalData(m_pdata);
-    }
-    catch(std::runtime_error &err) {
-        throw FB::script_error(err.what());
-    }
+    RTERROR_TO_SCRIPT(m_service->readPersonalData(m_pdata));
 }
 
 
 FB::JSOutObject esteidAPI::get_authCert()
 {
-    if(m_authCert == NULL)
-        m_authCert = new CertificateAPI(m_host);
-
-    return m_authCert;
+    RTERROR_TO_SCRIPT(
+        return new CertificateAPI(m_host, m_service->getAuthCert()));
 }
 
 FB::JSOutObject esteidAPI::get_signCert()
 {
-    if(m_signCert == NULL)
-        m_signCert = new CertificateAPI(m_host);
-
-    return m_signCert;
+    RTERROR_TO_SCRIPT(
+        return new CertificateAPI(m_host, m_service->getSignCert()));
 }
 
 std::string esteidAPI::getVersion()

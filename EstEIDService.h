@@ -120,8 +120,10 @@ protected:
     class idCardCacheEntry {
     public:
         bool cardPresent;
-        vector <std::string> pdata;
-        void purge() { cardPresent = false; pdata.clear(); }
+        vector <std::string> mPData;
+        ByteVec mAuthCert;
+        ByteVec mSignCert;
+        void purge() { cardPresent = false; mPData.clear(); mAuthCert.clear(); mSignCert.clear(); }
         idCardCacheEntry() : cardPresent(false) {}
     };
     typedef vector <idCardCacheEntry> idCardCache;

@@ -56,9 +56,11 @@ public:
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
-    FB::JSOutObject m_authCert;
-    FB::JSOutObject m_signCert;
     FB::AutoPtr<PluginUI> m_UI;
+    X509Certificate *m_authCert;
+    X509Certificate *m_signCert;
+    FB::JSOutObject m_authCertAPI;
+    FB::JSOutObject m_signCertAPI;
     EstEIDService *m_service;
     vector <std::string> m_pdata;
 
