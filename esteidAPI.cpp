@@ -208,7 +208,7 @@ std::string esteidAPI::sign(std::string hash, std::string url) {
             ESTEID_ERROR_CARD_ERROR("PIN2 locked");
         }
 
-        if(pinpad) {
+        if(0) { //pinpad
             // FIXME: Implement
             throw FB::script_error("Unable to use PinPAD (yet)");
         } else {
