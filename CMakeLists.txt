@@ -6,6 +6,15 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
+find_package(Subversion)
+if(Subversion_FOUND AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
+    Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} PROJECT)
+    set(SVN_REV ${PROJECT_WC_LAST_CHANGED_REV})
+    message(STATUS "Current subversion revision is ${SVN_REV}")
+else()
+    message( "Unable to determine subversion revision")
+endif()
+
 include(${CMAKE_DIR}/common.cmake)
 
 set (PROJNAME ${PLUGIN_NAME})
