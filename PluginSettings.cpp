@@ -24,7 +24,8 @@ PluginSettings::PluginSettings() :
 
 void PluginSettings::FindConfig() {
 #ifdef _WIN32
-#error Not implemented
+    std::string appdata(getenv("APPDATA"));
+    fileName = appdata + "\\" FBSTRING_PluginName "plugin.conf";
 #else // UNIX
     std::string home(getenv("HOME"));
     fileName = home + "/.config/" FBSTRING_PluginName "plugin.conf";
