@@ -248,7 +248,7 @@ void esteidAPI::DisplayNotification(void) {
     //if(!m_notified) {
         try {
             FB::JSAPI_DOMElement div = GetNotificationDiv();
-            div.setInnerHTML("Ikaldus!");
+            div.setInnerHTML(GetPageURL());
         } catch(FB::bad_variant_cast &e) {
             ESTEID_DEBUG("Error showing notification: %s %s %s\n", e.what(), e.from, e.to);
         } catch(std::exception &e) {
