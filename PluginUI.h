@@ -2,6 +2,7 @@
 #define H_ESTEID_PLUGINUI
 
 #include <string>
+#include "PluginSettings.h"
 
 /** A base class for different UI implementations */
 class PluginUI
@@ -20,8 +21,8 @@ public:
     virtual void ShowPinBlockedMessage(int pin) = 0;
 
     /** Open Settings dialog */
-    //FIXME: how to pass whitelist?
-    virtual void ShowSettings(std::string pageUrl = "") = 0;
+    virtual void ShowSettings(PluginSettings &conf,
+                              std::string pageUrl = "") = 0;
 
     PluginUI(void);
     virtual ~PluginUI(void);

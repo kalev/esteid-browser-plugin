@@ -12,7 +12,11 @@
 
 #include "esteidAPI.h"
 #include "JSUtil.h"
-// #include "CallbackAPI.h"
+
+/* UI Messages */
+#define MSG_SETTINGS "Settings"
+#define MSG_SITEACCESS "This site is trying to obtain access to your ID-card."
+#define MSG_INSECURE "Access to ID-card was denied because the connection to the site is not secure."
 
 #include <iconv.h>
 
@@ -24,6 +28,15 @@
 
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(esteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(esteidAPI, a)
+
+#define WHITELIST_REQUIRED \
+    if(!IsSecure()) { \
+        DisplayNotification(MSG_INSECURE); \
+        ESTEID_ERROR_NO_PERMISSION; \
+    } else if(!IsWhiteListed()) { \
+        DisplayNotification(MSG_SITEACCESS); \
+        ESTEID_ERROR_NO_PERMISSION; \
+    }
 
 #define ESTEID_DEBUG printf
 
@@ -38,10 +51,15 @@
     throw FB::script_error("Invalid argument"); }
 #define ESTEID_ERROR_USER_ABORT { \
     throw FB::script_error("User cancelled operation"); }
+#define ESTEID_ERROR_NO_CARD { \
+    throw FB::script_error("No card in reader"); }
+#define ESTEID_ERROR_NO_PERMISSION ESTEID_ERROR_NO_CARD
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
     m_host(host), m_authCert(NULL), m_signCert(NULL),
-    m_service(EstEIDService::getInstance())
+    m_service(EstEIDService::getInstance()),
+    m_settingsCallback(new SettingsCallback(host, *this)),
+    m_closeCallback(new CloseCallback(host, *this))
 {
     ESTEID_DEBUG("esteidAPI::esteidAPI()\n");
 
@@ -143,6 +161,35 @@ PluginUI* esteidAPI::GetMozillaUI()
     return NULL;
 }
 
+bool esteidAPI::IsLocal() {
+    std::string url = GetPageURL();
+    // FIXME: This code is butt-ugly!
+    if(!url.compare(0,  7, "file://"))            return true;
+    if(!url.compare(0, 17, "http://localhost/"))  return true;
+    if(!url.compare(0, 18, "https://localhost/")) return true;
+    if(!url.compare(0, 17, "http://localhost:"))  return true;
+    if(!url.compare(0, 18, "https://localhost:")) return true;
+    return false;
+}
+
+bool esteidAPI::IsSecure() {
+    if(!GetPageURL().compare(0, 8, "https://")) return true;
+    if(m_conf.allowLocal && IsLocal())          return true;
+    return false;
+}
+
+bool esteidAPI::IsWhiteListed() {
+    if(m_conf.allowLocal && IsLocal()) return true;
+
+    std::string url = GetPageURL();
+    size_t pos1 = url.find("://") + 3, pos2 = url.find("/", pos1);
+    if(pos1 >= pos2) return false;
+    std::string host = url.substr(pos1, pos2 - pos1);
+    if(m_conf.InWhitelist(host)) return true;
+
+    return false;
+}
+
 std::string esteidAPI::GetPageURL(void) {
     if(m_pageURL.empty()) {
         /* Using method no. 1 from
@@ -156,14 +203,7 @@ std::string esteidAPI::GetPageURL(void) {
     return m_pageURL;
 }
 
-FB::JSAPI_DOMElement esteidAPI::GetNotificationDiv(void) {
-/*
-    if(!m_settingsCallback)
-        m_settingsCallback = new CallbackAPI(m_host, &esteidAPI::ShowSettings);
-    if(!m_closeCallback)
-        m_closeCallback = new CallbackAPI(m_host, &esteidAPI::CloseNotification);
-*/
-
+void esteidAPI::CreateNotificationBar(void) {
     FB::JSAPI_DOMDocument doc = m_host->getDOMDocument();
 
     /* Create notification bar div */
@@ -191,11 +231,9 @@ FB::JSAPI_DOMElement esteidAPI::GetNotificationDiv(void) {
     FB::JSAPI_DOMElement btn = doc.callMethod<FB::JSObject>("createElement",
                                        FB::variant_list_of("input"));
     btn.setProperty("type",    FB::variant("button"));
-    btn.setProperty("value",   FB::variant("Settings"));
-/*
+    btn.setProperty("value",   FB::variant(MSG_SETTINGS));
     btn.callMethod<FB::variant>("addEventListener", 
             FB::variant_list_of("click")(m_settingsCallback)(false));
-*/
     btnbar.callMethod<FB::JSObject>("appendChild",
             FB::variant_list_of(btn.getJSObject()));
 
@@ -205,10 +243,8 @@ FB::JSAPI_DOMElement esteidAPI::GetNotificationDiv(void) {
     style = btn.getProperty<FB::JSObject>("style");
     btn.setProperty("type",    FB::variant("button"));
     btn.setProperty("value",   FB::variant("x"));
-/*
     btn.callMethod<FB::variant>("addEventListener", 
             FB::variant_list_of("click")(m_closeCallback)(false));
-*/
     btnbar.callMethod<FB::JSObject>("appendChild",
             FB::variant_list_of(btn.getJSObject()));
 #else
@@ -229,8 +265,8 @@ FB::JSAPI_DOMElement esteidAPI::GetNotificationDiv(void) {
                                          FB::variant_list_of("div"));
     style = text.getProperty<FB::JSObject>("style");
     style.setProperty("marginLeft", FB::variant("2em"));
-    text = bar.callMethod<FB::JSObject>("appendChild",
-            FB::variant_list_of(text.getJSObject()));
+    m_msgElement = bar.callMethod<FB::JSObject>("appendChild",
+                           FB::variant_list_of(text.getJSObject()));
 
     /* We can't inject divs into DOMDocument, we MUST find body tag */
     FB::JSArray tmp(doc.callMethod<FB::JSObject>("getElementsByTagName",
@@ -238,23 +274,40 @@ FB::JSAPI_DOMElement esteidAPI::GetNotificationDiv(void) {
     FB::JSAPI_DOMElement body = tmp[0].convert_cast<FB::JSObject>();
 
     /* Insert notification bar into body */
-    body.callMethod<FB::JSObject>("appendChild",
-             FB::variant_list_of(bar.getJSObject()));
-
-    return text;
+    m_barElement = body.callMethod<FB::JSObject>("appendChild",
+                            FB::variant_list_of(bar.getJSObject()));
 }
 
-void esteidAPI::DisplayNotification(void) {
-    //if(!m_notified) {
-        try {
-            FB::JSAPI_DOMElement div = GetNotificationDiv();
-            div.setInnerHTML(GetPageURL());
-        } catch(FB::bad_variant_cast &e) {
-            ESTEID_DEBUG("Error showing notification: %s %s %s\n", e.what(), e.from, e.to);
-        } catch(std::exception &e) {
-            ESTEID_DEBUG("Error showing notification: %s\n", e.what());
-        }
-    //}
+void esteidAPI::DisplayNotification(std::string msg) {
+    try {
+        OpenNotificationBar();
+        FB::JSAPI_DOMElement(m_msgElement).setInnerHTML(msg);
+    } catch(std::exception &e) {
+        ESTEID_DEBUG("Unable to display notification: %s\n", e.what());
+    }
+}
+
+void esteidAPI::OpenNotificationBar(void) {
+    if(!m_barElement) {
+        CreateNotificationBar();
+    }
+}
+
+void esteidAPI::CloseNotificationBar(void) {
+    if(!m_barElement) return;
+
+    FB::JSAPI_DOMElement bar(m_barElement);
+    FB::JSAPI_DOMNode style = bar.getProperty<FB::JSObject>("style");
+    style.setProperty("display", FB::variant("none"));
+}
+
+void esteidAPI::ShowSettings(void) {
+    if(IsSecure())
+        m_UI->ShowSettings(m_conf, GetPageURL());
+    else
+        m_UI->ShowSettings(m_conf);
+
+    CloseNotificationBar();
 }
 
 void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
@@ -269,6 +322,8 @@ void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
     }
     ESTEID_DEBUG("onMessage: %s %d\n", evtname.c_str(), i);
 
+    if(!IsWhiteListed()) return;
+
     /* FIXME: Prefixing every event name with an additional "on" is a bloody
               hack. We either need to fix firebreath or our JS API spec. */
     FireEvent("on" + evtname, FB::variant_list_of(i));
@@ -282,23 +337,28 @@ void esteidAPI::UpdatePersonalData()
 // TODO: Optimize memory usage. Don't create new object if cert hasn't changed.
 FB::JSOutObject esteidAPI::get_authCert()
 {
+    WHITELIST_REQUIRED;
+
     RTERROR_TO_SCRIPT(
         return new CertificateAPI(m_host, m_service->getAuthCert()));
 }
 
 FB::JSOutObject esteidAPI::get_signCert()
 {
+    WHITELIST_REQUIRED;
+
     RTERROR_TO_SCRIPT(
         return new CertificateAPI(m_host, m_service->getSignCert()));
 }
 
 std::string esteidAPI::getVersion()
 {
-    DisplayNotification();
     return FBSTRING_PLUGIN_VERSION;
 }
 
 std::string esteidAPI::sign(std::string hash, std::string url) {
+    WHITELIST_REQUIRED;
+
     int tries;
     bool retrying = false, pinpad;
 
@@ -414,11 +474,9 @@ std::string esteidAPI::CP1252_to_UTF8(const std::string &str_in)
 }
 
 
-#define ESTEID_WHITELIST_REQUIRED 
-
 #define ESTEID_PD_GETTER_IMP(index, attr) \
     std::string esteidAPI::get_##attr() { \
-            ESTEID_WHITELIST_REQUIRED; \
+        WHITELIST_REQUIRED; \
         UpdatePersonalData(); \
         if(m_pdata.size() <= index) \
             throw FB::script_error("PD index out of range"); \

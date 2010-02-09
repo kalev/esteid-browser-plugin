@@ -1,8 +1,6 @@
 #include "EstEIDService.h"
 #include "converters.h"
 
-#include <stdio.h> //FIXME: remove!
-
 /* Zero out our singleton instance variable */
 EstEIDService* EstEIDService::sEstEIDService = NULL;
 

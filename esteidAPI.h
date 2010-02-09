@@ -7,6 +7,7 @@
 #include "CertificateAPI.h"
 #include "PluginUI.h"
 #include "EstEIDService.h"
+#include "CallbackAPI.h"
 
 class esteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
 {
@@ -60,18 +61,47 @@ private:
     FB::AutoPtr<PluginUI> m_UI;
     FB::JSOutObject m_authCert;
     FB::JSOutObject m_signCert;
+    FB::JSOutObject m_settingsCallback;
+    FB::JSOutObject m_closeCallback;
+    FB::JSObject m_msgElement;
+    FB::JSObject m_barElement;
     EstEIDService *m_service;
     vector <std::string> m_pdata;
     std::string m_pageURL;
-    FB::JSOutObject m_settingsCallback;
-    FB::JSOutObject m_closeCallback;
+    PluginSettings m_conf; // TODO: Optimize this?
+
+    class SettingsCallback : public CallbackAPI {
+    public:
+        SettingsCallback(FB::BrowserHostWrapper *host, esteidAPI &eidp) : 
+            CallbackAPI(host), m_eidp(eidp) { }
+        virtual bool eventHandler()
+            { m_eidp.ShowSettings(); return true; };
+    private:
+        esteidAPI &m_eidp;
+    };
+
+    class CloseCallback : public CallbackAPI {
+    public:
+        CloseCallback(FB::BrowserHostWrapper *host, esteidAPI &eidp) : 
+            CallbackAPI(host), m_eidp(eidp) { }
+        virtual bool eventHandler()
+            { m_eidp.CloseNotificationBar(); return true; };
+    private:
+        esteidAPI &m_eidp;
+    };
 
     std::string GetPageURL(void);
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
     int getPin2RetryCount();
-    FB::JSAPI_DOMElement GetNotificationDiv(void);
-    void DisplayNotification(void);
+    void ShowSettings(void);
+    void DisplayNotification(std::string msg);
+    void CreateNotificationBar(void);
+    void OpenNotificationBar(void);
+    void CloseNotificationBar(void);
+    bool IsSecure(void);
+    bool IsLocal(void);
+    bool IsWhiteListed(void);
 
     static std::string iconvConvert(const std::string&, const char*, const char*);
     static std::string CP1252_to_UTF8(const std::string&);

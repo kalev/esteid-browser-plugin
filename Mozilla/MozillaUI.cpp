@@ -92,7 +92,7 @@ void MozillaUI::ShowPinBlockedMessage(int pin)
     m_eid->ShowPinBlockedMessage(m_dw, pin);
 }
 
-void MozillaUI::ShowSettings(std::string pageUrl)
+void MozillaUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
 {
     PRUString tmp(pageUrl);
     m_eid->ShowSettings(m_dw, tmp.c_str());
