@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
+#include "DOM/JSAPI_DOMElement.h"
 #include "BrowserHostWrapper.h"
 #include "NpapiBrowserHost.h"
 #include "CertificateAPI.h"
@@ -61,10 +62,16 @@ private:
     FB::JSOutObject m_signCert;
     EstEIDService *m_service;
     vector <std::string> m_pdata;
+    std::string m_pageURL;
+    FB::JSOutObject m_settingsCallback;
+    FB::JSOutObject m_closeCallback;
 
+    std::string GetPageURL(void);
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
     int getPin2RetryCount();
+    FB::JSAPI_DOMElement GetNotificationDiv(void);
+    void DisplayNotification(void);
 
     static std::string iconvConvert(const std::string&, const char*, const char*);
     static std::string CP1252_to_UTF8(const std::string&);

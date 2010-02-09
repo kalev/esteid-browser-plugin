@@ -1,6 +1,8 @@
 #include "BrowserObjectAPI.h"
 #include "variant_list.h"
 #include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/JSAPI_DOMWindow.h"
+#include "Util/JSArray.h"
 #include "config.h"
 
 #include "Mozilla/MozillaUI.h"
@@ -10,6 +12,7 @@
 
 #include "esteidAPI.h"
 #include "JSUtil.h"
+// #include "CallbackAPI.h"
 
 #include <iconv.h>
 
@@ -76,6 +79,8 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_RO_PROPERTY(comment3);
     REGISTER_RO_PROPERTY(comment4);
 
+    ESTEID_DEBUG("esteidAPI: Page URL is %s\n", GetPageURL().c_str());
+
     /* Try to access Mozilla UI */
     m_UI = GetMozillaUI();
 
@@ -138,6 +143,120 @@ PluginUI* esteidAPI::GetMozillaUI()
     return NULL;
 }
 
+std::string esteidAPI::GetPageURL(void) {
+    if(m_pageURL.empty()) {
+        /* Using method no. 1 from
+         * https://developer.mozilla.org/en/Getting_the_page_URL_in_NPAPI_plugin
+         */
+        FB::JSAPI_DOMWindow dw = m_host->getDOMWindow();
+        FB::JSAPI_DOMNode loc = dw.getProperty<FB::JSObject>("location");
+        m_pageURL = loc.getProperty<std::string>("href");
+    }
+
+    return m_pageURL;
+}
+
+FB::JSAPI_DOMElement esteidAPI::GetNotificationDiv(void) {
+/*
+    if(!m_settingsCallback)
+        m_settingsCallback = new CallbackAPI(m_host, &esteidAPI::ShowSettings);
+    if(!m_closeCallback)
+        m_closeCallback = new CallbackAPI(m_host, &esteidAPI::CloseNotification);
+*/
+
+    FB::JSAPI_DOMDocument doc = m_host->getDOMDocument();
+
+    /* Create notification bar div */
+    FB::JSAPI_DOMElement bar = doc.callMethod<FB::JSObject>("createElement",
+                                        FB::variant_list_of("div"));
+    FB::JSAPI_DOMNode style = bar.getProperty<FB::JSObject>("style");
+    style.setProperty("fontSize",         FB::variant("110%"));
+    style.setProperty("backgroundColor",  FB::variant("#ffff66"));
+    style.setProperty("position",         FB::variant("fixed"));
+    style.setProperty("top",              FB::variant("0px"));
+    style.setProperty("left",             FB::variant("0px"));
+    style.setProperty("right",            FB::variant("0px"));
+    style.setProperty("padding",          FB::variant("5px"));
+
+    /* Create button bar div */
+    FB::JSAPI_DOMElement btnbar = doc.callMethod<FB::JSObject>("createElement",
+                                          FB::variant_list_of("div"));
+    style = btnbar.getProperty<FB::JSObject>("style");
+    style.setProperty("cssFloat",  FB::variant("right"));
+    style.setProperty("width",     FB::variant("10em"));
+    style.setProperty("textAlign", FB::variant("right"));
+
+#if 1
+    /* Create Settings button */
+    FB::JSAPI_DOMElement btn = doc.callMethod<FB::JSObject>("createElement",
+                                       FB::variant_list_of("input"));
+    btn.setProperty("type",    FB::variant("button"));
+    btn.setProperty("value",   FB::variant("Settings"));
+/*
+    btn.callMethod<FB::variant>("addEventListener", 
+            FB::variant_list_of("click")(m_settingsCallback)(false));
+*/
+    btnbar.callMethod<FB::JSObject>("appendChild",
+            FB::variant_list_of(btn.getJSObject()));
+
+    /* Create Close button */
+    btn = doc.callMethod<FB::JSObject>("createElement",
+                                       FB::variant_list_of("input"));
+    style = btn.getProperty<FB::JSObject>("style");
+    btn.setProperty("type",    FB::variant("button"));
+    btn.setProperty("value",   FB::variant("x"));
+/*
+    btn.callMethod<FB::variant>("addEventListener", 
+            FB::variant_list_of("click")(m_closeCallback)(false));
+*/
+    btnbar.callMethod<FB::JSObject>("appendChild",
+            FB::variant_list_of(btn.getJSObject()));
+#else
+    btnbar.setInnerHTML("\
+        <input type=\"button\" value=\"Settings\" \
+               onclick=\"alert('hee');\"></input>\
+        <input type=\"button\" value=\"x\" \
+               onclick=\"this.parentNode.parentNode.style.display='none';\"></input>\
+    ");
+#endif
+
+    /* Insert buttonbar into container */
+    bar.callMethod<FB::JSObject>("appendChild",
+            FB::variant_list_of(btnbar.getJSObject()));
+    
+    /* Create message div */
+    FB::JSAPI_DOMElement text = doc.callMethod<FB::JSObject>("createElement",
+                                         FB::variant_list_of("div"));
+    style = text.getProperty<FB::JSObject>("style");
+    style.setProperty("marginLeft", FB::variant("2em"));
+    text = bar.callMethod<FB::JSObject>("appendChild",
+            FB::variant_list_of(text.getJSObject()));
+
+    /* We can't inject divs into DOMDocument, we MUST find body tag */
+    FB::JSArray tmp(doc.callMethod<FB::JSObject>("getElementsByTagName",
+                            FB::variant_list_of("body")));
+    FB::JSAPI_DOMElement body = tmp[0].convert_cast<FB::JSObject>();
+
+    /* Insert notification bar into body */
+    body.callMethod<FB::JSObject>("appendChild",
+             FB::variant_list_of(bar.getJSObject()));
+
+    return text;
+}
+
+void esteidAPI::DisplayNotification(void) {
+    //if(!m_notified) {
+        try {
+            FB::JSAPI_DOMElement div = GetNotificationDiv();
+            div.setInnerHTML("Ikaldus!");
+        } catch(FB::bad_variant_cast &e) {
+            ESTEID_DEBUG("Error showing notification: %s %s %s\n", e.what(), e.from, e.to);
+        } catch(std::exception &e) {
+            ESTEID_DEBUG("Error showing notification: %s\n", e.what());
+        }
+    //}
+}
+
 void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
     //const char *evtname;
     std::string evtname;
@@ -175,6 +294,7 @@ FB::JSOutObject esteidAPI::get_signCert()
 
 std::string esteidAPI::getVersion()
 {
+    DisplayNotification();
     return FBSTRING_PLUGIN_VERSION;
 }
 
