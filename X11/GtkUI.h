@@ -1,6 +1,10 @@
 #include "PluginUI.h"
 #include <stdexcept>
 
+#include <gtkmm.h>
+
+class WhitelistDialog;
+
 class GtkUI : public PluginUI {
 public:
     GtkUI();
@@ -13,6 +17,14 @@ public:
     virtual void ClosePinPrompt();
     virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
     virtual void ShowPinBlockedMessage(int pin);
+
+protected:
+    int loadGladeUI(std::string gladeFile);
+
+    WhitelistDialog *m_whitelistDialog;
+
+    // Glade interface description.
+    Glib::RefPtr<Gtk::Builder> m_refGlade;
 
 private:
     bool m_dialog_up;
