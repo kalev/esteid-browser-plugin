@@ -1,5 +1,5 @@
 #/**********************************************************\ 
-# Auto-generated Windows project definition file for the
+# Auto-generated Mac project definition file for the
 # esteid project
 #\**********************************************************/
 
@@ -18,11 +18,24 @@ add_definitions(
     
 )
 
+# Bundle resources
+    file(GLOB_RECURSE RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}
+        Mac/bundle_template/**/*.nib
+        Mac/bundle_template/**/*.strings)
+
+    foreach(_file ${RESOURCE_FILES})
+        get_filename_component(_file_dir ${_file} PATH)
+        file(RELATIVE_PATH _file_dir ${CMAKE_CURRENT_SOURCE_DIR}/Mac/bundle_template ${_file_dir})
+        
+        set_source_files_properties(${_file} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/${_file_dir}" )
+    endforeach(_file)
+
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
 set (SOURCES
     ${SOURCES}
     ${PLATFORM}
+    ${RESOURCE_FILES}
     )
 
 set(PLIST "Mac/bundle_template/Info.plist")

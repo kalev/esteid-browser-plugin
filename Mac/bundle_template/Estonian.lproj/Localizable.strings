@@ -1,0 +1,20 @@
+/* PIN Panel */
+"PINPanel.Error.PIN2.Locked" = "PIN2 on blokeeritud!";
+"PINPanel.Error.PIN2.Invalid" = "PIN2 sisestati valesti!";
+"PINPanel.Label.URL" = "Asukoht:";
+"PINPanel.Label.Hash" = "Räsi:";
+"PINPanel.Label.Name" = "Nimi:";
+"PINPanel.Label.PIN2" = "PIN2:";
+"PINPanel.Label.SecureEntry" = "Sõrmistiku kasutamiseks vajuta Allkirjasta";
+"PINPanel.Message.PIN2" = "Palun sisesta digitaalseks allkirjastamiseks oma PIN2.";
+"PINPanel.Label.Details" = "Detailid";
+"PINPanel.Action.Cancel" = "Tühista";
+"PINPanel.Action.OK" = "Allkirjasta";
+
+/* Whitelist */
+"Whitelist.Alert.Blocked.Title" = "Blokeeritud veebileht soovib ligipääsu ID-kaardile";
+"Whitelist.Alert.Blocked.Message" = "Kas soovid lubada eelnevalt blokeeritud veebilehel '%@' ligipääsu ID-kaardile?";
+"Whitelist.Alert.Unknown.Title" = "Veebileht soovib ligipääsu ID-kaardile";
+"Whitelist.Alert.Unknown.Message" = "Kas soovid lubada veebilehel '%@' ligipääsu ID-kaardile?";
+"Whitelist.Action.Allow" = "Luba";
+"Whitelist.Action.Deny" = "Keela";

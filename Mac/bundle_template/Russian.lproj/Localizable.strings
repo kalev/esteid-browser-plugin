@@ -1,0 +1,20 @@
+﻿/* PIN Panel */
+"PINPanel.Error.PIN2.Locked" = "PIN2 заблокирован!";
+"PINPanel.Error.PIN2.Invalid" = "PIN2 введён неверно!";
+"PINPanel.Label.URL" = "URL:";
+"PINPanel.Label.Hash" = "Хэш:";
+"PINPanel.Label.Name" = "Имя:";
+"PINPanel.Label.PIN2" = "PIN2:";
+"PINPanel.Label.SecureEntry" = "Нажмите OK для использования клавиатуры считывателя";
+"PINPanel.Message.PIN2" = "Пожалуйста введите PIN2.";
+"PINPanel.Label.Details" = "Детали";
+"PINPanel.Action.Cancel" = "Отмена";
+"PINPanel.Action.OK" = "OK";
+
+/* Whitelist */
+"Whitelist.Alert.Blocked.Title" = "Заблокированная веб-страница хочет получит доступ к ID-карте";
+"Whitelist.Alert.Blocked.Message" = "Хотите ли Вы дать ранее заблокированной веб-странице '%@' допуск к Вашей ID-карте?";
+"Whitelist.Alert.Unknown.Title" = "Веб-страница хочет получит доступ к ID-карте";
+"Whitelist.Alert.Unknown.Message" = "Хотите ли Вы дать веб-странице '%@' допуск к Вашей ID-карте?";
+"Whitelist.Action.Allow" = "Разрешить";
+"Whitelist.Action.Deny" = "Отказать";

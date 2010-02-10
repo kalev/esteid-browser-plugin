@@ -1,0 +1,20 @@
+/* PIN Panel */
+"PINPanel.Error.PIN2.Locked" = "PIN2 is blocked!";
+"PINPanel.Error.PIN2.Invalid" = "PIN2 was entered incorrectly!";
+"PINPanel.Label.URL" = "URL:";
+"PINPanel.Label.Hash" = "Hash:";
+"PINPanel.Label.Name" = "Name:";
+"PINPanel.Label.PIN2" = "PIN2:";
+"PINPanel.Label.SecureEntry" = "Press OK to use pinpad";
+"PINPanel.Message.PIN2" = "Please insert your PIN2 code.";
+"PINPanel.Label.Details" = "Details";
+"PINPanel.Action.Cancel" = "Cancel";
+"PINPanel.Action.OK" = "OK";
+
+/* Whitelist */
+"Whitelist.Alert.Blocked.Title" = "Blocked website wants to access ID-card";
+"Whitelist.Alert.Blocked.Message" = "Do you want to allow previously blocked website '%@' to access your ID-card?";
+"Whitelist.Alert.Unknown.Title" = "Website wants to access ID-card";
+"Whitelist.Alert.Unknown.Message" = "Do you want to allow website '%@' to access your ID-card?";
+"Whitelist.Action.Allow" = "Allow";
+"Whitelist.Action.Deny" = "Deny";
