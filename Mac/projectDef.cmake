@@ -6,6 +6,11 @@
 # Mac template platform definition CMake file
 # Included from ../CMakeLists.txt
 
+find_library(FOUNDATION_LIBRARY Foundation)
+find_library(APPKIT_LIBRARY AppKit)
+
+set(EXTRA_LIBRARIES ${FOUNDATION_LIBRARY} ${APPKIT_LIBRARY})
+    
 # remember that the current source dir is the project root; this file is in Mac/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*.cpp
@@ -52,6 +57,7 @@ target_link_libraries(${PROJNAME}
     ${ICONV_LIBRARIES}
     ${OPENSSLCRYPTO_LIBRARIES}
     ${SMARTCARDPP_LIBRARIES}
+    ${EXTRA_LIBRARIES}
     )
 
 add_dependencies(${PROJNAME}
