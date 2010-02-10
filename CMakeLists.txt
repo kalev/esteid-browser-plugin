@@ -28,6 +28,10 @@ find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
 
+if(NOT GTKMM_INCLUDE_DIRS)
+    pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
+endif()
+
 # Utility classes (FIXME: Move those to smartcardpp)
 set(UTIL_DIR utility)
 set(UTILITY_SOURCES
@@ -46,6 +50,7 @@ endif(ICONV_SECOND_ARGUMENT_IS_CONST)
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${GTKMM_INCLUDE_DIRS}
     ${ICONV_INCLUDE_DIR}
     ${OPENSSLCRYPTO_INCLUDE_DIR}
     ${SMARTCARDPP_INCLUDE_DIR}

@@ -8,6 +8,8 @@
 #include "Mozilla/MozillaUI.h"
 #ifdef _WIN32
 #include "Win/WindowsUI.h"
+#else
+#include "X11/GtkUI.h"
 #endif
 
 #include "esteidAPI.h"
@@ -100,7 +102,11 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     ESTEID_DEBUG("esteidAPI: Page URL is %s\n", GetPageURL().c_str());
 
     /* Try to access Mozilla UI */
+#if 0
     m_UI = GetMozillaUI();
+#else
+    m_UI = new GtkUI();
+#endif
 
     /* Use platform specific UI if browser specific is not found */
     if(!m_UI) {

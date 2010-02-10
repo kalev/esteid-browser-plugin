@@ -53,7 +53,7 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 
     pinDialogPriv_l params = { NULL, NULL };
     pinDialog dlg(&params, "");
-    dlg.showPrompt("PIN2 blocked.\nPlease use ID-card Utility to unlock the PIN.", false);
+    dlg.showPrompt("PIN2 blocked.\nPlease run ID-card Utility to unlock the PIN.", false);
 }
 
 
