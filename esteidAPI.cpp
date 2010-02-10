@@ -104,8 +104,6 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     /* Try to access Mozilla UI */
 #if 0
     m_UI = GetMozillaUI();
-#else
-    m_UI = new GtkUI();
 #endif
 
     /* Use platform specific UI if browser specific is not found */
@@ -113,12 +111,12 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 #ifdef _WIN32
         ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI\n");
         m_UI = new WindowsUI();
+#else
+        ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI\n");
+        m_UI = new GtkUI();
 #endif
 #ifdef SUCKOSX
         m_UI = new MacUI();
-#endif
-#ifdef UNIX_MUFF
-       m_UI = new GtkUI();
 #endif
     }
 

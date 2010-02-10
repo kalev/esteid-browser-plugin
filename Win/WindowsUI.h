@@ -20,7 +20,7 @@ public:
         std::string pageUrl, int pinPadTimeout,
         bool retry, int tries);
     virtual void ClosePinPrompt();
-    virtual void ShowSettings(std::string pageUrl = "");
+    virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
     virtual void ShowPinBlockedMessage(int pin);
 };
 

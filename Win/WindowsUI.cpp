@@ -57,7 +57,7 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 }
 
 
-void WindowsUI::ShowSettings(std::string pageUrl)
+void WindowsUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
 {
     ESTEID_DEBUG("WindowsUI::ShowSettings()\n");
 }
