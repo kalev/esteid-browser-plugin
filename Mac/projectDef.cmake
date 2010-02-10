@@ -10,6 +10,8 @@
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*.cpp
     Mac/*.h
+    Mac/*.m
+    Mac/*.mm
     Mac/*.cmake
     )
 
