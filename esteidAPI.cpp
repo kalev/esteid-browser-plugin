@@ -9,7 +9,11 @@
 #ifdef _WIN32
 #include "Win/WindowsUI.h"
 #else
+#ifdef __APPLE__
+#include "Mac/MacUI.h"
+#else
 #include "X11/GtkUI.h"
+#endif
 #endif
 
 #include "esteidAPI.h"
@@ -19,6 +23,10 @@
 #define MSG_SETTINGS "Settings"
 #define MSG_SITEACCESS "This site is trying to obtain access to your ID-card."
 #define MSG_INSECURE "Access to ID-card was denied because the connection to the site is not secure."
+
+#ifdef __APPLE__ && __LP64__
+#define LIBICONV_PLUG 1
+#endif
 
 #include <iconv.h>
 
@@ -112,11 +120,12 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
         ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI\n");
         m_UI = new WindowsUI();
 #else
+#ifdef __APPLE__
+		m_UI = NULL;
+#else	
         ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI\n");
         m_UI = new GtkUI();
 #endif
-#ifdef SUCKOSX
-        m_UI = new MacUI();
 #endif
     }
 

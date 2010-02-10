@@ -28,11 +28,11 @@ find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
     if(NOT GTKMM_INCLUDE_DIRS)
         pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
     endif()
-endif(UNIX)
+endif(UNIX AND NOT APPLE)
 
 # Utility classes (FIXME: Move those to smartcardpp)
 set(UTIL_DIR utility)
