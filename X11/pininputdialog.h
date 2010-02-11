@@ -1,15 +1,15 @@
-#ifndef ESTEID_PININPUT_H
-#define ESTEID_PININPUT_H
+#ifndef ESTEID_PININPUTDIALOG_H
+#define ESTEID_PININPUTDIALOG_H
 
 #include <gtkmm.h>
 
 enum PinType { PIN1, PIN2 };
 
-class PinInput : public Gtk::Dialog
+class PinInputDialog : public Gtk::Dialog
 {
 public:
-    PinInput(PinType pinType = PIN2, const std::string& name = "ID-kaart");
-    virtual ~PinInput();
+    PinInputDialog(PinType pinType = PIN2, const std::string& name = "ID-kaart");
+    virtual ~PinInputDialog();
     void setMinPinLength(int len);
     void setText(std::string text);
     std::string getPin();
@@ -34,4 +34,4 @@ protected:
     int m_minPinLength;
 };
 
-#endif //ESTEID_PININPUT_H
+#endif //ESTEID_PININPUTDIALOG_H

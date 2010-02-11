@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "X11/pininput.h"
+#include "X11/pininputdialog.h"
 #include "X11/PluginWindowX11.h"
 #include "X11/whitelistdialog.h"
 
@@ -69,7 +69,7 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
 
     std::string pin;
 
-    PinInput dialog(PIN2, subject);
+    PinInputDialog dialog(PIN2, subject);
     m_dialog_up = true;
     int rv = dialog.run();
     m_dialog_up = false;
