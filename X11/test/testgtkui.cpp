@@ -1,5 +1,5 @@
 #include "testgtkui.h"
-#include "pininput.h"
+#include "pininputdialog.h"
 #include "whitelistdialog.h"
 #include <gtkmm/messagedialog.h>
 #include <iostream>
@@ -80,7 +80,7 @@ void TestGtkUI::on_button_pinBlocked_clicked()
 
 void TestGtkUI::on_button_pinInput_clicked()
 {
-    PinInput dialog(PIN1, "Mari-Liis Männik");
+    PinInputDialog dialog(PIN1, "Mari-Liis Männik");
 
     int result = dialog.run();
 
