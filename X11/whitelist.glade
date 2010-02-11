@@ -4,7 +4,9 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkDialog" id="WhitelistDialog">
     <property name="border_width">5</property>
-    <property name="type_hint">normal</property>
+    <property name="title" translatable="yes">Allowed sites</property>
+    <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox1">
@@ -15,17 +17,19 @@
           <object class="GtkFrame" id="frame1">
             <property name="visible">True</property>
             <property name="label_xalign">0</property>
-            <property name="shadow_type">none</property>
+            <property name="shadow_type">out</property>
             <child>
               <object class="GtkHBox" id="hbox1">
                 <property name="visible">True</property>
-                <property name="spacing">2</property>
+                <property name="border_width">7</property>
+                <property name="spacing">5</property>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hscrollbar_policy">automatic</property>
                     <property name="vscrollbar_policy">automatic</property>
+                    <property name="shadow_type">in</property>
                     <child>
                       <placeholder/>
                     </child>
@@ -40,11 +44,12 @@
                     <property name="orientation">vertical</property>
                     <property name="layout_style">start</property>
                     <child>
-                      <object class="GtkButton" id="editButton">
-                        <property name="label" translatable="yes">Edit</property>
+                      <object class="GtkButton" id="addButton">
+                        <property name="label">gtk-add</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="use_stock">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -53,16 +58,33 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="deleteButton">
-                        <property name="label" translatable="yes">Delete</property>
+                      <object class="GtkButton" id="editButton">
+                        <property name="label">gtk-edit</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
                         <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="deleteButton">
+                        <property name="label">gtk-delete</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
