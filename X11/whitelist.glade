@@ -31,7 +31,12 @@
                     <property name="vscrollbar_policy">automatic</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <placeholder/>
+                      <object class="GtkTreeView" id="whitelistView">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="headers_visible">False</property>
+                        <property name="rules_hint">True</property>
+                      </object>
                     </child>
                   </object>
                   <packing>
