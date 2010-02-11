@@ -8,7 +8,7 @@
 TestGtkUI::TestGtkUI()
     : m_pinBlockedButton("Show PIN blocked dialog"),
       m_pinInputButton("Show PIN input dialog"),
-      m_whitelistButton("Show PIN input dialog")
+      m_whitelistButton("Show whitelist dialog")
 {
     set_title("Plugin UI test");
 
@@ -108,5 +108,9 @@ void TestGtkUI::on_button_pinInput_clicked()
 
 void TestGtkUI::on_button_whitelist_clicked()
 {
+    if (m_whitelistDialog->get_modal())
+        printf("whitelist is modal\n");
+
+    //m_whitelistDialog->set_transient_for(*this);
     m_whitelistDialog->run();
 }
