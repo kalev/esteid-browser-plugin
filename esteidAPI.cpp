@@ -24,7 +24,7 @@
 #define MSG_SITEACCESS "This site is trying to obtain access to your ID-card."
 #define MSG_INSECURE "Access to ID-card was denied because the connection to the site is not secure."
 
-#ifdef __APPLE__ && __LP64__
+#if defined (__APPLE__) && defined (__LP64__)
 #define LIBICONV_PLUG 1
 #endif
 
