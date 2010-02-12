@@ -3,15 +3,46 @@
 WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade)
     : Gtk::Dialog(cobject),
       m_refGlade(refGlade),
-      m_cancelButton(0)
+      m_addButton(NULL),
+      m_editButton(NULL),
+      m_deleteButton(NULL),
+      m_okButton(NULL),
+      m_cancelButton(NULL)
 {
-    // Get the Glade-instantiated Button, and connect a signal handler:
+    // Get the Glade-instantiated buttons
+    m_refGlade->get_widget("addButton", m_addButton);
+    m_refGlade->get_widget("editButton", m_editButton);
+    m_refGlade->get_widget("deleteButton", m_deleteButton);
+    m_refGlade->get_widget("okButton", m_okButton);
     m_refGlade->get_widget("cancelButton", m_cancelButton);
+
+    // Connect buttons to their signal handlers
+    if (m_addButton) {
+        m_addButton->signal_clicked().connect( sigc::mem_fun(*this,
+                    &WhitelistDialog::on_button_add) );
+    }
+
+    if (m_editButton) {
+        m_editButton->signal_clicked().connect( sigc::mem_fun(*this,
+                    &WhitelistDialog::on_button_edit) );
+    }
+
+    if (m_deleteButton) {
+        m_deleteButton->signal_clicked().connect( sigc::mem_fun(*this,
+                    &WhitelistDialog::on_button_delete) );
+    }
+
+    if (m_okButton) {
+        m_okButton->signal_clicked().connect( sigc::mem_fun(*this,
+                    &WhitelistDialog::on_button_ok) );
+    }
+
     if (m_cancelButton) {
         m_cancelButton->signal_clicked().connect( sigc::mem_fun(*this,
                     &WhitelistDialog::on_button_cancel) );
     }
 
+    // Set up treeview
     m_whitelistView = getTreeView();
     m_listModel->clear();
 }
@@ -82,7 +113,33 @@ void WhitelistDialog::addDefaultSite(const std::string & site)
 }
 
 
+void WhitelistDialog::on_button_add()
+{
+    printf("add pressed\n");
+}
+
+
+void WhitelistDialog::on_button_edit()
+{
+    printf("edit pressed\n");
+}
+
+
+void WhitelistDialog::on_button_delete()
+{
+    printf("delete pressed\n");
+}
+
+
+void WhitelistDialog::on_button_ok()
+{
+    printf("ok pressed\n");
+}
+
+
 void WhitelistDialog::on_button_cancel()
 {
+    printf("cancel pressed\n");
+
     hide();
 }

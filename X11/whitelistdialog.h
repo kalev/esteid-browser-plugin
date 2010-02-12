@@ -30,10 +30,18 @@ protected:
     Gtk::TreeView *getTreeView();
 
     // Signal handlers:
+    void on_button_add();
+    void on_button_edit();
+    void on_button_delete();
+    void on_button_ok();
     void on_button_cancel();
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
 
+    Gtk::Button *m_addButton;
+    Gtk::Button *m_editButton;
+    Gtk::Button *m_deleteButton;
+    Gtk::Button *m_okButton;
     Gtk::Button *m_cancelButton;
 
     Gtk::TreeView *m_whitelistView;
