@@ -33,6 +33,16 @@ TestGtkUI::TestGtkUI()
 
     m_refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
 
+    // Insert dummy sites
+    std::vector<std::string> sv;
+    sv.push_back("id.swedbank.ee");
+    sv.push_back("id.seb.ee");
+    sv.push_back("id.eesti.ee");
+    m_whitelistDialog->addDefaultSites(sv);
+
+    m_whitelistDialog->addSite("not.in.default.whitelist.org");
+    m_whitelistDialog->addSite("user.added.ee");
+
     show_all_children();
 }
 

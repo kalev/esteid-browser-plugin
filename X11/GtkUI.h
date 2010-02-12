@@ -4,6 +4,7 @@
 #include <gtkmm.h>
 
 class WhitelistDialog;
+class PluginSettings;
 
 class GtkUI : public PluginUI {
 public:
@@ -22,6 +23,7 @@ protected:
     int loadGladeUI(std::string gladeFile);
 
     WhitelistDialog *m_whitelistDialog;
+    PluginSettings *m_conf;
 
     // Glade interface description.
     Glib::RefPtr<Gtk::Builder> m_refGlade;

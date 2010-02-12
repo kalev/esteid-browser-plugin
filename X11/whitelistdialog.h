@@ -10,19 +10,24 @@ public:
     WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
     virtual ~WhitelistDialog();
 
+    void addSites(const std::vector<std::string> & sv);
+    void addDefaultSites(const std::vector<std::string> & sv);
+    void addSite(const std::string & site, bool defaultSite = false);
+    void addDefaultSite(const std::string & site);
+
 protected:
     class WhitelistModelColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
         Gtk::TreeModelColumn<Glib::ustring> site;
+        // Default sites are shown Gray to indicate that they cannot be edited
+        Gtk::TreeModelColumn<bool> sensitive;
 
-        WhitelistModelColumns() { add(site); }
+        WhitelistModelColumns() { add(site); add(sensitive); }
     };
 
 
     Gtk::TreeView *getTreeView();
-    void addSites(const std::vector<std::string> & sv);
-    void addSite(const std::string & site);
 
     // Signal handlers:
     void on_button_cancel();

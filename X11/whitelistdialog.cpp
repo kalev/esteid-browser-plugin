@@ -13,16 +13,7 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
     }
 
     m_whitelistView = getTreeView();
-
-
-    // Insert dummy sites
-    std::vector<std::string> sv;
-    sv.push_back("id.swedbank.ee");
-    sv.push_back("id.seb.ee");
-    sv.push_back("id.eesti.ee");
-
     m_listModel->clear();
-    addSites(sv);
 }
 
 
@@ -34,13 +25,21 @@ WhitelistDialog::~WhitelistDialog()
 Gtk::TreeView *WhitelistDialog::getTreeView()
 {
     Gtk::TreeView *treeview;
+    Gtk::CellRendererText *renderer;
+    Gtk::TreeViewColumn *col0;
 
     m_refGlade->get_widget("whitelistView", treeview);
 
     m_listModel = Gtk::ListStore::create(m_listColumns);
     m_listModel->set_sort_column_id(0, Gtk::SORT_ASCENDING);
     treeview->set_model(m_listModel);
-    treeview->append_column("Sites", m_listColumns.site);
+
+    // Set up custom renderer to show some sites as not sensitive
+    renderer = new Gtk::CellRendererText();
+    treeview->append_column("Sites", *renderer);
+    col0 = treeview->get_column(0);
+    col0->add_attribute(*renderer, "text", 0);
+    col0->add_attribute(*renderer, "sensitive", 1);
 
     return treeview;
 }
@@ -55,12 +54,31 @@ void WhitelistDialog::addSites(const std::vector<std::string> & sv)
 }
 
 
-void WhitelistDialog::addSite(const std::string & site)
+void WhitelistDialog::addDefaultSites(const std::vector<std::string> & sv)
 {
-    Gtk::TreeModel::iterator it;
+    std::vector<std::string>::const_iterator it;
 
-    it = m_listModel->append();
-    (*it)[m_listColumns.site] = site;
+    for (it = sv.begin(); it != sv.end(); ++it)
+        addDefaultSite(*it);
+}
+
+
+void WhitelistDialog::addSite(const std::string & site, bool defaultSite)
+{
+    Gtk::TreeModel::Row row;
+
+    row = *(m_listModel->append());
+    row[m_listColumns.site] = site;
+    if (defaultSite) // Mark sites in default whitelist as not sensitive
+        row[m_listColumns.sensitive] = false;
+    else
+        row[m_listColumns.sensitive] = true;
+}
+
+
+void WhitelistDialog::addDefaultSite(const std::string & site)
+{
+    addSite(site, true);
 }
 
 
