@@ -48,6 +48,9 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
 
     m_whitelistView->signal_row_activated().connect( sigc::mem_fun(*this,
                 &WhitelistDialog::on_treeview_row_activated) );
+
+    m_whitelistView->signal_cursor_changed().connect( sigc::mem_fun(*this,
+                &WhitelistDialog::enableDisableButtons) );
 }
 
 
@@ -137,6 +140,7 @@ void WhitelistDialog::on_button_delete()
     it = getCurrentSelection();
     if (it) {
         m_listModel->erase(it);
+        enableDisableButtons();
     }
 }
 
@@ -167,6 +171,24 @@ void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & pat
     it = m_listModel->get_iter(path);
     if (it) {
         Gtk::TreeModel::Row row = *it;
+    }
+}
+
+
+// Enable or disable buttons depending on what is currently selected.
+void WhitelistDialog::enableDisableButtons()
+{
+    Gtk::TreeModel::iterator it;
+
+    it = getCurrentSelection();
+    if (it && (*it)[m_listColumns.sensitive]) {
+        // Sensitive text is selected
+        m_editButton->set_sensitive(true);
+        m_deleteButton->set_sensitive(true);
+    } else {
+        // Either nothing or non-sensitive text is selected
+        m_editButton->set_sensitive(false);
+        m_deleteButton->set_sensitive(false);
     }
 }
 

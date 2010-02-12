@@ -42,6 +42,7 @@ protected:
     void on_button_ok();
     void on_button_cancel();
     void on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn *column);
+    void enableDisableButtons();
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
 
