@@ -1,7 +1,5 @@
 #include "whitelistdialog.h"
 
-#include <iostream>
-
 WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade)
     : Gtk::Dialog(cobject),
       m_refGlade(refGlade),
@@ -50,9 +48,6 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
 
     m_whitelistView->signal_row_activated().connect( sigc::mem_fun(*this,
                 &WhitelistDialog::on_treeview_row_activated) );
-
-    m_whitelistView->signal_cursor_changed().connect( sigc::mem_fun(*this,
-                &WhitelistDialog::on_treeview_cursor_changed) );
 }
 
 
@@ -141,8 +136,6 @@ void WhitelistDialog::on_button_delete()
 
     it = getCurrentSelection();
     if (it) {
-        Gtk::TreeModel::Row row = *it;
-        std::cout << "removing site: " << row[m_listColumns.site] << std::endl;
         m_listModel->erase(it);
     }
 }
@@ -151,6 +144,8 @@ void WhitelistDialog::on_button_delete()
 void WhitelistDialog::on_button_ok()
 {
     printf("ok pressed\n");
+
+    response(Gtk::RESPONSE_OK);
 }
 
 
@@ -164,6 +159,7 @@ void WhitelistDialog::on_button_cancel()
 
 void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn * /* column */)
 {
+    /* FIXME: double click should open Edit window */
     Gtk::TreeModel::iterator it;
 
     printf("row doubleclicked\n");
@@ -171,28 +167,29 @@ void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & pat
     it = m_listModel->get_iter(path);
     if (it) {
         Gtk::TreeModel::Row row = *it;
-        std::cout << "selected site: " << row[m_listColumns.site] << std::endl;
-    }
-}
-
-
-void WhitelistDialog::on_treeview_cursor_changed()
-{
-    Gtk::TreeModel::iterator it;
-
-    printf("row changed\n");
-
-    it = getCurrentSelection();
-    if (it) {
-        Gtk::TreeModel::Row row = *it;
-        std::cout << "selected site: " << row[m_listColumns.site] << std::endl;
     }
 }
 
 
 Gtk::TreeModel::iterator WhitelistDialog::getCurrentSelection()
 {
+    return m_whitelistView->get_selection()->get_selected();
+}
+
+
+std::vector<std::string> WhitelistDialog::getWhitelist()
+{
+    std::vector<std::string> ret;
     Gtk::TreeModel::iterator it;
 
-    return m_whitelistView->get_selection()->get_selected();
+    for (it = m_listModel->children().begin(); it != m_listModel->children().end(); ++it) {
+        Gtk::TreeModel::Row row = *it;
+
+        // Return sites that are user set and skip default (read-only) values.
+        if (row[m_listColumns.sensitive]) {
+            ret.push_back(row[m_listColumns.site]);
+        }
+    }
+
+    return ret;
 }

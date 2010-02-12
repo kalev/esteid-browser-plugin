@@ -121,6 +121,15 @@ void GtkUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
     m_dialog_up = true;
     m_whitelistDialog->addDefaultSites(conf.default_whitelist);
     m_whitelistDialog->addSites(conf.whitelist);
-    m_whitelistDialog->run();
+    int rv = m_whitelistDialog->run();
+    m_whitelistDialog->hide();
     m_dialog_up = false;
+
+    if (rv == Gtk::RESPONSE_OK) {
+        ESTEID_DEBUG("GtkUI::ShowSettings(): saving whitelist\n");
+        m_conf->whitelist = m_whitelistDialog->getWhitelist();
+        m_conf->Save();
+    } else {
+        ESTEID_DEBUG("GtkUI::ShowSettings(): cancelled\n");
+    }
 }

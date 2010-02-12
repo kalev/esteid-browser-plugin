@@ -10,17 +10,22 @@ public:
     WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
     virtual ~WhitelistDialog();
 
+    // Functions for setting up data for displaying
     void addSites(const std::vector<std::string> & sv);
     void addDefaultSites(const std::vector<std::string> & sv);
     void addSite(const std::string & site, bool defaultSite = false);
     void addDefaultSite(const std::string & site);
 
+    // Call this to retrieve modified whitelist
+    std::vector<std::string> getWhitelist();
+
 protected:
     class WhitelistModelColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn<Glib::ustring> site;
-        // Default sites are shown Gray to indicate that they cannot be edited
+        Gtk::TreeModelColumn<std::string> site;
+        // sensitive = false: site from default whitelist (read-only)
+        // sensitive = true: user set site
         Gtk::TreeModelColumn<bool> sensitive;
 
         WhitelistModelColumns() { add(site); add(sensitive); }
@@ -37,7 +42,6 @@ protected:
     void on_button_ok();
     void on_button_cancel();
     void on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn *column);
-    void on_treeview_cursor_changed();
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
 
@@ -50,8 +54,6 @@ protected:
     Gtk::TreeView *m_whitelistView;
     WhitelistModelColumns m_listColumns;
     Glib::RefPtr<Gtk::ListStore> m_listModel;
-
-    Gtk::TreeModel::iterator m_iteratorSelected;
 };
 
 #endif //ESTEID_WHITELISTDIALOG_H
