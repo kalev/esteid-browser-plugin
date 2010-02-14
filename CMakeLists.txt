@@ -23,6 +23,8 @@ browserplugin_project(${PROJNAME})
 
 # Custom cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+include(InstallSettings)
+
 find_package(Gecko REQUIRED)
 find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)

@@ -6,6 +6,9 @@
 # Windows template platform definition CMake file
 # Included from ../CMakeLists.txt
 
+set(GLADE_INSTALL_DIR ${SHARE_INSTALL_PREFIX}/mozilla-esteid)
+set(GLADE_FILE ${GLADE_INSTALL_DIR}/whitelist.ui)
+
 # remember that the current source dir is the project root; this file is in ${PLATFORM_NAME}/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ${PLATFORM_NAME}/*.cpp
@@ -17,7 +20,8 @@ SOURCE_GROUP(${PLATFORM_NAME} FILES ${PLATFORM})
 
 # use this to add preprocessor definitions
 add_definitions(
-    -D"FB_X11=1"
+    -DFB_X11=1
+    -DGLADE_FILE="${GLADE_FILE}"
 )
 
 set (SOURCES
@@ -49,3 +53,6 @@ target_link_libraries(${PROJNAME}
 add_dependencies(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     )
+
+install(TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
+install(FILES ${PLATFORM_NAME}/whitelist.ui DESTINATION ${GLADE_INSTALL_DIR})
