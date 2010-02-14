@@ -15,6 +15,7 @@ public:
     void addDefaultSites(const std::vector<std::string> & sv);
     void addSite(const std::string & site, bool defaultSite = false);
     void addDefaultSite(const std::string & site);
+    void setEntryText(const std::string & site);
 
     // Call this to retrieve modified whitelist
     std::vector<std::string> getWhitelist();
@@ -36,6 +37,7 @@ protected:
     Gtk::TreeModel::iterator getCurrentSelection();
 
     // Signal handlers:
+    void on_entry_changed();
     void on_button_add();
     void on_button_edit();
     void on_button_delete();
@@ -46,6 +48,7 @@ protected:
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
 
+    Gtk::Entry *m_entry;
     Gtk::Button *m_addButton;
     Gtk::Button *m_editButton;
     Gtk::Button *m_deleteButton;

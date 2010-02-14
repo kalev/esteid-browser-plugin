@@ -3,13 +3,15 @@
 WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade)
     : Gtk::Dialog(cobject),
       m_refGlade(refGlade),
+      m_entry(NULL),
       m_addButton(NULL),
       m_editButton(NULL),
       m_deleteButton(NULL),
       m_okButton(NULL),
       m_cancelButton(NULL)
 {
-    // Get the Glade-instantiated buttons
+    // Get the Glade-instantiated widgets
+    m_refGlade->get_widget("entry", m_entry);
     m_refGlade->get_widget("addButton", m_addButton);
     m_refGlade->get_widget("editButton", m_editButton);
     m_refGlade->get_widget("deleteButton", m_deleteButton);
@@ -17,6 +19,11 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
     m_refGlade->get_widget("cancelButton", m_cancelButton);
 
     // Connect buttons to their signal handlers
+    if (m_entry) {
+        m_entry->signal_changed().connect( sigc::mem_fun(*this,
+                    &WhitelistDialog::on_entry_changed) );
+    }
+
     if (m_addButton) {
         m_addButton->signal_clicked().connect( sigc::mem_fun(*this,
                     &WhitelistDialog::on_button_add) );
@@ -41,6 +48,15 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
         m_cancelButton->signal_clicked().connect( sigc::mem_fun(*this,
                     &WhitelistDialog::on_button_cancel) );
     }
+
+    // Set the Add button as default widget so that user could
+    // just press enter in text entry box to activate this button.
+    m_addButton->set_flags(Gtk::CAN_DEFAULT);
+    m_addButton->grab_default();
+
+    m_addButton->set_sensitive(false);
+    m_editButton->set_sensitive(false);
+    m_deleteButton->set_sensitive(false);
 
     // Set up treeview
     m_whitelistView = getTreeView();
@@ -119,9 +135,24 @@ void WhitelistDialog::addDefaultSite(const std::string & site)
 }
 
 
+void WhitelistDialog::setEntryText(const std::string & site)
+{
+    m_entry->set_text(site);
+}
+
+
+void WhitelistDialog::on_entry_changed()
+{
+    m_addButton->set_sensitive(m_entry->get_text_length() > 0);
+}
+
+
 void WhitelistDialog::on_button_add()
 {
     printf("add pressed\n");
+
+    addSite(m_entry->get_text());
+    m_entry->set_text("");
 }
 
 
