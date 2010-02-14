@@ -9,6 +9,10 @@
 
 #define ESTEID_DEBUG printf
 
+#ifndef GLADE_FILE
+#define GLADE_FILE "whitelist.ui"
+#endif
+
 
 GtkUI::GtkUI():
     m_dialog_up(false)
@@ -17,7 +21,7 @@ GtkUI::GtkUI():
 
     Gtk::Main::init_gtkmm_internals();
 
-    if (loadGladeUI("whitelist.glade") != 0) {
+    if (loadGladeUI(GLADE_FILE) != 0) {
         ESTEID_DEBUG("GtkUI::GtkUI(): loadGladeUI() failed\n");
     }
 
