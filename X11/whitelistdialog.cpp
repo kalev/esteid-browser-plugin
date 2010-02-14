@@ -66,7 +66,7 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
                 &WhitelistDialog::on_treeview_row_activated) );
 
     m_whitelistView->signal_cursor_changed().connect( sigc::mem_fun(*this,
-                &WhitelistDialog::enableDisableButtons) );
+                &WhitelistDialog::on_treeview_cursor_changed) );
 }
 
 
@@ -93,6 +93,10 @@ Gtk::TreeView *WhitelistDialog::getTreeView()
     col0 = treeview->get_column(0);
     col0->add_attribute(*renderer, "text", 0);
     col0->add_attribute(*renderer, "sensitive", 1);
+    col0->add_attribute(*renderer, "editable", true);
+
+    renderer->signal_edited().connect( sigc::mem_fun(*this,
+                &WhitelistDialog::on_cellrenderer_edited) );
 
     return treeview;
 }
@@ -158,7 +162,16 @@ void WhitelistDialog::on_button_add()
 
 void WhitelistDialog::on_button_edit()
 {
+    Gtk::TreeModel::iterator it;
+    Gtk::TreePath path;
+
     printf("edit pressed\n");
+
+    it = getCurrentSelection();
+    if (it) {
+        path = m_listModel->get_path(it);
+        startEditing(path);
+    }
 }
 
 
@@ -194,14 +207,33 @@ void WhitelistDialog::on_button_cancel()
 
 void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn * /* column */)
 {
-    /* FIXME: double click should open Edit window */
-    Gtk::TreeModel::iterator it;
-
     printf("row doubleclicked\n");
 
+    /* FIXME: Not needed unless we are going to open
+              a new dialog window in here. */
+}
+
+
+void WhitelistDialog::on_treeview_cursor_changed()
+{
+    printf("row clicked\n");
+
+    enableDisableButtons();
+}
+
+
+void WhitelistDialog::on_cellrenderer_edited(const Glib::ustring& path_string, const Glib::ustring& new_site)
+{
+    Gtk::TreeModel::iterator it;
+    Gtk::TreePath path(path_string);
+
+    printf("finished editing\n");
+
+    // Update the model with new value
     it = m_listModel->get_iter(path);
     if (it) {
         Gtk::TreeModel::Row row = *it;
+        row[m_listColumns.site] = new_site;
     }
 }
 
@@ -227,6 +259,15 @@ void WhitelistDialog::enableDisableButtons()
 Gtk::TreeModel::iterator WhitelistDialog::getCurrentSelection()
 {
     return m_whitelistView->get_selection()->get_selected();
+}
+
+
+void WhitelistDialog::startEditing(Gtk::TreePath& path)
+{
+    Gtk::TreeViewColumn *col0 = m_whitelistView->get_column(0);
+    bool start_editing = true;
+
+    m_whitelistView->set_cursor(path, *col0, start_editing);
 }
 
 

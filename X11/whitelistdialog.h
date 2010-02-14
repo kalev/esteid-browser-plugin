@@ -33,9 +33,6 @@ protected:
     };
 
 
-    Gtk::TreeView *getTreeView();
-    Gtk::TreeModel::iterator getCurrentSelection();
-
     // Signal handlers:
     void on_entry_changed();
     void on_button_add();
@@ -44,7 +41,13 @@ protected:
     void on_button_ok();
     void on_button_cancel();
     void on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn *column);
+    void on_treeview_cursor_changed();
+    void on_cellrenderer_edited(const Glib::ustring& path_string, const Glib::ustring& new_text);
+
     void enableDisableButtons();
+    Gtk::TreeView *getTreeView();
+    Gtk::TreeModel::iterator getCurrentSelection();
+    void startEditing(Gtk::TreePath& path);
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
 
