@@ -471,23 +471,10 @@ std::string esteidAPI::subjectToHumanReadable(std::string& subject)
     std::vector<std::string> sf = stringSplit(subject, ",");
 
     if (sf.size() == 3) {
-        ret = normalizeNameCase(sf[1]) + " " + normalizeNameCase(sf[0]);
+        ret = sf[1] + " " + sf[0];
     } else {
         ret = subject;
     }
-
-    return ret;
-}
-
-
-/* Convert first character to upper case and rest to lower case */
-std::string esteidAPI::normalizeNameCase(const std::string& name)
-{
-    std::string ret;
-
-    ret += toupper(name[0]);
-    for (size_t i = 1; i < name.length(); i++)
-        ret += tolower(name[i]);
 
     return ret;
 }
