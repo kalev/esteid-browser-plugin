@@ -82,7 +82,7 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
         pin = dialog.getPin();
         ESTEID_DEBUG("GtkUI::PromptForSignPIN(): PIN is '%s'\n", pin.c_str());
     } else {
-        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): cancelled\n", pin.c_str());
+        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): cancelled\n");
     }
 
     return pin;
