@@ -21,6 +21,7 @@ public:
 
 protected:
     int loadGladeUI(std::string gladeFile);
+    void on_whitelistdialog_response(int response_id);
 
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;

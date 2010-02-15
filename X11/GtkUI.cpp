@@ -26,6 +26,11 @@ GtkUI::GtkUI():
     }
 
     m_refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
+
+    if (m_whitelistDialog) {
+        m_whitelistDialog->signal_response().connect( sigc::mem_fun(*this,
+                    &GtkUI::on_whitelistdialog_response) );
+    }
 }
 
 
@@ -119,23 +124,33 @@ void GtkUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
     if (!m_whitelistDialog)
         return;
 
-    if (m_dialog_up)
+    if (m_dialog_up) {
+        // Bring the window to the front
+        m_whitelistDialog->present();
         return;
+    }
 
     if (pageUrl.length() > 0)
         m_whitelistDialog->setEntryText(pageUrl);
     m_whitelistDialog->addDefaultSites(conf.default_whitelist);
     m_whitelistDialog->addSites(conf.whitelist);
-    m_dialog_up = true;
-    int rv = m_whitelistDialog->run();
-    m_whitelistDialog->hide();
-    m_dialog_up = false;
 
-    if (rv == Gtk::RESPONSE_OK) {
-        ESTEID_DEBUG("GtkUI::ShowSettings(): saving whitelist\n");
+    m_whitelistDialog->show_all();
+    m_dialog_up = true;
+}
+
+
+void GtkUI::on_whitelistdialog_response(int response_id)
+{
+    ESTEID_DEBUG("GtkUI::on_whitelistdialog_response()\n");
+
+    if (response_id == Gtk::RESPONSE_OK) {
+        ESTEID_DEBUG("GtkUI: saving whitelist\n");
         m_conf->whitelist = m_whitelistDialog->getWhitelist();
         m_conf->Save();
-    } else {
-        ESTEID_DEBUG("GtkUI::ShowSettings(): cancelled\n");
     }
+
+    ESTEID_DEBUG("GtkUI: hiding whitelist\n");
+    m_whitelistDialog->hide();
+    m_dialog_up = false;
 }

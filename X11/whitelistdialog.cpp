@@ -201,7 +201,7 @@ void WhitelistDialog::on_button_cancel()
 {
     printf("cancel pressed\n");
 
-    hide();
+    response(Gtk::RESPONSE_CANCEL);
 }
 
 
