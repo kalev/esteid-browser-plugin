@@ -90,6 +90,7 @@ private:
         esteidAPI &m_eidp;
     };
 
+    std::string GetHostName(void);
     std::string GetPageURL(void);
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);

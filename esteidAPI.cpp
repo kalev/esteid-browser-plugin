@@ -192,15 +192,27 @@ bool esteidAPI::IsSecure() {
 }
 
 bool esteidAPI::IsWhiteListed() {
-    if(m_conf.allowLocal && IsLocal()) return true;
+    if (m_conf.allowLocal && IsLocal())
+        return true;
 
-    std::string url = GetPageURL();
-    size_t pos1 = url.find("://") + 3, pos2 = url.find("/", pos1);
-    if(pos1 >= pos2) return false;
-    std::string host = url.substr(pos1, pos2 - pos1);
-    if(m_conf.InWhitelist(host)) return true;
+    std::string host = GetHostName();
+    if (host.empty())
+        return false;
+    if (m_conf.InWhitelist(host))
+        return true;
 
     return false;
+}
+
+std::string esteidAPI::GetHostName() {
+    std::string url = GetPageURL();
+
+    size_t pos1 = url.find("://") + 3, pos2 = url.find("/", pos1);
+    if (pos1 >= pos2)
+        return "";
+    std::string host = url.substr(pos1, pos2 - pos1);
+
+    return host;
 }
 
 std::string esteidAPI::GetPageURL(void) {
@@ -316,7 +328,7 @@ void esteidAPI::CloseNotificationBar(void) {
 
 void esteidAPI::ShowSettings(void) {
     if(IsSecure())
-        m_UI->ShowSettings(m_conf, GetPageURL());
+        m_UI->ShowSettings(m_conf, GetHostName());
     else
         m_UI->ShowSettings(m_conf);
 
