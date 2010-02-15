@@ -6,7 +6,7 @@
 # Windows template platform definition CMake file
 # Included from ../CMakeLists.txt
 
-set(GLADE_INSTALL_DIR ${SHARE_INSTALL_PREFIX}/mozilla-esteid)
+set(GLADE_INSTALL_DIR ${SHARE_INSTALL_PREFIX}/esteid-browser-plugin)
 set(GLADE_FILE ${GLADE_INSTALL_DIR}/whitelist.ui)
 
 # remember that the current source dir is the project root; this file is in ${PLATFORM_NAME}/
