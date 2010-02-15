@@ -26,7 +26,7 @@ TestGtkUI::TestGtkUI()
     m_whitelistButton.signal_clicked().connect(sigc::mem_fun(*this,
             &TestGtkUI::on_button_whitelist_clicked) );
 
-    if (loadGladeUI("whitelist.glade") != 0) {
+    if (loadGladeUI("whitelist.ui") != 0) {
         printf("loadGladeUI() failed\n");
         exit(1);
     }
@@ -81,10 +81,17 @@ int TestGtkUI::loadGladeUI(std::string gladeFile)
 
 void TestGtkUI::on_button_pinBlocked_clicked()
 {
+#if 0
+    Gtk::MessageDialog *dialog = new Gtk::MessageDialog(*this, "PIN2 blocked", false, Gtk::MESSAGE_WARNING);
+    dialog->set_secondary_text("Please run ID-card Utility to unlock the PIN.");
+
+    dialog->run();
+#else
     Gtk::MessageDialog dialog(*this, "PIN2 blocked", false, Gtk::MESSAGE_WARNING);
     dialog.set_secondary_text("Please run ID-card Utility to unlock the PIN.");
 
     dialog.run();
+#endif
 }
 
 
@@ -108,6 +115,10 @@ void TestGtkUI::on_button_pinInput_clicked()
         std::cout << "X: Close clicked." << std::endl;
         std::cout << "X: PIN is " << dialog.getPin() << std::endl;
         break;
+    case Gtk::RESPONSE_DELETE_EVENT:
+        std::cout << "X: DELETE_EVENT" << std::endl;
+        std::cout << "X: PIN is " << dialog.getPin() << std::endl;
+        break;
     default:
         std::cout << "X: Unexpected button clicked." << std::endl;
         std::cout << "X: PIN is " << dialog.getPin() << std::endl;
@@ -122,5 +133,25 @@ void TestGtkUI::on_button_whitelist_clicked()
         printf("whitelist is modal\n");
 
     //m_whitelistDialog->set_transient_for(*this);
-    m_whitelistDialog->run();
+    int result = m_whitelistDialog->run();
+
+    switch (result) {
+    case Gtk::RESPONSE_OK:
+        std::cout << "X: OK clicked." << std::endl;
+        break;
+    case Gtk::RESPONSE_CANCEL:
+        std::cout << "X: Cancel clicked." << std::endl;
+        break;
+    case Gtk::RESPONSE_CLOSE:
+        std::cout << "X: Close clicked." << std::endl;
+        break;
+    case Gtk::RESPONSE_DELETE_EVENT:
+        std::cout << "X: DELETE_EVENT" << std::endl;
+        break;
+    default:
+        std::cout << "X: Unexpected button clicked." << std::endl;
+        break;
+    }
+
+    m_whitelistDialog->hide();
 }
