@@ -121,7 +121,8 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
         m_UI = new WindowsUI();
 #else
 #ifdef __APPLE__
-		m_UI = NULL;
+		ESTEID_DEBUG("GetMozillaUI failed; trying to load MacUI\n");
+		m_UI = new MacUI();
 #else	
         ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI\n");
         m_UI = new GtkUI();
