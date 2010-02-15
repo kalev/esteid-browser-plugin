@@ -425,7 +425,7 @@ std::string esteidAPI::sign(std::string hash, std::string url) {
             // FIXME: Implement
             throw FB::script_error("Unable to use PinPAD (yet)");
         } else {
-            pin = m_UI->PromptForSignPIN(subject, url, hash, pageUrl,
+            pin = m_UI->PromptForSignPIN(subjectToHumanReadable(subject), url, hash, pageUrl,
                                          pinpad, retrying, tries);
             if(!pin.length()) {
                 ESTEID_DEBUG("sign: got empty PIN from UI\n");
@@ -455,6 +455,59 @@ int esteidAPI::getPin2RetryCount() {
     } catch(std::runtime_error &e) {
         ESTEID_ERROR_FROMCARD(e);
     }
+}
+
+
+std::string esteidAPI::subjectToHumanReadable(std::string& subject)
+{
+    /* Certificates on Estonian ID card have their subjectCN fields in format:
+     *    lastName,firstName,personalID
+     * We split it here to show our prompt in a more human readable way:
+     *    Firstname Lastname (PIN2)
+     * If we can not split the CN properly, we show it as is */
+
+    std::string ret;
+    std::vector<std::string> sf = stringSplit(subject, ",");
+
+    if (sf.size() == 3) {
+        ret = normalizeNameCase(sf[1]) + " " + normalizeNameCase(sf[0]);
+    } else {
+        ret = subject;
+    }
+
+    return ret;
+}
+
+
+/* Convert first character to upper case and rest to lower case */
+std::string esteidAPI::normalizeNameCase(const std::string& name)
+{
+    std::string ret;
+
+    ret += toupper(name[0]);
+    for (size_t i = 1; i < name.length(); i++)
+        ret += tolower(name[i]);
+
+    return ret;
+}
+
+
+std::vector<std::string> esteidAPI::stringSplit(std::string str, std::string separator)
+{
+    std::vector<std::string> results;
+
+    for (int found = 0; found != std::string::npos; found = str.find_first_of(separator)) {
+        if (found > 0) {
+            results.push_back(str.substr(0, found));
+            str = str.substr(found+1);
+        }
+    }
+
+    if (!str.empty()) {
+        results.push_back(str);
+    }
+
+    return results;
 }
 
 

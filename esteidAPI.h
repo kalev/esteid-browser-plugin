@@ -104,6 +104,9 @@ private:
     bool IsLocal(void);
     bool IsWhiteListed(void);
 
+    static std::string subjectToHumanReadable(std::string& subject);
+    static std::string normalizeNameCase(const std::string& name);
+    static std::vector<std::string> stringSplit(std::string str, std::string separator);
     static std::string iconvConvert(const std::string&, const char*, const char*);
     static std::string CP1252_to_UTF8(const std::string&);
 };
