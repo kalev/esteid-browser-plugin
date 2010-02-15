@@ -5,7 +5,6 @@
 #include "Util/JSArray.h"
 #include "config.h"
 
-#include "Mozilla/MozillaUI.h"
 #ifdef _WIN32
 #include "Win/WindowsUI.h"
 #else
@@ -109,26 +108,19 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 
     ESTEID_DEBUG("esteidAPI: Page URL is %s\n", GetPageURL().c_str());
 
-    /* Try to access Mozilla UI */
-#if 0
-    m_UI = GetMozillaUI();
-#endif
-
-    /* Use platform specific UI if browser specific is not found */
-    if(!m_UI) {
+    /* Use platform specific UI */
 #ifdef _WIN32
-        ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI\n");
-        m_UI = new WindowsUI();
+    ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI\n");
+    m_UI = new WindowsUI();
 #else
 #ifdef __APPLE__
-		ESTEID_DEBUG("GetMozillaUI failed; trying to load MacUI\n");
-		m_UI = new MacUI();
+    ESTEID_DEBUG("GetMozillaUI failed; trying to load MacUI\n");
+    m_UI = new MacUI();
 #else	
-        ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI\n");
-        m_UI = new GtkUI();
+    ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI\n");
+    m_UI = new GtkUI();
 #endif
 #endif
-    }
 
 #if 0
     /* Die if UI initialization fails */
@@ -144,35 +136,6 @@ esteidAPI::~esteidAPI()
     ESTEID_DEBUG("esteidAPI::~esteidAPI()\n");
 
     m_service->RemoveObserver(this);
-}
-
-PluginUI* esteidAPI::GetMozillaUI()
-{
-    if(!m_host) return NULL;
-
-    /* Check if we are running under NPAPI */
-    FB::Npapi::NpapiBrowserHost *nphost = \
-      dynamic_cast<FB::Npapi::NpapiBrowserHost*> (m_host.ptr());
-
-    if(!nphost) return NULL;
-
-    ESTEID_DEBUG("findUI: detected NPAPI\n");
-
-    /* Check for Mozilla */
-    nsISupports *sm = NULL, *dw = NULL;
-    nphost->GetValue(NPNVserviceManager, &sm);
-    nphost->GetValue(NPNVDOMWindow, &dw);
-    if(sm && dw) {
-        try {
-            return new MozillaUI(sm, dw);
-        }
-        catch(std::runtime_error &e) {
-            ESTEID_DEBUG("%s\n", e.what());
-            return NULL;
-        }
-    }
-
-    return NULL;
 }
 
 bool esteidAPI::IsLocal() {

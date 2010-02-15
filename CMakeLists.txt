@@ -25,7 +25,6 @@ browserplugin_project(${PROJNAME})
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 include(InstallSettings)
 
-find_package(Gecko REQUIRED)
 find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
@@ -61,53 +60,6 @@ include_directories(
     ${UTIL_DIR}
 )
 
-# Need to include Gecko directories before Firebreath's bundled headers
-include_directories(
-    BEFORE
-    ${GECKO_INCLUDE_DIR}
-)
-
-
-set(XPIDL_FLAGS -I${GECKO_IDL_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/Mozilla/components)
-
-macro(xpidl_generate_header idl header)
-    add_custom_command(
-        OUTPUT ${header}
-        COMMAND ${GECKO_XPIDL_EXECUTABLE} ${XPIDL_FLAGS} -m header -e ${header} ${idl}
-        DEPENDS ${idl}
-    )
-endmacro(xpidl_generate_header)
-
-macro(xpidl_generate_typelib idl xpt)
-    add_custom_command(
-        OUTPUT ${xpt}
-        COMMAND ${GECKO_XPIDL_EXECUTABLE} ${XPIDL_FLAGS} -m typelib -e ${xpt} ${idl}
-        DEPENDS ${idl}
-    )
-endmacro(xpidl_generate_typelib)
-
-
-# Generate header and typelib from IDL files
-file(GLOB idlFiles ${CMAKE_CURRENT_SOURCE_DIR}/Mozilla/components/*.idl)
-foreach(idlFile ${idlFiles})
-    get_filename_component(basename ${idlFile} NAME_WE) # name without extension
-    set(hFile ${basename}.h)
-    set(xptFile ${basename}.xpt)
-
-    xpidl_generate_header(${idlFile} ${hFile})
-    xpidl_generate_typelib(${idlFile} ${xptFile})
-endforeach(idlFile)
-
-set(mozilla_ui_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/nsIEstEIDPrivate.h
-    ${CMAKE_CURRENT_BINARY_DIR}/nsIEstEIDPrivate.xpt
-    Mozilla/MozillaUI.cpp
-)
-set_source_files_properties(${mozilla_ui_SRCS} PROPERTIES
-    COMPILE_FLAGS "${GECKO_DEFINITIONS}"
-    )
-
-
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
     *.h
@@ -126,7 +78,6 @@ SOURCE_GROUP(Generated FILES
     )
 
 SET( SOURCES
-    ${mozilla_ui_SRCS}
     ${GENERAL}
     ${GENERATED}
     ${UTILITY_SOURCES}
