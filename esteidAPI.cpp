@@ -61,7 +61,7 @@
 #define ESTEID_ERROR_USER_ABORT { \
     throw FB::script_error("User cancelled operation"); }
 #define ESTEID_ERROR_NO_CARD { \
-    throw FB::script_error("No card in reader"); }
+    throw FB::script_error("No cards found"); }
 #define ESTEID_ERROR_NO_PERMISSION ESTEID_ERROR_NO_CARD
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
