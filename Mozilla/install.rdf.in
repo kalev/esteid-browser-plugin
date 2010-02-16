@@ -8,7 +8,7 @@
     <Description about="urn:mozilla:install-manifest">
         <em:id>{aa84ce40-4253-11da-8cd6-0800200c9a66}</em:id>
         <em:name>Estonian ID Card</em:name>
-        <em:version>@PROJECT_VERSION@</em:version>
+        <em:version>@FBSTRING_PLUGIN_VERSION@</em:version>
         <em:description>Estonian ID Card support</em:description>
         <em:iconURL>chrome://esteid/skin/id-32.png</em:iconURL>
         <em:optionsURL>chrome://esteid/content/prefs.xul</em:optionsURL>

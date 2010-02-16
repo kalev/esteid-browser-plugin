@@ -85,3 +85,5 @@ SET( SOURCES
 
 # This will include Win/projectDef.cmake, Linux/projectDef.cmake, etc
 include_platform()
+
+add_subdirectory(Mozilla)
