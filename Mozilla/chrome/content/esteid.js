@@ -1,28 +1,26 @@
-var logmsg = "";
 var errflag = false;
 
+try {
+  Components.utils.import("resource://esteid/global.jsm");
+} catch(e) {
+  // Too old firefox / thunderbird. Default to window-local storage.
+  var esteidglobal = {  
+    log : "",
+    isConfigured : false,
+  };
+  log_debug("No global JSM available, logs will be window specific");
+}
+
 function esteid_log(a) {
-  try {
-    eidui.logMessage(a);
-  } catch(e) {
-    logmsg += a + "\n";
-  }
+  esteidglobal.log += a + "\n";
 }
 
 function esteid_debug(a) {
-  try {
-    eidui.debugMessage(a);
-  } catch(e) {
-    logmsg += "DEBUG: " + a + "\n";
-  }
+  esteid_log("DEBUG: " + a);
 }
 
 function esteid_error(a) {
-  try {
-    eidui.errorMessage(a);
-  } catch(e) {
-    logmsg += "ERROR: " + a + "\n";
-  }
+  esteid_log("ERROR: " + a);
   errflag = true;
 }
 
@@ -46,31 +44,39 @@ function isBrowser() {
     return (com != null);
 }
 
+function showPrefs() {
+    // Do not show multiple windows
+    var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+                       .getService(Components.interfaces.nsIWindowWatcher);
+    var win = ww.getWindowByName("esteidprefs", null);
+
+    if(win && !win.closed) {
+      win.focus();
+      return;
+    }
+
+    var params = { log: esteidglobal.log, out:null};
+    window.openDialog("chrome://esteid/content/prefs.xul",
+                       "esteidprefs", "chrome,centerscreen", params);
+}
+
 function LoadEstEID() {
     if(isBrowser()) {
         try {
             var com = document.getElementById('eidplugin');
 
-            if(!eidui.isConfigured)
+            if(!esteidglobal.isConfigured)
                 esteid_log("Plugin Version: " + com.getVersion() + "\n");
 
             var elt = document.getElementById('esteidbrowserpanel');
 	    elt.setAttribute("tooltiptext", "EstEID plugin " + com.getVersion());
         } catch (anError) {
             esteid_error("Can't find signing plugin: " + anError);
-            // FIXME: Remove as soon as plugin is moved to NPRuntime
-            try {
-                var com = Components.classes["@id.eesti.ee/esteid;1"]
-                                    .createInstance(Components.interfaces.nsIEstEID);
-                esteid_log("XPCOM component version: " + com.getVersion() + "\n");
-            } catch (e) {
-                esteid_error(e);
-            }
         }
     }
 
     try {
-        if(!eidui.isConfigured)
+        if(!esteidglobal.isConfigured)
             ConfigureEstEID();
     } catch (anError) {
         esteid_error(anError);
@@ -80,11 +86,8 @@ function LoadEstEID() {
     else        showNormalIcon();
 
     errflag = false;
-    eidui.isConfigured = true;
+    esteidglobal.isConfigured = true;
 }
-
-var eidui = Components.classes["@id.eesti.ee/esteid-private;1"]
-                      .getService(Components.interfaces.nsIEstEIDPrivate);
 
 window.addEventListener("load", LoadEstEID, false);
 //window.addEventListener("unload", UnLoadEstEID, false);

@@ -16,26 +16,11 @@
 
   <tabbox flex="1">
     <tabs>
-      <tab label="&esteid.Whitelist;" />
       <tab label="&esteid.Log;"       />
     </tabs>
     <tabpanels flex="1" >
-      <vbox>
-        <caption label="&esteid.WhiteListCaption;" />
-        <listbox id="whitelist" rows="5" flex="1" onselect="enableDelBtn();" />
-        <hbox>
-          <button id="delbtn" label="&esteid.RemoveHost;"
-                  oncommand="removeSelected();" disabled="true" />
-        </hbox>
-        <hbox>
-          <textbox type="text" id="addhost" />
-          <button id="addbtn" label="&esteid.AddHost;"
-                  oncommand="addHost();" />
-        </hbox>
-      </vbox>
       <textbox id="log" multiline="true" rows="20" cols="40"
                readonly="true" />
     </tabpanels>
   </tabbox>
-
 </dialog>
