@@ -1,5 +1,14 @@
 #import "MacUIPanel.h"
 #import "MacUIPrivate.h"
+#import "MacPINPanel.h"
+#import "EstEIDService.h"
+
+static inline NSString *CPlusStringToNSString(std::string str)
+{
+	return [(NSString *)CFStringCreateWithBytes(kCFAllocatorDefault, (const UInt8 *)str.c_str(), str.length(), kCFStringEncodingISOLatin9, NO) autorelease];
+}
+
+#pragma mark -
 
 @implementation MacUIPrivate
 
@@ -76,26 +85,42 @@
 
 - (BOOL)pinPanelShouldEnd:(MacPINPanel *)pinPanel
 {
-	/*NSError *error = nil;
-	 
-	 //[pinPanel setUserInfo:[[[self->m_readerManager selectedReader] sign:[pinPanel hash] pin:[pinPanel PIN] error:&error] uppercaseString]]; 
-	 
-	 if([[error domain] isEqualToString:EstEIDReaderErrorDomain]) {
-	 NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	 
-	 NSBeep();
-	 
-	 switch([error code]) {
-	 case EstEIDReaderErrorLockedPIN:
-	 [pinPanel setError:[bundle localizedStringForKey:@"PINPanel.Error.PIN2.Locked" value:nil table:nil] fatal:YES];
-	 break;
-	 case EstEIDReaderErrorInvalidPIN:
-	 [pinPanel setError:[bundle localizedStringForKey:@"PINPanel.Error.PIN2.Invalid" value:nil table:nil] fatal:NO];
-	 break;
-	 }
-	 }*/
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+	NSString *error = nil;
+	BOOL fatal = NO;
 	
-	return ([pinPanel userInfo]) ? YES : NO;
+	try {
+		EstEIDService *service = EstEIDService::getInstance();
+		
+		[pinPanel setUserInfo:CPlusStringToNSString(service->signSHA1([[pinPanel hash] UTF8String], EstEidCard::SIGN, [[pinPanel PIN] UTF8String]))];
+	}
+	catch(AuthError err) {
+		NSLog(@"%@: Couldn't sign hash %@ because of '%s'.", NSStringFromClass([self class]), [pinPanel hash], err.what());
+		
+		if(err.m_blocked) {
+			error = [bundle localizedStringForKey:@"PINPanel.Error.PIN2.Locked" value:nil table:nil];
+			fatal = YES;
+		} else {
+			error = [bundle localizedStringForKey:@"PINPanel.Error.PIN2.Invalid" value:nil table:nil];
+			fatal = NO;
+		}
+	}
+	catch(std::runtime_error err) {
+		NSLog(@"%@: Couldn't sign hash %@ because of '%s'", NSStringFromClass([self class]), [pinPanel hash], err.what());
+		fatal = YES;
+	}
+	
+	if(error || fatal) {
+		NSBeep();
+		
+		if(error) {
+			[pinPanel setError:error fatal:fatal];
+		}
+		
+		return NO;
+	}
+	
+	return YES;
 }
 
 #pragma mark NSObject
