@@ -60,6 +60,10 @@ include_directories(
     ${UTIL_DIR}
 )
 
+if( APPLE )
+    include_directories( /usr/local/include/../include )
+endif( APPLE )
+
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
     *.h
