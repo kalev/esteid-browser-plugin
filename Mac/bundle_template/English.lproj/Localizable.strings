@@ -10,11 +10,15 @@
 "PINPanel.Label.Details" = "Details";
 "PINPanel.Action.Cancel" = "Cancel";
 "PINPanel.Action.OK" = "OK";
+"PINPanel.Title" = "Sign with ID-card";
 
-/* Whitelist */
-"Whitelist.Alert.Blocked.Title" = "Blocked website wants to access ID-card";
-"Whitelist.Alert.Blocked.Message" = "Do you want to allow previously blocked website '%@' to access your ID-card?";
-"Whitelist.Alert.Unknown.Title" = "Website wants to access ID-card";
-"Whitelist.Alert.Unknown.Message" = "Do you want to allow website '%@' to access your ID-card?";
-"Whitelist.Action.Allow" = "Allow";
-"Whitelist.Action.Deny" = "Deny";
+/* Settings Panel */
+"SettingsPanel.Action.Cancel" = "Cancel";
+"SettingsPanel.Action.OK" = "OK";
+"SettingsPanel.Placeholder.Website" = "Insert a new website here (id.eesti.ee)";
+"SettingsPanel.Message.Format" = "Website '%@' wants to access your ID-card. You can manage the allowed websites in this view.";
+"SettingsPanel.Title" = "ID-card whitelist";
+
+/* Alerts */
+"Alert.PINBlocked.Message" = "PIN is blocked!";
+"Alert.Action.OK" = "Close";

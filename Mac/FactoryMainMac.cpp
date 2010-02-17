@@ -8,6 +8,7 @@
 \**********************************************************/
 
 #include "NpapiPlugin.h"
+#include "Mac/MacUI.h"
 #include "Mac/PluginWindowMac.h"
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
@@ -17,5 +18,7 @@ FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
 
 FB::PluginWindowMac *_createPluginWindow(CGrafPtr port, int x, int y)
 {
+	MacUI::SetWindow(port);
+	
     return new FB::PluginWindowMac(port, x, y);
 }

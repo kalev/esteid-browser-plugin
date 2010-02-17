@@ -1,15 +1,8 @@
-#import <AppKit/AppKit.h>
-#import <Foundation/Foundation.h>
+#import "MacUIPanel.h"
 
-@class MacPINPanel;
+@protocol MacPINPanelDelegate;
 
-@protocol MacPINPanelDelegate <NSObject>
-
-- (BOOL)pinPanelShouldEnd:(MacPINPanel *)pinPanel;
-
-@end
-
-@interface MacPINPanel : NSObject
+@interface MacPINPanel : NSObject <MacUIPanel>
 {
 	@private
 	id <MacPINPanelDelegate> m_delegate;
@@ -32,8 +25,6 @@
 	IBOutlet NSTextField *m_urlTextField;
 }
 
-- (NSWindow *)window;
-
 - (id <MacPINPanelDelegate>)delegate;
 - (void)setDelegate:(id <MacPINPanelDelegate>)delegate;
 - (id)userInfo;
@@ -54,10 +45,6 @@
 - (void)setPIN:(NSString *)PIN;
 - (NSString *)URL;
 - (void)setURL:(NSString *)url;
-
-- (void)beginSheetForWindow:(NSWindow *)window;
-- (void)beginSheetForWindow:(NSWindow *)window modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)info;
-- (void)runModal;
 
 /**
  * @name Actions

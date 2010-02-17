@@ -10,11 +10,15 @@
 "PINPanel.Label.Details" = "Детали";
 "PINPanel.Action.Cancel" = "Отмена";
 "PINPanel.Action.OK" = "OK";
+"PINPanel.Title" = "Sign with ID-card";
 
-/* Whitelist */
-"Whitelist.Alert.Blocked.Title" = "Заблокированная веб-страница хочет получит доступ к ID-карте";
-"Whitelist.Alert.Blocked.Message" = "Хотите ли Вы дать ранее заблокированной веб-странице '%@' допуск к Вашей ID-карте?";
-"Whitelist.Alert.Unknown.Title" = "Веб-страница хочет получит доступ к ID-карте";
-"Whitelist.Alert.Unknown.Message" = "Хотите ли Вы дать веб-странице '%@' допуск к Вашей ID-карте?";
-"Whitelist.Action.Allow" = "Разрешить";
-"Whitelist.Action.Deny" = "Отказать";
+/* Settings Panel */
+"SettingsPanel.Action.Cancel" = "Отмена";
+"SettingsPanel.Action.OK" = "OK";
+"SettingsPanel.Placeholder.Website" = "Вставьте сюда новую веб-страничку (id.eesti.ee)";
+"SettingsPanel.Message.Format" = "Website '%@' wants to access your ID-card. You can manage the allowed websites in this view.";
+"SettingsPanel.Title" = "ID-card whitelist";
+
+/* Alerts */
+"Alert.PINBlocked.Message" = "PIN is blocked!";
+"Alert.Action.OK" = "Close";

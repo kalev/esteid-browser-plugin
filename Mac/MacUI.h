@@ -18,8 +18,8 @@ public:
     virtual void ShowPinBlockedMessage(int pin);
 	virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
 	
+	static void SetWindow(void *window);
 private:
-    /* Pointers to Safari interfaces. */
     void *m_internal;
 };
 

@@ -27,6 +27,7 @@ add_definitions(
 
 # Bundle resources
     file(GLOB_RECURSE RESOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}
+    	Mac/bundle_template/*.png
         Mac/bundle_template/**/*.nib
         Mac/bundle_template/**/*.strings)
 

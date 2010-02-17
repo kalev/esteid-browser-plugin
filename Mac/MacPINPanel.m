@@ -1,13 +1,9 @@
 #import "MacPINPanel.h"
+#import "MacPINPanelDelegate.h"
 
 static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 
 @implementation MacPINPanel
-
-- (NSWindow *)window
-{
-	return self->m_window;
-}
 
 - (id <MacPINPanelDelegate>)delegate
 {
@@ -76,38 +72,6 @@ static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 		}
 		
 		[[NSUserDefaults standardUserDefaults] setBool:flag forKey:MacPINPanelShowsDetailsKey];
-	}
-}
-
-- (void)beginSheetForWindow:(NSWindow *)window
-{
-	[self beginSheetForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:NULL];
-}
-
-- (void)beginSheetForWindow:(NSWindow *)window modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)info
-{
-	[[NSApplication sharedApplication] beginSheet:[self window] modalForWindow:window modalDelegate:delegate didEndSelector:selector contextInfo:info];
-	
-	if([self allowsSecureEntry]) {
-		[self->m_nameTextField selectText:nil];
-	}
-}
-
-- (void)runModal
-{
-	NSApplication *application = [NSApplication sharedApplication];
-	
-	while([self->m_window isVisible]) {
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1F];
-		NSEvent *event = [application nextEventMatchingMask:NSAnyEventMask untilDate:date inMode:NSDefaultRunLoopMode dequeue:YES];
-		
-		if(event) {
-			[application sendEvent:event];
-		}
-		
-		[date release];
-		[pool release];
 	}
 }
 
@@ -231,6 +195,22 @@ static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 	[self setShowsDetails:![self showsDetails] animate:YES];
 }
 
+#pragma mark MacUIPanel
+
+- (NSWindow *)window
+{
+	return self->m_window;
+}
+
+- (void)beginSheetForWindow:(NSWindow *)window modalDelegate:(id)delegate didEndSelector:(SEL)selector contextInfo:(void *)info
+{
+	[[NSApplication sharedApplication] beginSheet:[self window] modalForWindow:window modalDelegate:delegate didEndSelector:selector contextInfo:info];
+	
+	if([self allowsSecureEntry]) {
+		[self->m_nameTextField selectText:nil];
+	}
+}
+
 #pragma mark NSWindowController
 
 - (void)awakeFromNib
@@ -245,6 +225,7 @@ static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 	[self->m_detailsLabel setStringValue:[bundle localizedStringForKey:@"PINPanel.Label.Details" value:nil table:nil]];
 	[self->m_cancelButton setStringValue:[bundle localizedStringForKey:@"PINPanel.Action.Cancel" value:nil table:nil]];
 	[self->m_okButton setStringValue:[bundle localizedStringForKey:@"PINPanel.Action.OK" value:nil table:nil]];
+	[self->m_window setTitle:[bundle localizedStringForKey:@"PINPanel.Title" value:nil table:nil]];
 	
 	[self setShowsDetails:[[NSUserDefaults standardUserDefaults] boolForKey:MacPINPanelShowsDetailsKey] animate:NO];
 }
