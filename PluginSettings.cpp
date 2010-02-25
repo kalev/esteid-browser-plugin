@@ -19,7 +19,6 @@ PluginSettings::PluginSettings() :
     default_whitelist.push_back("id.swedbank.ee");
     default_whitelist.push_back("id.seb.ee");
     default_whitelist.push_back("id.eesti.ee");
-    default_whitelist.push_back("id.smartlink.ee");
 }
 
 
