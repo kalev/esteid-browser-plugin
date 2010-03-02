@@ -1,0 +1,51 @@
+diff -r 69179e87fe85 gen_templates/firebreathWin.rc
+--- a/gen_templates/firebreathWin.rc	Mon Mar 01 08:16:18 2010 +0100
++++ b/gen_templates/firebreathWin.rc	Mon Mar 01 11:24:42 2010 +0200
+@@ -16,6 +16,9 @@
+ //
+ #include "winres.h"
+ 
++#include "utility/pinDialog_res.h"
++#include "utility/pinDialog.rc"
++
+ /////////////////////////////////////////////////////////////////////////////
+ #undef APSTUDIO_READONLY_SYMBOLS
+ 
+@@ -28,6 +31,37 @@
+ #pragma code_page(1252)
+ #endif //_WIN32
+ 
++
++#ifdef APSTUDIO_INVOKED
++/////////////////////////////////////////////////////////////////////////////
++//
++// TEXTINCLUDE
++//
++
++1 TEXTINCLUDE
++BEGIN
++    "resource.h\r\n"
++    "config.h\r\n\0"
++END
++
++2 TEXTINCLUDE
++BEGIN
++    "#include ""winres.h""\r\n"
++    "#include ""utility/pinDialog_res.h""\r\n"
++    "#include ""utility/pinDialog.rc""\r\n\0"
++END
++
++3 TEXTINCLUDE
++BEGIN
++    "\0"
++END
++
++#endif    // APSTUDIO_INVOKED
++
++
++
++
++
+ /////////////////////////////////////////////////////////////////////////////
+ //
+ // Version
