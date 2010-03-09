@@ -66,7 +66,7 @@ void EstEIDService::execute() {
         try {
             threadObj::wait(500);
             Poll();
-        } catch(std::runtime_error &e) { }
+        } catch(std::runtime_error) { }
     }
 }
 

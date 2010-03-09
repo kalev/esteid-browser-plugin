@@ -8,6 +8,10 @@
 #include <cstring>
 #include "esteid.h"
 
+#if WIN32 
+#define snprintf sprintf_s 
+#endif
+
 #define ESTEID_DEBUG(...) do { \
     char msg[1024]; \
     snprintf(msg, 1024, __VA_ARGS__); \
