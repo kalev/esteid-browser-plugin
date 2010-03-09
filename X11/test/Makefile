@@ -1,4 +1,4 @@
-CPPFLAGS = `pkg-config --cflags gtkmm-2.4`
+CPPFLAGS = -I.. `pkg-config --cflags gtkmm-2.4`
 LIBS = `pkg-config --libs gtkmm-2.4`
 
 testgtkui: testgtkui.o pininputdialog.o whitelistdialog.o main.o

@@ -7,7 +7,7 @@
 #include "X11/PluginWindowX11.h"
 #include "X11/whitelistdialog.h"
 
-#define ESTEID_DEBUG printf
+#include "debug.h"
 
 #ifndef GLADE_FILE
 #define GLADE_FILE "whitelist.ui"
@@ -17,12 +17,12 @@
 GtkUI::GtkUI():
     m_dialog_up(false)
 {
-    ESTEID_DEBUG("GtkUI intialized\n");
+    ESTEID_DEBUG("GtkUI intialized");
 
     Gtk::Main::init_gtkmm_internals();
 
     if (loadGladeUI(GLADE_FILE) != 0) {
-        ESTEID_DEBUG("GtkUI::GtkUI(): loadGladeUI() failed\n");
+        ESTEID_DEBUG("GtkUI::GtkUI(): loadGladeUI() failed");
     }
 
     m_refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
@@ -36,7 +36,7 @@ GtkUI::GtkUI():
 
 GtkUI::~GtkUI()
 {
-    ESTEID_DEBUG("~GtkUI()\n");
+    ESTEID_DEBUG("~GtkUI()");
 }
 
 
@@ -71,7 +71,7 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout, bool retry, int tries)
 {
-    ESTEID_DEBUG("GtkUI::PromptForSignPIN()\n");
+    ESTEID_DEBUG("GtkUI::PromptForSignPIN()");
 
     if (m_dialog_up)
         return "";
@@ -85,9 +85,9 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
 
     if (rv == Gtk::RESPONSE_OK) {
         pin = dialog.getPin();
-        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): PIN is '%s'\n", pin.c_str());
+        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): PIN is '%s'", pin.c_str());
     } else {
-        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): cancelled\n");
+        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): cancelled");
     }
 
     return pin;
@@ -96,13 +96,13 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
 
 void GtkUI::ClosePinPrompt()
 {
-    ESTEID_DEBUG("GtkUI::ClosePinPrompt()\n");
+    ESTEID_DEBUG("GtkUI::ClosePinPrompt()");
 }
 
 
 void GtkUI::ShowPinBlockedMessage(int pin)
 {
-    ESTEID_DEBUG("GtkUI::ShowPinBlockedMessage()\n");
+    ESTEID_DEBUG("GtkUI::ShowPinBlockedMessage()");
 
     if (m_dialog_up)
         return;
@@ -117,7 +117,7 @@ void GtkUI::ShowPinBlockedMessage(int pin)
 
 void GtkUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
 {
-    ESTEID_DEBUG("GtkUI::ShowSettings()\n");
+    ESTEID_DEBUG("GtkUI::ShowSettings()");
 
     m_conf = &conf;
 
@@ -142,15 +142,15 @@ void GtkUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
 
 void GtkUI::on_whitelistdialog_response(int response_id)
 {
-    ESTEID_DEBUG("GtkUI::on_whitelistdialog_response()\n");
+    ESTEID_DEBUG("GtkUI::on_whitelistdialog_response()");
 
     if (response_id == Gtk::RESPONSE_OK) {
-        ESTEID_DEBUG("GtkUI: saving whitelist\n");
+        ESTEID_DEBUG("GtkUI: saving whitelist");
         m_conf->whitelist = m_whitelistDialog->getWhitelist();
         m_conf->Save();
     }
 
-    ESTEID_DEBUG("GtkUI: hiding whitelist\n");
+    ESTEID_DEBUG("GtkUI: hiding whitelist");
     m_whitelistDialog->hide();
     m_dialog_up = false;
 }

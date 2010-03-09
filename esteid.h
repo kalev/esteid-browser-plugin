@@ -9,6 +9,8 @@
 #ifndef H_esteidPLUGIN
 #define H_esteidPLUGIN
 
+#include "utility/logger.h"
+
 #include "PluginWindow.h"
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/AttachedEvent.h"
@@ -46,5 +48,7 @@ public:
     virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *);
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
 };
+
+extern logger eidlog;
 
 #endif

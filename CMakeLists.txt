@@ -40,12 +40,15 @@ set(UTIL_DIR utility)
 set(UTILITY_SOURCES
     ${UTIL_DIR}/threadObj.cpp
     ${UTIL_DIR}/converters.cpp
+    ${UTIL_DIR}/logger.cpp
 )
 
 # Pthread is needed to link utility classes on UNIX-like OS-es
 if(UNIX)
   link_libraries (pthread)
 endif(UNIX)
+
+add_definitions( -DDEBUG )
 
 if(ICONV_SECOND_ARGUMENT_IS_CONST)
     add_definitions( -DICONV_SECOND_ARGUMENT_IS_CONST )

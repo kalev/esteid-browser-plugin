@@ -4,7 +4,7 @@
 #import "MacUIPrivate.h"
 #import "Mac/PluginWindowMac.h"
 
-#define ESTEID_DEBUG printf
+#import "debug.h"
 
 static inline NSString *CPlusStringToNSString(std::string str)
 {
@@ -28,7 +28,7 @@ MacUI::MacUI()
 	
 	[pool release];
 	
-	ESTEID_DEBUG("MacUI intialized\n");
+	ESTEID_DEBUG("MacUI intialized");
 }
 
 MacUI::~MacUI()
@@ -38,7 +38,7 @@ MacUI::~MacUI()
 	[(id)m_internal release];
 	[pool release];
 	
-	ESTEID_DEBUG("~MacUI()\n");
+	ESTEID_DEBUG("~MacUI()");
 }
 
 std::string MacUI::PromptForSignPIN(std::string subject,

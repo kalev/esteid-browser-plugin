@@ -12,6 +12,8 @@
 
 #include "esteid.h"
 
+logger eidlog("npesteid");
+
 void esteid::StaticInitialize()
 {
     // Place one-time initialization stuff here; note that there isn't an absolute guarantee that

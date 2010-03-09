@@ -6,16 +6,16 @@
 #include "Win/PluginWindowWin.h"
 #include "utility/pinDialog.h"
 
-#define ESTEID_DEBUG printf
+#include "debug.h"
 
 WindowsUI::WindowsUI()
 {
-    ESTEID_DEBUG("WindowsUI intialized\n");
+    ESTEID_DEBUG("WindowsUI intialized");
 }
 
 WindowsUI::~WindowsUI()
 {
-    ESTEID_DEBUG("~WindowsUI()\n");
+    ESTEID_DEBUG("~WindowsUI()");
 }
 
 
@@ -23,7 +23,7 @@ std::string WindowsUI::PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout, bool retry, int tries)
 {
-    ESTEID_DEBUG("WindowsUI::PromptForSignPIN()\n");
+    ESTEID_DEBUG("WindowsUI::PromptForSignPIN()");
 
     PinString pin;
 
@@ -43,13 +43,13 @@ std::string WindowsUI::PromptForSignPIN(std::string subject,
 
 void WindowsUI::ClosePinPrompt()
 {
-    ESTEID_DEBUG("WindowsUI::ClosePinPrompt()\n");
+    ESTEID_DEBUG("WindowsUI::ClosePinPrompt()");
 }
 
 
 void WindowsUI::ShowPinBlockedMessage(int pin)
 {
-    ESTEID_DEBUG("WindowsUI::ShowPinBlockedMessage()\n");
+    ESTEID_DEBUG("WindowsUI::ShowPinBlockedMessage()");
 
     pinDialogPriv_l params = { NULL, NULL };
     pinDialog dlg(&params, "");
@@ -59,5 +59,5 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 
 void WindowsUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
 {
-    ESTEID_DEBUG("WindowsUI::ShowSettings()\n");
+    ESTEID_DEBUG("WindowsUI::ShowSettings()");
 }

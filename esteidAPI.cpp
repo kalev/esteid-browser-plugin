@@ -18,7 +18,7 @@
 #include "esteidAPI.h"
 #include "JSUtil.h"
 #include "converter.h"
-#include "debugprint.h"
+#include "debug.h"
 
 /* UI Messages */
 #define MSG_SETTINGS "Settings"
@@ -39,10 +39,10 @@
 
 // FIXME: Set error codes
 #define ESTEID_ERROR_FROMCARD(e) { \
-    ESTEID_DEBUG("Card error: %s\n", e.what()); \
+    ESTEID_DEBUG("Card error: %s", e.what()); \
     throw FB::script_error(e.what()); }
 #define ESTEID_ERROR_CARD_ERROR(m) { \
-    ESTEID_DEBUG("Card error: %s\n", m); \
+    ESTEID_DEBUG("Card error: %s", m); \
     throw FB::script_error(m); }
 #define ESTEID_ERROR_INVALID_ARG { \
     throw FB::script_error("Invalid argument"); }
@@ -58,7 +58,7 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     m_settingsCallback(new SettingsCallback(host, *this)),
     m_closeCallback(new CloseCallback(host, *this))
 {
-    ESTEID_DEBUG("esteidAPI::esteidAPI()\n");
+    ESTEID_DEBUG("esteidAPI::esteidAPI()");
 
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(sign);
@@ -94,17 +94,17 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_RO_PROPERTY(comment3);
     REGISTER_RO_PROPERTY(comment4);
 
-    ESTEID_DEBUG("esteidAPI: Page URL is %s\n", GetPageURL().c_str());
+    ESTEID_DEBUG("esteidAPI: Page URL is %s", GetPageURL().c_str());
 
     /* Use platform specific UI */
 #ifdef _WIN32
-    ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI\n");
+    ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI");
     m_UI = new WindowsUI();
 #else
 #ifdef __APPLE__
     m_UI = new MacUI();
 #else	
-    ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI\n");
+    ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI");
     m_UI = new GtkUI();
 #endif
 #endif
@@ -120,7 +120,7 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 
 esteidAPI::~esteidAPI()
 {
-    ESTEID_DEBUG("esteidAPI::~esteidAPI()\n");
+    ESTEID_DEBUG("esteidAPI::~esteidAPI()");
 
     m_service->RemoveObserver(this);
 }
@@ -259,7 +259,7 @@ void esteidAPI::DisplayNotification(std::string msg) {
         OpenNotificationBar();
         FB::JSAPI_DOMElement(m_msgElement).setInnerHTML(msg);
     } catch(std::exception &e) {
-        ESTEID_DEBUG("Unable to display notification: %s\n", e.what());
+        ESTEID_DEBUG("Unable to display notification: %s", e.what());
     }
 }
 
@@ -296,7 +296,7 @@ void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
         case EstEIDService::READERS_CHANGED: evtname = "OnReadersChanged";break;
         default: throw std::runtime_error("Invalid message type"); break;
     }
-    ESTEID_DEBUG("onMessage: %s %d\n", evtname.c_str(), i);
+    ESTEID_DEBUG("onMessage: %s %d", evtname.c_str(), i);
 
     if(!IsWhiteListed()) return;
 
@@ -379,7 +379,7 @@ std::string esteidAPI::sign(std::string hash, std::string url) {
             pin = m_UI->PromptForSignPIN(subjectToHumanReadable(subject), url, hash, pageUrl,
                                          pinpad, retrying, tries);
             if(!pin.length()) {
-                ESTEID_DEBUG("sign: got empty PIN from UI\n");
+                ESTEID_DEBUG("sign: got empty PIN from UI");
                 ESTEID_ERROR_USER_ABORT;
             }
 
@@ -387,7 +387,7 @@ std::string esteidAPI::sign(std::string hash, std::string url) {
                 return m_service->signSHA1(hash, EstEidCard::SIGN, pin);
             } catch(AuthError &e) {
                 if(e.m_aborted) {
-                    ESTEID_DEBUG("sign: cancel pressed on PinPAD\n");
+                    ESTEID_DEBUG("sign: cancel pressed on PinPAD");
                     ESTEID_ERROR_USER_ABORT;
                 }
             } catch(std::runtime_error &e) {

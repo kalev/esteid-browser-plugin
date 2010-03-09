@@ -1,5 +1,5 @@
 #include "converter.h"
-#include "debugprint.h"
+#include "debug.h"
 #include <iconv.h>
 
 #ifdef ICONV_SECOND_ARGUMENT_IS_CONST
