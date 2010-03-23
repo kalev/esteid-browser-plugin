@@ -48,8 +48,6 @@ if(UNIX)
   link_libraries (pthread)
 endif(UNIX)
 
-add_definitions( -DDEBUG )
-
 if(ICONV_SECOND_ARGUMENT_IS_CONST)
     add_definitions( -DICONV_SECOND_ARGUMENT_IS_CONST )
 endif(ICONV_SECOND_ARGUMENT_IS_CONST)
