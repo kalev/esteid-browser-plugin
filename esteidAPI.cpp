@@ -114,7 +114,8 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_RO_PROPERTY(comment3);
     REGISTER_RO_PROPERTY(comment4);
 
-    ESTEID_DEBUG("esteidAPI: Page URL is %s", GetPageURL().c_str());
+    m_pageURL = GetPageURL();
+    ESTEID_DEBUG("esteidAPI: Page URL is %s", m_pageURL.c_str());
 
     /* Use platform specific UI */
 #ifdef _WIN32
@@ -146,18 +147,17 @@ esteidAPI::~esteidAPI()
 }
 
 bool esteidAPI::IsLocal() {
-    std::string url = GetPageURL();
     // FIXME: This code is butt-ugly!
-    if(!url.compare(0,  7, "file://"))            return true;
-    if(!url.compare(0, 17, "http://localhost/"))  return true;
-    if(!url.compare(0, 18, "https://localhost/")) return true;
-    if(!url.compare(0, 17, "http://localhost:"))  return true;
-    if(!url.compare(0, 18, "https://localhost:")) return true;
+    if(!m_pageURL.compare(0,  7, "file://"))            return true;
+    if(!m_pageURL.compare(0, 17, "http://localhost/"))  return true;
+    if(!m_pageURL.compare(0, 18, "https://localhost/")) return true;
+    if(!m_pageURL.compare(0, 17, "http://localhost:"))  return true;
+    if(!m_pageURL.compare(0, 18, "https://localhost:")) return true;
     return false;
 }
 
 bool esteidAPI::IsSecure() {
-    if(!GetPageURL().compare(0, 8, "https://")) return true;
+    if(!m_pageURL.compare(0, 8, "https://")) return true;
     if(m_conf.allowLocal && IsLocal())          return true;
     return false;
 }
@@ -176,25 +176,21 @@ bool esteidAPI::IsWhiteListed() {
 }
 
 std::string esteidAPI::GetHostName() {
-    std::string url = GetPageURL();
-
-    size_t pos1 = url.find("://") + 3, pos2 = url.find("/", pos1);
+    size_t pos1 = m_pageURL.find("://") + 3, pos2 = m_pageURL.find("/", pos1);
     if (pos1 >= pos2)
         return "";
-    std::string host = url.substr(pos1, pos2 - pos1);
+    std::string host = m_pageURL.substr(pos1, pos2 - pos1);
 
     return host;
 }
 
 std::string esteidAPI::GetPageURL(void) {
-    if(m_pageURL.empty()) {
-        /* Using method no. 1 from
-         * https://developer.mozilla.org/en/Getting_the_page_URL_in_NPAPI_plugin
-         */
-        FB::JSAPI_DOMWindow dw = m_host->getDOMWindow();
-        FB::JSAPI_DOMNode loc = dw.getProperty<FB::JSObject>("location");
-        m_pageURL = loc.getProperty<std::string>("href");
-    }
+    /* Using method no. 1 from
+     * https://developer.mozilla.org/en/Getting_the_page_URL_in_NPAPI_plugin
+     */
+    FB::JSAPI_DOMWindow dw = m_host->getDOMWindow();
+    FB::JSAPI_DOMNode loc = dw.getProperty<FB::JSObject>("location");
+    m_pageURL = loc.getProperty<std::string>("href");
 
     return m_pageURL;
 }
