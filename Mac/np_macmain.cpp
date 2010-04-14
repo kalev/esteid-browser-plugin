@@ -39,7 +39,7 @@ typedef void (*NPP_ShutdownProcPtr)(void);
 extern "C" {
 	NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
 	NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
-	void NP_Shutdown(void);
+	NPError NP_Shutdown(void);
 
 #ifndef _NO_MAIN
 	// For compatibility with CFM browsers.
@@ -84,8 +84,10 @@ NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs)
     return NPERR_NO_ERROR;
 }
 
-void OSCALL NP_Shutdown()
+NPError OSCALL NP_Shutdown()
 {
     delete module;
     module = NULL;
+	
+	return NPERR_NO_ERROR;
 }

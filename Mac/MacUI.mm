@@ -22,7 +22,7 @@
 #import "MacPINPanel.h"
 #import "MacSettingsPanel.h"
 #import "MacUIPrivate.h"
-#import "Mac/PluginWindowMac.h"
+#import "Mac/PluginWindowMacQuickDraw.h"
 
 #import "debug.h"
 

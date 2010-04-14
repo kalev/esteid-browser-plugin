@@ -29,16 +29,16 @@
 
 #include "NpapiPlugin.h"
 #include "Mac/MacUI.h"
-#include "Mac/PluginWindowMac.h"
+#include "Mac/PluginWindowMacQuickDraw.h"
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
 {
     return new FB::Npapi::NpapiPlugin(host);
 }
 
-FB::PluginWindowMac *_createPluginWindow(CGrafPtr port, int x, int y)
+FB::PluginWindowMacQuickDraw *_createPluginWindow(CGrafPtr port, int x, int y)
 {
 	MacUI::SetWindow(port);
 	
-    return new FB::PluginWindowMac(port, x, y);
+    return new FB::PluginWindowMacQuickDraw(port, x, y);
 }
