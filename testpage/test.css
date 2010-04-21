@@ -1,0 +1,82 @@
+html,body,#container {
+    margin: 0px;
+    padding: 0px;
+}
+
+#container {
+    min-width: 60em;
+}
+#eidver {
+    text-align: center;
+    display: inline;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#verdiv, #statusdiv {
+    height: 4.5em;
+    margin: 1em;
+}
+
+#cardstatus {
+    width: 6em;
+    border-style: double;
+    padding: 1em;
+    text-align: center;
+}
+
+#left, #right {
+    float: left;
+}
+
+#pddiv {
+    border: solid;
+    width: 20em;
+    padding: 1em;
+    margin: 1em;
+    overflow: auto;
+}
+#pdstatus {
+    margin: 1em;
+}
+
+#authcertdiv, #signcertdiv {
+    border: solid;
+    width: 25em;
+    padding: 1em;
+    margin: 1em;
+    overflow: auto;
+}
+
+#authCertDump, #signCertDump {
+    font-size: 50%;
+    width: 64em;
+}
+
+#signdiv {
+    border: solid;
+    width: 20em;
+    padding: 1em;
+    margin: 1em;
+}
+#signstatus {
+    margin: 1em;
+}
+
+#hashdiv {
+    margin: 1em;
+}
+
+#crashdiv {
+    width: 20em;
+    padding: 1em;
+    margin: 1em;
+}
+#crashstatus {
+    margin: 1em;
+    overflow: auto;
+}
+
+.red {
+    background: red;
+}

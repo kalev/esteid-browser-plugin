@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <link rel="stylesheet" type="text/css" href="test.css" />
+  <script type="text/javascript" src="test.js"></script>
+</head>
+<body onload="inittest();">
+<div id="container">
+
+<object id="esteid" type="application/x-esteid"
+        style="width: 1px; height: 1px; visibility: hidden;">
+ID-Kaardi tugi ei tööta :(
+</object>
+
+<div id="left">
+
+<div id="verdiv">
+  <br />
+  Plugin Version:
+  <div id="eidver">Not Available</div>
+  <br />
+  <label for="autoload" style="visibility: hidden">Load data on card insert</label>
+  <input type="checkbox" style="visibility: hidden" id="autoload" />
+</div>
+
+<div id="pddiv">
+  <table id="persData"></table>
+  <input type="button" value="Loe Andmefail" onclick="testPersonalData();" />
+  <div id="pdstatus">&nbsp;</div>
+</div>
+
+<div id="crashdiv">
+  <input type="button" value="Proovi Crashida" onclick="testCrash();" />
+  <div id="crashstatus"></div>
+</div>
+
+</div> <!-- left -->
+
+<div id="right">
+
+<div id="statusdiv">
+  Kaart sees?
+  <div id="cardstatus">Veel ei tea</div>
+</div>
+
+<div id="authcertdiv">
+  <table id="authCertData"></table>
+  <pre id="authCertDump" style="display: none;"></pre>
+  <input type="button" value="Loe Isikutuvastuse Sertifikaat"
+         onclick="readCertificateData('auth');" />
+  <input type="button" value="PEM"
+         onclick="showDump('auth');" />
+  <div id="authCertStatus">&nbsp;</div>
+</div>
+
+<div id="signcertdiv">
+  <table id="signCertData"></table>
+  <pre id="signCertDump" style="display: none; width: 64em;"></pre>
+  <input type="button" value="Loe Allkirjastamise Sertifikaat"
+         onclick="readCertificateData('sign');" />
+  <input type="button" value="PEM"
+         onclick="showDump('sign');" />
+  <input type="button" value="Allkirjasta" onclick="testSign('sign');" />
+  <div id="signCertStatus">&nbsp;</div>
+</div>
+
+<div id="hashdiv">
+  <label for="testhash">Hash</label>
+  <input type="text" maxlength="40" id="testhash" style="width: 30em;"
+         value="26fd6dbee37c55c14af480f00daff8817b61967e" />
+</div>
+
+</div> <!-- right -->
+
+  <input type="button" value="Crash" onclick="esteid.crash();" />
+</div> <!-- container -->
+</body>
+</html>
