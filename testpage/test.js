@@ -54,6 +54,8 @@ function inittest() {
     try {
         esteid.addEventListener("OnCardInserted", cardInserted);
         esteid.addEventListener("OnCardRemoved", cardRemoved);
+        esteid.addEventListener("SignSuccess", signSuccess);
+        esteid.addEventListener("SignFailure", signFailure);
     }
     catch(err) {
         var e = document.getElementById("cardstatus");
@@ -169,6 +171,38 @@ function testSign(n) {
         e.innerHTML = "Error: " + err.message;
         e.style.background = bgerr;
     }
+}
+
+// Test signing with a dummy hash
+function testSignAsync() {
+    var e = document.getElementById("signCertStatus");
+    var hash = document.getElementById("testhash").value;
+    var url = "https://id.smartlink.ee/plugin_tests/test.txt";
+
+    try {
+        e.innerHTML = "Started signing";
+        e.style.background = "";
+        signedData = esteid.signAsync(hash, url);
+    } catch(err) {
+        e.innerHTML = "Error: " + err.message;
+        e.style.background = bgerr;
+    }
+}
+
+// Callback for returning signed hash
+function signSuccess(signedData) {
+    var e = document.getElementById("signCertStatus");
+
+    e.innerHTML = "OK: " + signedData;
+    e.style.background = "";
+}
+
+// Callback for signing failure
+function signFailure(message) {
+    var e = document.getElementById("signCertStatus");
+
+    e.innerHTML = "Error: " + message;
+    e.style.background = bgerr;
 }
 
 function runCrashCode(code) {

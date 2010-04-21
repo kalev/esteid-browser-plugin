@@ -45,7 +45,7 @@ public:
      * @param hash HEX encoded document hash to sign
      * @param url an URL to the document itself
      */
-    std::string sign(std::string hash, std::string url);
+    void signAsync(std::string hash, std::string url);
 
     /** Certificates (read-only properties) */
     FB::JSOutObject get_authCert();
@@ -69,6 +69,8 @@ public:
     std::string get_comment3();
     std::string get_comment4();
 
+    void onPinEntered(std::string hash);
+
    /**  Will fire event handlers
    *        - OnCardInserted
    *        - OnCardRemoved
@@ -88,6 +90,9 @@ private:
     EstEIDService *m_service;
     vector <std::string> m_pdata;
     std::string m_pageURL;
+    std::string m_subject;
+    std::string m_hash;
+    std::string m_url;
     PluginSettings m_conf; // TODO: Optimize this?
 
     class SettingsCallback : public CallbackAPI {
@@ -114,6 +119,7 @@ private:
     std::string GetPageURL(void);
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
+    void promptForSignPIN(bool retrying = false);
     int getPin2RetryCount();
     void ShowSettings(void);
     void DisplayNotification(std::string msg);

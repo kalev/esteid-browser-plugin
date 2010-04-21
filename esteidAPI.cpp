@@ -81,7 +81,7 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     ESTEID_DEBUG("esteidAPI::esteidAPI()");
 
     REGISTER_METHOD(getVersion);
-    REGISTER_METHOD(sign);
+    REGISTER_METHOD(signAsync);
 
 /*  FIXME: Investigate if this is needed at all?
     registerEvent("OnCardInserted");
@@ -120,13 +120,13 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     /* Use platform specific UI */
 #ifdef _WIN32
     ESTEID_DEBUG("GetMozillaUI failed; trying to load WindowsUI");
-    m_UI = new WindowsUI();
+    m_UI = new WindowsUI(this);
 #else
 #ifdef __APPLE__
-    m_UI = new MacUI();
+    m_UI = new MacUI(this);
 #else	
     ESTEID_DEBUG("GetMozillaUI failed; trying to load GtkUI");
-    m_UI = new GtkUI();
+    m_UI = new GtkUI(this);
 #endif
 #endif
 
@@ -348,71 +348,104 @@ std::string esteidAPI::getVersion()
     return FBSTRING_PLUGIN_VERSION;
 }
 
-std::string esteidAPI::sign(std::string hash, std::string url) {
+
+void esteidAPI::signAsync(std::string hash, std::string url)
+{
     WHITELIST_REQUIRED;
 
-    int tries;
-    bool retrying = false, pinpad;
-
-    // FIXME: This shouldn't happen. Remove this line after constructor is fixed
-    if(!m_UI) throw FB::script_error("No UI, can't prompt for PIN");
-
     /* Extract subject line from Certificate */
-    std::string subject = \
-        static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
+    std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
 
+    m_subject = subjectToHumanReadable(subjectRaw);
+    m_hash = hash;
+    m_url = url;
+
+    promptForSignPIN();
+}
+
+
+void esteidAPI::promptForSignPIN(bool retrying)
+{
+    int triesLeft;
+    bool pinpad;
+
+    if (m_subject.empty()) {
+        FireEvent("onSignFailure", FB::variant_list_of("Empty subject"));
+        return;
+    }
+
+    if (m_url.empty()) {
+        FireEvent("onSignFailure", FB::variant_list_of("Partial document URL must be specified"));
+        return;
+    }
+
+    // FIXME: Hardcoded SHA1 support
+    if (m_hash.length() != 40) {
+        FireEvent("onSignFailure", FB::variant_list_of("Invalid hash"));
+        return;
+    }
+
+#if 0
     try {
         pinpad = m_service->hasSecurePinEntry();
     } catch(std::runtime_error &e) { 
-        ESTEID_ERROR_FROMCARD(e);
+        FireEvent("onSignFailure", FB::variant_list_of(e.what()));
+        return;
+    }
+#else
+    pinpad = false;
+#endif
+
+    triesLeft = getPin2RetryCount();
+    if (triesLeft <= 0) {
+        m_UI->ShowPinBlockedMessage(2);
+        FireEvent("onSignFailure", FB::variant_list_of("PIN2 locked"));
+        return;
     }
 
-    // FIXME: Implement!
-    std::string pageUrl = "";
-
-    // FIXME: Hardcoded SHA1 support
-    if(hash.length() != 40)
-        ESTEID_ERROR_INVALID_ARG("Invalid hash");
-
-    if(!url.length())
-        ESTEID_ERROR_INVALID_ARG("Partial document URL must be specified");
-
-    while(true) {
-        std::string pin;
-
-        tries = getPin2RetryCount();
-
-        if(tries <= 0) {
-            // This card is locked!
-            m_UI->ShowPinBlockedMessage(2);
-            ESTEID_ERROR_CARD_ERROR("PIN2 locked");
-        }
-
-        if(0) { //pinpad
-            // FIXME: Implement
-            throw FB::script_error("Unable to use PinPAD (yet)");
-        } else {
-            pin = m_UI->PromptForSignPIN(subjectToHumanReadable(subject), url, hash, pageUrl,
-                                         pinpad, retrying, tries);
-            if(!pin.length()) {
-                ESTEID_DEBUG("sign: got empty PIN from UI");
-                ESTEID_ERROR_USER_ABORT;
-            }
-
-            try {
-                return m_service->signSHA1(hash, EstEidCard::SIGN, pin);
-            } catch(AuthError &e) {
-                if(e.m_aborted) {
-                    ESTEID_DEBUG("sign: cancel pressed on PinPAD");
-                    ESTEID_ERROR_USER_ABORT;
-                }
-            } catch(std::runtime_error &e) {
-                ESTEID_ERROR_FROMCARD(e);
-            }
-        }
-        retrying = true;
-    }
+    m_UI->PromptForSignPIN(m_subject, m_url, m_hash, "" /*pageUrl*/,
+                           pinpad, retrying, triesLeft);
 }
+
+
+void esteidAPI::onPinEntered(std::string pin)
+{
+    std::string hash;
+
+    if (pin.empty()) {
+        // Shouldn't happen
+        ESTEID_DEBUG("sign: got empty PIN from UI");
+        FireEvent("onSignFailure", FB::variant_list_of("empty PIN"));
+        return;
+    }
+
+    try {
+        hash = m_service->signSHA1(m_hash, EstEidCard::SIGN, pin);
+    } catch(AuthError &e) {
+        if (e.m_aborted) { // pinpad
+            ESTEID_DEBUG("sign: cancel pressed on PinPAD");
+            FireEvent("onSignFailure", FB::variant_list_of("pinpad operation cancelled"));
+            return;
+        }
+
+        // ask again for PIN
+        promptForSignPIN(true);
+        return;
+    } catch(std::runtime_error &e) {
+        ESTEID_ERROR_FROMCARD(e);
+        FireEvent("onSignFailure", FB::variant_list_of(e.what()));
+        return;
+    }
+
+    if (hash.empty()) {
+        // Shouldn't happen
+        FireEvent("onSignFailure", FB::variant_list_of("empty hash"));
+        return;
+    }
+
+    FireEvent("onSignSuccess", FB::variant_list_of(hash));
+}
+
 
 int esteidAPI::getPin2RetryCount() {
     try {

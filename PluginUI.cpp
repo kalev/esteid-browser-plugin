@@ -20,7 +20,9 @@
 
 #include "PluginUI.h"
 
-PluginUI::PluginUI(void) : m_refCount(0)
+PluginUI::PluginUI(esteidAPI *esteidAPI)
+    : m_refCount(0),
+      m_esteidAPI(esteidAPI)
 {
 }
 

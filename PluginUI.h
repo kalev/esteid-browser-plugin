@@ -24,6 +24,9 @@
 #include <string>
 #include "PluginSettings.h"
 
+// Forward declaration
+class esteidAPI;
+
 /** A base class for different UI implementations */
 class PluginUI
 {
@@ -44,7 +47,7 @@ public:
     virtual void ShowSettings(PluginSettings &conf,
                               std::string pageUrl = "") = 0;
 
-    PluginUI(void);
+    PluginUI(esteidAPI *esteidAPI = 0);
     virtual ~PluginUI(void);
 
     // Support Reference counting
@@ -53,5 +56,6 @@ public:
 
 protected:
     unsigned int m_refCount;
+    esteidAPI *m_esteidAPI;
 };
 #endif // H_ESTEID_PLUGINUI

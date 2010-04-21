@@ -26,6 +26,7 @@
 #include "X11/pininputdialog.h"
 #include "X11/PluginWindowX11.h"
 #include "X11/whitelistdialog.h"
+#include "esteidAPI.h"
 
 #include "debug.h"
 
@@ -34,8 +35,9 @@
 #endif
 
 
-GtkUI::GtkUI():
-    m_dialog_up(false)
+GtkUI::GtkUI(esteidAPI *esteidAPI)
+    : PluginUI(esteidAPI),
+      m_dialog_up(false)
 {
     ESTEID_DEBUG("GtkUI intialized");
 
@@ -93,24 +95,24 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
 {
     ESTEID_DEBUG("GtkUI::PromptForSignPIN()");
 
-    if (m_dialog_up)
+    if (m_dialog_up) {
+        // Bring the window to the front
+        m_pinInputDialog->present();
         return "";
-
-    std::string pin;
-
-    PinInputDialog dialog(PIN2, subject);
-    m_dialog_up = true;
-    int rv = dialog.run();
-    m_dialog_up = false;
-
-    if (rv == Gtk::RESPONSE_OK) {
-        pin = dialog.getPin();
-        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): got PIN");
-    } else {
-        ESTEID_DEBUG("GtkUI::PromptForSignPIN(): cancelled");
     }
 
-    return pin;
+    m_pinInputDialog = new PinInputDialog(PIN2, subject);
+    if (m_pinInputDialog) {
+        m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
+                    &GtkUI::on_pininputdialog_response) );
+    } else {
+        return "";
+    }
+
+    m_pinInputDialog->show_all();
+    m_dialog_up = true;
+
+    return "";
 }
 
 
@@ -157,6 +159,26 @@ void GtkUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
 
     m_whitelistDialog->show_all();
     m_dialog_up = true;
+}
+
+
+void GtkUI::on_pininputdialog_response(int response_id)
+{
+    ESTEID_DEBUG("GtkUI::on_pininputdialog_response()");
+
+    std::string pin;
+
+    ESTEID_DEBUG("GtkUI: hiding pinInputDialog");
+    m_pinInputDialog->hide();
+    m_dialog_up = false;
+
+    if (response_id == Gtk::RESPONSE_OK) {
+        pin = m_pinInputDialog->getPin();
+        m_esteidAPI->onPinEntered(pin);
+        ESTEID_DEBUG("GtkUI::on_pininputdialog_response(): got PIN");
+    } else {
+        ESTEID_DEBUG("GtkUI::on_pininputdialog_response(): cancelled");
+    }
 }
 
 

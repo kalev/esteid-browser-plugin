@@ -23,12 +23,14 @@
 
 #include <gtkmm.h>
 
+class PinInputDialog;
 class WhitelistDialog;
 class PluginSettings;
+class esteidAPI;
 
 class GtkUI : public PluginUI {
 public:
-    GtkUI();
+    GtkUI(esteidAPI *esteidAPI);
     virtual ~GtkUI();
 
     virtual std::string PromptForSignPIN(std::string subject,
@@ -41,8 +43,10 @@ public:
 
 protected:
     int loadGladeUI(std::string gladeFile);
+    void on_pininputdialog_response(int response_id);
     void on_whitelistdialog_response(int response_id);
 
+    PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;
 
