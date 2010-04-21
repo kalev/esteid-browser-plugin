@@ -40,13 +40,6 @@ function inittest() {
     initcerttable("auth");
     initcerttable("sign");
 
-/*
-    if(typeof(esteid) == 'undefined') {
-        if(!window.external) return;
-        esteid = window.external;
-    }
-*/
-
     esteid = document.getElementById("esteid");
 
     var e = document.getElementById("eidver");
@@ -168,13 +161,6 @@ function testSign(n) {
     var hash = document.getElementById("testhash").value;
     var url = "https://id.smartlink.ee/plugin_tests/test.txt";
     try {
-        /* 
-        var certList = esteid.getCertificateList();
-        var certArr = certList.split(",");
-        var cert= esteid.getCertificateByThumbprint(certArr[1]);
-        signedData = esteid.sign("0A0B0C0D",cert);
-        //signedData = esteid.sign("0A0B0C0D",0);
-        */
         signedData = esteid.sign(hash,url);
         e.innerHTML = "OK: " + signedData;
         e.style.background = "";
