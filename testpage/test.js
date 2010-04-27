@@ -20,7 +20,7 @@ function initpdatatable() {
 }
 
 var cnames = [ "CN", "issuerCN", "validFrom", "validTo",
-              "keyUsage", "serial" // , "thumbPrint"
+              "keyUsage", "serial" //, "isValid"
 ];
 
 function initcerttable(n) {
