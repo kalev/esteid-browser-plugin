@@ -80,6 +80,9 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 {
     ESTEID_DEBUG("esteidAPI::esteidAPI()");
 
+    /* Load JavaScript code to be evaluated in browser */
+    #include "EstEIDNotificationBar.js"
+
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(signAsync);
 
@@ -196,101 +199,32 @@ std::string esteidAPI::GetPageURL(void) {
 }
 
 void esteidAPI::CreateNotificationBar(void) {
-    FB::JSAPI_DOMDocument doc = m_host->getDOMDocument();
-
-    /* Create notification bar div */
-    FB::JSAPI_DOMElement bar = doc.callMethod<FB::JSObject>("createElement",
-                                        FB::variant_list_of("div"));
-    FB::JSAPI_DOMNode style = bar.getProperty<FB::JSObject>("style");
-    style.setProperty("fontSize",         FB::variant("110%"));
-    style.setProperty("backgroundColor",  FB::variant("#ffff66"));
-    style.setProperty("position",         FB::variant("fixed"));
-    style.setProperty("top",              FB::variant("0px"));
-    style.setProperty("left",             FB::variant("0px"));
-    style.setProperty("right",            FB::variant("0px"));
-    style.setProperty("padding",          FB::variant("5px"));
-
-    /* Create button bar div */
-    FB::JSAPI_DOMElement btnbar = doc.callMethod<FB::JSObject>("createElement",
-                                          FB::variant_list_of("div"));
-    style = btnbar.getProperty<FB::JSObject>("style");
-    style.setProperty("cssFloat",  FB::variant("right"));
-    style.setProperty("width",     FB::variant("10em"));
-    style.setProperty("textAlign", FB::variant("right"));
-
-#if 1
-    /* Create Settings button */
-    FB::JSAPI_DOMElement btn = doc.callMethod<FB::JSObject>("createElement",
-                                       FB::variant_list_of("input"));
-    btn.setProperty("type",    FB::variant("button"));
-    btn.setProperty("value",   FB::variant(MSG_SETTINGS));
-    btn.callMethod<FB::variant>("addEventListener", 
-            FB::variant_list_of("click")(m_settingsCallback)(false));
-    btnbar.callMethod<FB::JSObject>("appendChild",
-            FB::variant_list_of(btn.getJSObject()));
-
-    /* Create Close button */
-    btn = doc.callMethod<FB::JSObject>("createElement",
-                                       FB::variant_list_of("input"));
-    style = btn.getProperty<FB::JSObject>("style");
-    btn.setProperty("type",    FB::variant("button"));
-    btn.setProperty("value",   FB::variant("x"));
-    btn.callMethod<FB::variant>("addEventListener", 
-            FB::variant_list_of("click")(m_closeCallback)(false));
-    btnbar.callMethod<FB::JSObject>("appendChild",
-            FB::variant_list_of(btn.getJSObject()));
-#else
-    btnbar.setInnerHTML("\
-        <input type=\"button\" value=\"Settings\" \
-               onclick=\"alert('hee');\"></input>\
-        <input type=\"button\" value=\"x\" \
-               onclick=\"this.parentNode.parentNode.style.display='none';\"></input>\
-    ");
-#endif
-
-    /* Insert buttonbar into container */
-    bar.callMethod<FB::JSObject>("appendChild",
-            FB::variant_list_of(btnbar.getJSObject()));
-    
-    /* Create message div */
-    FB::JSAPI_DOMElement text = doc.callMethod<FB::JSObject>("createElement",
-                                         FB::variant_list_of("div"));
-    style = text.getProperty<FB::JSObject>("style");
-    style.setProperty("marginLeft", FB::variant("2em"));
-    m_msgElement = bar.callMethod<FB::JSObject>("appendChild",
-                           FB::variant_list_of(text.getJSObject()));
-
-    /* We can't inject divs into DOMDocument, we MUST find body tag */
-    FB::JSArray tmp(doc.callMethod<FB::JSObject>("getElementsByTagName",
-                            FB::variant_list_of("body")));
-    FB::JSAPI_DOMElement body = tmp[0].convert_cast<FB::JSObject>();
-
-    /* Insert notification bar into body */
-    m_barElement = body.callMethod<FB::JSObject>("appendChild",
-                            FB::variant_list_of(bar.getJSObject()));
+    m_host->evaluateJavaScript(EstEIDNotificationBarScript);
+    m_barJSO = m_host->getDOMDocument()
+               .getProperty<FB::JSObject>("EstEIDNotificationBar");
+    m_barJSO->Invoke("create",
+                     FB::variant_list_of(MSG_SETTINGS)(m_settingsCallback));
 }
 
 void esteidAPI::DisplayNotification(std::string msg) {
     try {
         OpenNotificationBar();
-        FB::JSAPI_DOMElement(m_msgElement).setInnerHTML(msg);
+        m_barJSO->Invoke("show", FB::variant_list_of(msg));
     } catch(std::exception &e) {
         ESTEID_DEBUG("Unable to display notification: %s", e.what());
     }
 }
 
 void esteidAPI::OpenNotificationBar(void) {
-    if(!m_barElement) {
+    if(!m_barJSO) {
         CreateNotificationBar();
     }
 }
 
 void esteidAPI::CloseNotificationBar(void) {
-    if(!m_barElement) return;
+    if(!m_barJSO) return;
 
-    FB::JSAPI_DOMElement bar(m_barElement);
-    FB::JSAPI_DOMNode style = bar.getProperty<FB::JSObject>("style");
-    style.setProperty("display", FB::variant("none"));
+    m_barJSO->Invoke("close", FB::variant_list_of());
 }
 
 void esteidAPI::ShowSettings(void) {

@@ -85,8 +85,7 @@ private:
     FB::JSOutObject m_signCert;
     FB::JSOutObject m_settingsCallback;
     FB::JSOutObject m_closeCallback;
-    FB::JSObject m_msgElement;
-    FB::JSObject m_barElement;
+    FB::JSObject m_barJSO;
     EstEIDService *m_service;
     vector <std::string> m_pdata;
     std::string m_pageURL;
@@ -130,6 +129,7 @@ private:
     bool IsLocal(void);
     bool IsWhiteListed(void);
 
+    std::string EstEIDNotificationBarScript;
     static std::string subjectToHumanReadable(std::string& subject);
     static std::vector<std::string> stringSplit(std::string str, std::string separator);
     static std::string iconvConvert(const std::string&, const char*, const char*);
