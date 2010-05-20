@@ -19,6 +19,7 @@
  */
 
 #include "whitelistdialog.h"
+#include "debug.h"
 
 WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade)
     : Gtk::Dialog(cobject),
@@ -173,7 +174,7 @@ void WhitelistDialog::on_entry_changed()
 
 void WhitelistDialog::on_button_add()
 {
-    printf("add pressed\n");
+    ESTEID_DEBUG("add pressed\n");
 
     addSite(m_entry->get_text());
     m_entry->set_text("");
@@ -185,7 +186,7 @@ void WhitelistDialog::on_button_edit()
     Gtk::TreeModel::iterator it;
     Gtk::TreePath path;
 
-    printf("edit pressed\n");
+    ESTEID_DEBUG("edit pressed\n");
 
     it = getCurrentSelection();
     if (it) {
@@ -199,7 +200,7 @@ void WhitelistDialog::on_button_delete()
 {
     Gtk::TreeModel::iterator it;
 
-    printf("delete pressed\n");
+    ESTEID_DEBUG("delete pressed\n");
 
     it = getCurrentSelection();
     if (it) {
@@ -211,7 +212,7 @@ void WhitelistDialog::on_button_delete()
 
 void WhitelistDialog::on_button_ok()
 {
-    printf("ok pressed\n");
+    ESTEID_DEBUG("ok pressed\n");
 
     response(Gtk::RESPONSE_OK);
 }
@@ -219,7 +220,7 @@ void WhitelistDialog::on_button_ok()
 
 void WhitelistDialog::on_button_cancel()
 {
-    printf("cancel pressed\n");
+    ESTEID_DEBUG("cancel pressed\n");
 
     response(Gtk::RESPONSE_CANCEL);
 }
@@ -227,7 +228,7 @@ void WhitelistDialog::on_button_cancel()
 
 void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn * /* column */)
 {
-    printf("row doubleclicked\n");
+    ESTEID_DEBUG("row doubleclicked\n");
 
     /* FIXME: Not needed unless we are going to open
               a new dialog window in here. */
@@ -236,7 +237,7 @@ void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & pat
 
 void WhitelistDialog::on_treeview_cursor_changed()
 {
-    printf("row clicked\n");
+    ESTEID_DEBUG("row clicked\n");
 
     enableDisableButtons();
 }
@@ -247,7 +248,7 @@ void WhitelistDialog::on_cellrenderer_edited(const Glib::ustring& path_string, c
     Gtk::TreeModel::iterator it;
     Gtk::TreePath path(path_string);
 
-    printf("finished editing\n");
+    ESTEID_DEBUG("finished editing\n");
 
     // Update the model with new value
     it = m_listModel->get_iter(path);

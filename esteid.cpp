@@ -63,19 +63,16 @@ FB::JSAPI* esteid::createJSAPI()
 
 bool esteid::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)
 {
-    //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
 bool esteid::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *)
 {
-    //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
 bool esteid::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *)
 {
-    //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 bool esteid::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *)
