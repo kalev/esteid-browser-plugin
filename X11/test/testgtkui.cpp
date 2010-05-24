@@ -76,7 +76,7 @@ int TestGtkUI::loadGladeUI(std::string gladeFile)
 {
     //Load the GtkBuilder file and instantiate its widgets:
     m_refGlade = Gtk::Builder::create();
-#ifdef GLIBMM_EXCEPTIONS_ENABLED
+
     try {
         m_refGlade->add_from_file(gladeFile);
     } catch(const Glib::FileError& ex) {
@@ -86,14 +86,6 @@ int TestGtkUI::loadGladeUI(std::string gladeFile)
         std::cerr << "BuilderError: " << ex.what() << std::endl;
         return 1;
     }
-#else
-    std::auto_ptr<Glib::Error> error;
-
-    if (!m_refGlade->add_from_file(gladeFile, error)) {
-        std::cerr << error->what() << std::endl;
-        return 1;
-    }
-#endif /* !GLIBMM_EXCEPTIONS_ENABLED */
 
     return 0;
 }
