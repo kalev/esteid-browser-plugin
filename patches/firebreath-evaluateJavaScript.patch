@@ -1,0 +1,97 @@
+diff -r 0600b313c115 src/ActiveXPlugin/ActiveXBrowserHost.cpp
+--- a/src/ActiveXPlugin/ActiveXBrowserHost.cpp	Mon Feb 15 16:51:51 2010 +0200
++++ b/src/ActiveXPlugin/ActiveXBrowserHost.cpp	Fri May 21 01:28:40 2010 +0300
+@@ -65,6 +65,22 @@
+     return FB::JSAPI_DOMWindow(retObj);
+ }
+ 
++FB::variant ActiveXBrowserHost::evaluateJavaScript(std::string script)
++{
++    VARIANT res;
++
++    if(m_htmlDoc.p == NULL) {
++        throw FB::script_error("Can't execute JavaScript: Window is NULL");
++    }
++
++    HRESULT hr = m_htmlWin->execScript(CComBSTR(script.c_str()),
++                                       CComBSTR("javascript"), &res);
++    if (SUCCEEDED(hr)) {
++        return this->getVariant(&res);
++    } else {
++        throw FB::script_error("Error executing JavaScript code");
++    }
++}
+ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
+ {
+     CComVariant converted;
+diff -r 0600b313c115 src/ActiveXPlugin/ActiveXBrowserHost.h
+--- a/src/ActiveXPlugin/ActiveXBrowserHost.h	Mon Feb 15 16:51:51 2010 +0200
++++ b/src/ActiveXPlugin/ActiveXBrowserHost.h	Fri May 21 01:28:40 2010 +0300
+@@ -36,6 +36,7 @@
+ public:
+     FB::JSAPI_DOMDocument getDOMDocument();
+     FB::JSAPI_DOMWindow getDOMWindow();
++    FB::variant evaluateJavaScript(std::string script);
+ 
+ protected:
+     HWND m_hWnd;
+@@ -49,4 +50,5 @@
+     void getComVariant(VARIANT *dest, const FB::variant &var);
+ };
+ 
+-#endif // H_ACTIVEXBROWSERHOST
+\ No newline at end of file
++#endif // H_ACTIVEXBROWSERHOST
++
+diff -r 0600b313c115 src/NpapiPlugin/NpapiBrowserHost.cpp
+--- a/src/NpapiPlugin/NpapiBrowserHost.cpp	Mon Feb 15 16:51:51 2010 +0200
++++ b/src/NpapiPlugin/NpapiBrowserHost.cpp	Fri May 21 01:28:40 2010 +0300
+@@ -77,6 +77,26 @@
+     return FB::JSAPI_DOMWindow(m_htmlWin.ptr());
+ }
+ 
++FB::variant NpapiBrowserHost::evaluateJavaScript(std::string script) {
++    NPVariant retVal;
++    NPVariant tmp;
++
++    this->getNPVariant(&tmp, FB::variant(script));
++
++    if (m_htmlWin.ptr() == NULL)
++        throw std::runtime_error("Cannot find HTML window");
++
++
++    if (this->Evaluate(m_htmlWin->getNPObject(),
++                       &tmp.value.stringValue, &retVal)) {
++        FB::variant ret = this->getVariant(&retVal);
++        this->ReleaseVariantValue(&retVal);
++        return ret;
++    } else {
++        throw script_error("Error executing JavaScript code");
++    }
++}
++
+ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
+ {
+     FB::variant retVal;
+diff -r 0600b313c115 src/NpapiPlugin/NpapiBrowserHost.h
+--- a/src/NpapiPlugin/NpapiBrowserHost.h	Mon Feb 15 16:51:51 2010 +0200
++++ b/src/NpapiPlugin/NpapiBrowserHost.h	Fri May 21 01:28:40 2010 +0300
+@@ -39,6 +39,7 @@
+     public:
+         FB::JSAPI_DOMDocument getDOMDocument();
+         FB::JSAPI_DOMWindow getDOMWindow();
++        FB::variant evaluateJavaScript(std::string script);
+ 
+     public:
+         FB::variant getVariant(const NPVariant *npVar);
+diff -r 0600b313c115 src/ScriptingCore/BrowserHostWrapper.h
+--- a/src/ScriptingCore/BrowserHostWrapper.h	Mon Feb 15 16:51:51 2010 +0200
++++ b/src/ScriptingCore/BrowserHostWrapper.h	Fri May 21 01:28:40 2010 +0300
+@@ -49,6 +49,7 @@
+     public:
+         virtual JSAPI_DOMDocument getDOMDocument() = 0;
+         virtual JSAPI_DOMWindow getDOMWindow() = 0;
++        virtual FB::variant evaluateJavaScript(std::string script) = 0;
+         virtual void htmlLog(const std::string& str);
+ 
+     protected:
