@@ -19,8 +19,8 @@
  */
 
 #include "testgtkui.h"
-#include "pininputdialog.h"
-#include "whitelistdialog.h"
+#include "X11/pininputdialog.h"
+#include "X11/whitelistdialog.h"
 #include <gtkmm/messagedialog.h>
 #include <iostream>
 
@@ -46,7 +46,7 @@ TestGtkUI::TestGtkUI()
     m_whitelistButton.signal_clicked().connect(sigc::mem_fun(*this,
             &TestGtkUI::on_button_whitelist_clicked) );
 
-    if (loadGladeUI("whitelist.ui") != 0) {
+    if (loadGladeUI(GLADE_FILE) != 0) {
         printf("loadGladeUI() failed\n");
         exit(1);
     }

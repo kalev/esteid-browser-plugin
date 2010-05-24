@@ -23,7 +23,7 @@
 
 #include <gtkmm.h>
 
-#include "whitelistdialog.h"
+#include "X11/whitelistdialog.h"
 
 class TestGtkUI : public Gtk::Window
 {

@@ -24,6 +24,18 @@ add_definitions(
     -DGLADE_FILE="${GLADE_FILE}"
 )
 
+if(BUILD_TESTGTKUI)
+    set(testgtkui_SRCS
+        ${PLATFORM_NAME}/pininputdialog.cpp
+        ${PLATFORM_NAME}/whitelistdialog.cpp
+        ${PLATFORM_NAME}/test/main.cpp
+        ${PLATFORM_NAME}/test/testgtkui.cpp
+    )
+
+    add_executable(testgtkui ${testgtkui_SRCS})
+    target_link_libraries(testgtkui ${GTKMM_LIBRARIES})
+endif()
+
 set (SOURCES
     ${SOURCES}
     ${PLATFORM}
