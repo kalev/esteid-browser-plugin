@@ -32,8 +32,6 @@ public:
     virtual ~TestGtkUI();
 
 protected:
-    int loadGladeUI(std::string gladeFile);
-
     // Signal handlers:
     void on_button_pinBlocked_clicked();
     void on_button_pinInput_clicked();
@@ -46,9 +44,6 @@ protected:
     Gtk::Button m_whitelistButton;
 
     WhitelistDialog *m_whitelistDialog;
-
-    // Glade interface description.
-    Glib::RefPtr<Gtk::Builder> m_refGlade;
 };
 
 #endif //ESTEID_TESTGTKUI

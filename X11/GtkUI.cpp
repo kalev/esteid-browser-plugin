@@ -43,11 +43,15 @@ GtkUI::GtkUI(esteidAPI *esteidAPI)
 
     Gtk::Main::init_gtkmm_internals();
 
-    if (loadGladeUI(GLADE_FILE) != 0) {
-        ESTEID_DEBUG("GtkUI::GtkUI(): loadGladeUI() failed");
+    Glib::RefPtr<Gtk::Builder> refGlade = Gtk::Builder::create();
+    // Load the GtkBuilder file
+    try {
+        refGlade->add_from_file(GLADE_FILE);
+    } catch(const Glib::Error& ex) {
+        std::cerr << ex.what() << std::endl;
     }
 
-    m_refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
+    refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
 
     if (m_whitelistDialog) {
         m_whitelistDialog->signal_response().connect( sigc::mem_fun(*this,
@@ -59,25 +63,6 @@ GtkUI::GtkUI(esteidAPI *esteidAPI)
 GtkUI::~GtkUI()
 {
     ESTEID_DEBUG("~GtkUI()");
-}
-
-
-int GtkUI::loadGladeUI(std::string gladeFile)
-{
-    //Load the GtkBuilder file and instantiate its widgets:
-    m_refGlade = Gtk::Builder::create();
-
-    try {
-        m_refGlade->add_from_file(gladeFile);
-    } catch(const Glib::FileError& ex) {
-        std::cerr << "FileError: " << ex.what() << std::endl;
-        return 1;
-    } catch(const Gtk::BuilderError& ex) {
-        std::cerr << "BuilderError: " << ex.what() << std::endl;
-        return 1;
-    }
-
-    return 0;
 }
 
 

@@ -42,16 +42,12 @@ public:
     virtual void ShowPinBlockedMessage(int pin);
 
 protected:
-    int loadGladeUI(std::string gladeFile);
     void on_pininputdialog_response(int response_id);
     void on_whitelistdialog_response(int response_id);
 
     PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;
-
-    // Glade interface description.
-    Glib::RefPtr<Gtk::Builder> m_refGlade;
 
 private:
     bool m_dialog_up;
