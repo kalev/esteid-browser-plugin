@@ -52,6 +52,14 @@ if(ICONV_SECOND_ARGUMENT_IS_CONST)
     add_definitions( -DICONV_SECOND_ARGUMENT_IS_CONST )
 endif(ICONV_SECOND_ARGUMENT_IS_CONST)
 
+set(ENABLE_DEBUG FALSE
+    CACHE BOOL "Set to TRUE to enable debug print statements (default: FALSE)"
+)
+if(ENABLE_DEBUG)
+    message(STATUS "Debug print statements are enabled")
+    add_definitions(-DDEBUG)
+endif(ENABLE_DEBUG)
+
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${GTKMM_INCLUDE_DIRS}
