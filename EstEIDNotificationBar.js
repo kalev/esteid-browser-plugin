@@ -9,6 +9,7 @@
 EstEIDNotificationBarScript = "\
 document.EstEIDNotificationBar = { \
   create: function(slabel, sl) { \
+    this.callBack = sl; \
     /* Create notification bar div */ \
     var bar = document.createElement('div'); \
     bar.style.fontSize = '110%'; \
@@ -29,8 +30,8 @@ document.EstEIDNotificationBar = { \
     btn.type = 'button'; \
     btn.value = slabel; \
     btn.style.marginLeft = '3px'; \
-    if(!btn.addEventListener) btn.attachEvent('onclick', sl); /* IE */ \
-    else btn.addEventListener('click', sl, false); \
+    if(!btn.addEventListener) btn.attachEvent('onclick', this.settings); /* IE */ \
+    else btn.addEventListener('click', this.settings, false); \
     this.settingsBtn = btnbar.appendChild(btn); \
     /* Close button */ \
     var btn = document.createElement('input'); \
@@ -54,11 +55,15 @@ document.EstEIDNotificationBar = { \
     this.textDiv.innerHTML = msg; \
     this.barDiv.style.display = 'block'; \
   }, \
+  settings: function(e) { \
+    document.EstEIDNotificationBar.callBack.handleEvent(e); \
+  }, \
   close: function() { \
     document.EstEIDNotificationBar.barDiv.style.display = 'none'; \
   }, \
   barDiv: null, \
   textDiv: null, \
+  callBack: null, \
   settingsBtn: null \
 };\
 ";
