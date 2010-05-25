@@ -32,7 +32,7 @@ struct pinDialogPriv_l {
 
 class WindowsUI : public PluginUI {
 public:
-    WindowsUI();
+    WindowsUI(esteidAPI *esteidAPI);
     virtual ~WindowsUI();
 
     virtual std::string PromptForSignPIN(std::string subject,

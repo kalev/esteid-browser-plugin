@@ -28,7 +28,7 @@
 
 #include "debug.h"
 
-WindowsUI::WindowsUI()
+WindowsUI::WindowsUI(esteidAPI *esteidAPI)
 {
     ESTEID_DEBUG("WindowsUI intialized");
 }
