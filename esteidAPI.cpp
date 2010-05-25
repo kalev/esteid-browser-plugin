@@ -128,7 +128,7 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 #ifdef __APPLE__
     ESTEID_DEBUG("Trying to load MacUI");
     m_UI = new MacUI(this);
-#else	
+#else
     ESTEID_DEBUG("Trying to load GtkUI");
     m_UI = new GtkUI(this);
 #endif
@@ -229,7 +229,7 @@ void esteidAPI::CloseNotificationBar(void) {
 }
 
 void esteidAPI::ShowSettings(void) {
-	ESTEID_DEBUG("esteidAPI::ShowSettings()");
+    ESTEID_DEBUG("esteidAPI::ShowSettings()");
 
     if(IsSecure())
         m_UI->ShowSettings(m_conf, GetHostName());

@@ -105,19 +105,19 @@ public:
      * Sign a SHA1 hash with the first card
      */
     std::string signSHA1(std::string hash, EstEidCard::KeyType keyId,
-    		std::string pin);
+                         std::string pin);
     /**
      * Sign a SHA1 hash with the specified card
      */
     std::string signSHA1(std::string hash, EstEidCard::KeyType keyId,
-    		std::string pin, readerID);
+                         std::string pin, readerID);
 
     /* Message observer interface */
     enum msgType {
-	CARD_INSERTED,
-	CARD_REMOVED,
-	READERS_CHANGED,
-	CARD_ERROR
+        CARD_INSERTED,
+        CARD_REMOVED,
+        READERS_CHANGED,
+        CARD_ERROR
     };
     class messageObserver {
         friend class EstEIDService;
