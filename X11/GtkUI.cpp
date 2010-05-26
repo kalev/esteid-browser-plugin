@@ -30,8 +30,8 @@
 
 #include "debug.h"
 
-#ifndef GLADE_FILE
-#define GLADE_FILE "whitelist.ui"
+#ifndef WHITELISTDIALOG_UI
+#define WHITELISTDIALOG_UI "whitelistdialog.ui"
 #endif
 
 
@@ -46,7 +46,7 @@ GtkUI::GtkUI(esteidAPI *esteidAPI)
     Glib::RefPtr<Gtk::Builder> refGlade = Gtk::Builder::create();
     // Load the GtkBuilder file
     try {
-        refGlade->add_from_file(GLADE_FILE);
+        refGlade->add_from_file(WHITELISTDIALOG_UI);
     } catch(const Glib::Error& ex) {
         std::cerr << ex.what() << std::endl;
     }

@@ -7,7 +7,7 @@
 # Included from ../CMakeLists.txt
 
 set(GLADE_INSTALL_DIR ${SHARE_INSTALL_PREFIX}/esteid-browser-plugin)
-set(GLADE_FILE ${GLADE_INSTALL_DIR}/whitelist.ui)
+set(WHITELISTDIALOG_UI ${GLADE_INSTALL_DIR}/whitelistdialog.ui)
 
 # remember that the current source dir is the project root; this file is in ${PLATFORM_NAME}/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -21,7 +21,7 @@ SOURCE_GROUP(${PLATFORM_NAME} FILES ${PLATFORM})
 # use this to add preprocessor definitions
 add_definitions(
     -DFB_X11=1
-    -DGLADE_FILE="${GLADE_FILE}"
+    -DWHITELISTDIALOG_UI="${WHITELISTDIALOG_UI}"
 )
 
 if(BUILD_TESTGTKUI)
@@ -67,4 +67,4 @@ add_dependencies(${PROJNAME}
     )
 
 install(TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
-install(FILES ${PLATFORM_NAME}/whitelist.ui DESTINATION ${GLADE_INSTALL_DIR})
+install(FILES ${PLATFORM_NAME}/whitelistdialog.ui DESTINATION ${GLADE_INSTALL_DIR})

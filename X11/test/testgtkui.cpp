@@ -49,7 +49,7 @@ TestGtkUI::TestGtkUI()
     Glib::RefPtr<Gtk::Builder> refGlade = Gtk::Builder::create();
     // Load the GtkBuilder file
     try {
-        refGlade->add_from_file(GLADE_FILE);
+        refGlade->add_from_file(WHITELISTDIALOG_UI);
     } catch(const Glib::Error& ex) {
         std::cerr << ex.what() << std::endl;
         exit(1);
