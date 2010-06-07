@@ -48,6 +48,7 @@ void esteid::StaticDeinitialize()
 
 
 esteid::esteid()
+    : m_esteidAPI()
 {
 }
 
@@ -58,7 +59,8 @@ esteid::~esteid()
 FB::JSAPI* esteid::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
-    return new esteidAPI(m_host);
+    m_esteidAPI = new esteidAPI(m_host);
+    return m_esteidAPI.ptr();
 }
 
 bool esteid::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)

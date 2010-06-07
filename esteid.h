@@ -37,6 +37,8 @@
 
 #include "PluginCore.h"
 
+class esteidAPI;
+
 class esteid : public FB::PluginCore
 {
 public:
@@ -67,6 +69,9 @@ public:
     virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *);
     virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *);
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
+
+private:
+    FB::AutoPtr<esteidAPI> m_esteidAPI;
 };
 
 extern logger eidlog;
