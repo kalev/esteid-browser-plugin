@@ -33,13 +33,13 @@ public:
     GtkUI(esteidAPI *esteidAPI);
     virtual ~GtkUI();
 
-    virtual std::string PromptForSignPIN(std::string subject,
+    std::string PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout,
         bool retry, int tries);
-    virtual void ClosePinPrompt();
-    virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
-    virtual void ShowPinBlockedMessage(int pin);
+    void ClosePinPrompt();
+    void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
+    void ShowPinBlockedMessage(int pin);
 
 protected:
     void on_pininputdialog_response(int response_id);
