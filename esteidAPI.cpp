@@ -72,7 +72,7 @@
     throw FB::script_error("No cards found"); }
 #define ESTEID_ERROR_NO_PERMISSION ESTEID_ERROR_NO_CARD
 
-esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) : 
+esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     m_host(host), m_authCert(NULL), m_signCert(NULL),
     m_service(EstEIDService::getInstance()),
     m_settingsCallback(new SettingsCallback(host, *this)),
@@ -225,7 +225,7 @@ void esteidAPI::OpenNotificationBar(void) {
 void esteidAPI::CloseNotificationBar(void) {
     if(!m_barJSO) return;
 
-    m_barJSO->Invoke("close", FB::variant_list_of());
+    m_barJSO->Invoke("close", FB::variant_list_of(0));
 }
 
 void esteidAPI::ShowSettings(void) {
@@ -325,7 +325,7 @@ void esteidAPI::promptForSignPIN(bool retrying)
 #if 0
     try {
         pinpad = m_service->hasSecurePinEntry();
-    } catch(std::runtime_error &e) { 
+    } catch(std::runtime_error &e) {
         FireEvent("onSignFailure", FB::variant_list_of(e.what()));
         return;
     }

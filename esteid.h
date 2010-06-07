@@ -18,14 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**********************************************************\
-
-  Auto-generated esteid.cpp
-
-  This file contains the auto-generated main plugin object
-  implementation for the esteid project
-
-\**********************************************************/
 #ifndef H_esteidPLUGIN
 #define H_esteidPLUGIN
 

@@ -31,7 +31,6 @@ struct pinDialogPriv_l {
     WORD m_resourceID;
 };
 
-
 class WindowsUI : public PluginUI {
 public:
     WindowsUI(esteidAPI *esteidAPI);

@@ -32,7 +32,7 @@
 WindowsUI::WindowsUI(esteidAPI *esteidAPI)
     : PluginUI(esteidAPI)
 {
-    ESTEID_DEBUG("WindowsUI intialized");
+    ESTEID_DEBUG("WindowsUI initialized");
 }
 
 WindowsUI::~WindowsUI()
