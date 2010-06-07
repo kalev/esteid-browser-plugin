@@ -25,10 +25,12 @@
 
 #include "Win/PluginWindowWin.h"
 #include "utility/pinDialog.h"
+#include "Win/whitelistdialog.h"
 
 #include "debug.h"
 
 WindowsUI::WindowsUI(esteidAPI *esteidAPI)
+    : PluginUI(esteidAPI)
 {
     ESTEID_DEBUG("WindowsUI intialized");
 }
@@ -80,4 +82,14 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 void WindowsUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
 {
     ESTEID_DEBUG("WindowsUI::ShowSettings()");
+
+    m_conf = &conf;
+
+    m_whitelistDialog = new WhitelistDialog();
+    m_whitelistDialog->addDefaultSites(conf.default_whitelist);
+    m_whitelistDialog->addSites(conf.whitelist);
+    m_whitelistDialog->doDialog(ATL::_AtlBaseModule.GetResourceInstance(), conf);
+
+    if (pageUrl.length() > 0)
+        m_whitelistDialog->setEntryText(pageUrl);
 }

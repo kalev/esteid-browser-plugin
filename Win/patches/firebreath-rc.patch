@@ -1,17 +1,19 @@
-diff -r 69179e87fe85 gen_templates/firebreathWin.rc
---- a/gen_templates/firebreathWin.rc	Mon Mar 01 08:16:18 2010 +0100
-+++ b/gen_templates/firebreathWin.rc	Mon Mar 01 11:24:42 2010 +0200
-@@ -16,6 +16,9 @@
+diff -r 669c88c52f79 gen_templates/firebreathWin.rc
+--- a/gen_templates/firebreathWin.rc	Mon Mar 01 14:16:05 2010 +0100
++++ b/gen_templates/firebreathWin.rc	Tue Mar 02 12:17:28 2010 +0200
+@@ -16,6 +16,11 @@
  //
  #include "winres.h"
  
 +#include "utility/pinDialog_res.h"
 +#include "utility/pinDialog.rc"
++#include "Win/whitelistdialog_res.h"
++#include "Win/whitelistdialog.rc"
 +
  /////////////////////////////////////////////////////////////////////////////
  #undef APSTUDIO_READONLY_SYMBOLS
  
-@@ -28,6 +31,37 @@
+@@ -28,6 +33,39 @@
  #pragma code_page(1252)
  #endif //_WIN32
  
@@ -32,7 +34,9 @@ diff -r 69179e87fe85 gen_templates/firebreathWin.rc
 +BEGIN
 +    "#include ""winres.h""\r\n"
 +    "#include ""utility/pinDialog_res.h""\r\n"
-+    "#include ""utility/pinDialog.rc""\r\n\0"
++    "#include ""utility/pinDialog.rc""\r\n"
++    "#include ""Win/whitelistdialog_res.h""\r\n"
++    "#include ""Win/whitelistdialog.rc""\r\n\0"
 +END
 +
 +3 TEXTINCLUDE

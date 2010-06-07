@@ -24,6 +24,8 @@
 #include "PluginUI.h"
 #include "Win/win_common.h"
 
+class WhitelistDialog;
+
 struct pinDialogPriv_l {
     HINSTANCE m_hInst;
     WORD m_resourceID;
@@ -42,6 +44,10 @@ public:
     virtual void ClosePinPrompt();
     virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
     virtual void ShowPinBlockedMessage(int pin);
+
+protected:
+    WhitelistDialog *m_whitelistDialog;
+    PluginSettings *m_conf;
 };
 
 #endif /* WINDOWSUI_H */
