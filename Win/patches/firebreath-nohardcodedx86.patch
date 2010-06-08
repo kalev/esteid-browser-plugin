@@ -1,0 +1,15 @@
+diff -r bc512c14709b cmake/buildconfig.cmake
+--- a/cmake/buildconfig.cmake	Wed May 26 13:33:42 2010 -0600
++++ b/cmake/buildconfig.cmake	Tue Jun 08 22:13:01 2010 +0300
+@@ -25,9 +25,9 @@
+ 	set(CMAKE_EXE_LINKER_FLAGS_RELEASE
+ 	    "${CMAKE_EXE_LINKER_FLAGS_RELEASE}       ")
+ 	set(CMAKE_SHARED_LINKER_FLAGS_DEBUG
+-	    "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}      /SUBSYSTEM:WINDOWS /MACHINE:X86")
++	    "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}      /SUBSYSTEM:WINDOWS")
+ 	set(CMAKE_SHARED_LINKER_FLAGS_RELEASE
+-	    "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}    /SUBSYSTEM:WINDOWS /MACHINE:X86 /OPT:REF /OPT:ICF")
++	    "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}    /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF")
+ endif()
+ 
+ # We define preprocessor flags here in addition to other flags
