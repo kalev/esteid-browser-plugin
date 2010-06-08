@@ -13,6 +13,7 @@ struct pinDialogPriv;
 #include "pinDialog_res.h"
 
 class mutexObj;
+class esteidAPI;
 
 class pinOpInterface
 {
@@ -37,8 +38,8 @@ protected:
 	friend struct pinDialogPriv;
 public:
 	EstEidCard::KeyType keyType() { return m_key; }
-	pinDialog(const void * opsysParam,std::string prompt);
-	pinDialog(const void * opsysParam,EstEidCard::KeyType key);
+	pinDialog(const void * opsysParam,std::string prompt,esteidAPI *esteidAPI = 0);
+	pinDialog(const void * opsysParam,EstEidCard::KeyType key,esteidAPI *esteidAPI = 0);
 	~pinDialog();
 	bool doDialog();
 	bool showPrompt(std::string,bool allowRetry = false);

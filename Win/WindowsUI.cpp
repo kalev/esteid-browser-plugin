@@ -54,12 +54,10 @@ std::string WindowsUI::PromptForSignPIN(std::string subject,
             IDD_PIN_DIALOG_ENG
     };
 
-    pinDialog dlg(&params, EstEidCard::SIGN);
-    if (!dlg.doDialog())
-        return "";
+    m_pinDialog = new pinDialog(&params, EstEidCard::SIGN, m_esteidAPI);
+    m_pinDialog->doDialog();
 
-    pin = dlg.getPin();
-    return pin.c_str();
+    return "";
 }
 
 

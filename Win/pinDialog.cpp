@@ -10,6 +10,7 @@
 #include "precompiled.h"
 #include "pinDialog.h"
 #include "threadObj.h"
+#include "esteidAPI.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -43,8 +44,9 @@ struct pinDialogPriv {
 	HWND m_hwnd;
 	std::vector<char,locked_allocator < char > > m_buffer;
 	iconHandle *dlgIcon,*appIcon;
-	pinDialogPriv(pinDialog &ref,const void * opsysParam) : 
-		m_buffer(20,'0'),m_dlg(ref),dlgIcon(NULL),appIcon(NULL) {
+	esteidAPI *m_esteidAPI;
+	pinDialogPriv(pinDialog &ref,const void * opsysParam,esteidAPI *esteidAPI) : 
+		m_buffer(20,'0'),m_dlg(ref),m_esteidAPI(esteidAPI),dlgIcon(NULL),appIcon(NULL) {
 		params = *((pinDialogPriv_a*) opsysParam);
 		}
 	~pinDialogPriv() {
@@ -104,9 +106,13 @@ LRESULT pinDialogPriv::on_command(WPARAM wParam, LPARAM lParam) {
 			break;
 			}
 		case IDOK:
+			m_esteidAPI->onPinEntered(getPin().c_str());
+			DestroyWindow(m_hwnd);
+			return TRUE;
+			break;
 		case IDCANCEL:
 			GetDlgItemTextA(m_hwnd,IDC_PININPUT,&m_buffer[0],(int)m_buffer.size());
-			EndDialog (m_hwnd,wParam );
+			DestroyWindow(m_hwnd);
 			return TRUE;
 		}
 	return FALSE;
@@ -140,10 +146,15 @@ LRESULT CALLBACK pinDialogPriv::dialogProc(HWND hwnd, UINT message, WPARAM wPara
 	}
 
 bool pinDialogPriv::doDialog() {
-	if (IDOK == DialogBoxParam(params.m_hInst,MAKEINTRESOURCE(params.m_resourceID)
+	HWND hWnd = CreateDialogParam(params.m_hInst,MAKEINTRESOURCE(params.m_resourceID)
 		,GetForegroundWindow(),
-		(DLGPROC)dialogProc, (LPARAM) this)) return true;
-	return false;
+		(DLGPROC)dialogProc, (LPARAM) this);
+
+	if (!hWnd)
+		return false;
+
+	ShowWindow(hWnd, SW_NORMAL);
+	return true;
 	}
 
 bool pinDialogPriv::showPrompt(std::string prompt,bool allowRetry) {
@@ -255,14 +266,14 @@ bool pinDialogPriv::doDialog() {
 
 #endif
 
-pinDialog::pinDialog(const void * opsysParam,std::string prompt) : m_minLen(4),
+pinDialog::pinDialog(const void * opsysParam,std::string prompt,esteidAPI *esteidAPI) : m_minLen(4),
 	m_key((EstEidCard::KeyType)0) {
-	d = new pinDialogPriv(*this,opsysParam);
+	d = new pinDialogPriv(*this,opsysParam,esteidAPI);
 	m_prompt = prompt;
 	}
 
-pinDialog::pinDialog(const void * opsysParam,EstEidCard::KeyType key) : m_key(key) {
-	d = new pinDialogPriv(*this,opsysParam);
+pinDialog::pinDialog(const void * opsysParam,EstEidCard::KeyType key, esteidAPI *esteidAPI) : m_key(key) {
+	d = new pinDialogPriv(*this,opsysParam,esteidAPI);
 	if (m_key == EstEidCard::AUTH) {
 		m_prompt = "Enter ID-card (PIN1)";
 		m_minLen = 4;

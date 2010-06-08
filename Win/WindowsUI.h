@@ -24,6 +24,7 @@
 #include "PluginUI.h"
 #include "Win/win_common.h"
 
+class pinDialog;
 class WhitelistDialog;
 
 struct pinDialogPriv_l {
@@ -45,6 +46,7 @@ public:
     void ShowPinBlockedMessage(int pin);
 
 protected:
+    pinDialog *m_pinDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;
 };
