@@ -158,23 +158,8 @@ function testPersonalData() {
     readPersonalData();
 }
 
-function testSign(n) {
-    var e = document.getElementById(n + "CertStatus");
-    var hash = document.getElementById("testhash").value;
-    var url = "https://id.smartlink.ee/plugin_tests/test.txt";
-    try {
-        signedData = esteid.sign(hash,url);
-        e.innerHTML = "OK: " + signedData;
-        e.style.background = "";
-    }
-    catch(err) {
-        e.innerHTML = "Error: " + err.message;
-        e.style.background = bgerr;
-    }
-}
-
 // Test signing with a dummy hash
-function testSignAsync() {
+function testSign() {
     var e = document.getElementById("signCertStatus");
     var hash = document.getElementById("testhash").value;
     var url = "https://id.smartlink.ee/plugin_tests/test.txt";
