@@ -23,7 +23,6 @@ SOURCE_GROUP(Win FILES ${PLATFORM})
 set (SOURCES
     ${SOURCES}
     ${PLATFORM}
-    ${UTIL_DIR}/pinDialog.cpp
     )
 
 add_library(${PROJNAME} SHARED ${SOURCES})

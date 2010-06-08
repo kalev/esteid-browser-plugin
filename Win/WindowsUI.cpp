@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "Win/PluginWindowWin.h"
-#include "utility/pinDialog.h"
+#include "Win/pinDialog.h"
 #include "Win/whitelistdialog.h"
 
 #include "debug.h"
