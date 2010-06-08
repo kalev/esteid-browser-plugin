@@ -167,7 +167,7 @@ LRESULT WhitelistDialog::on_notify(WPARAM wParam, LPARAM lParam)
         if (((LPNMHDR)lParam)->code == LVN_ENDLABELEDIT) {
             NMLVDISPINFO *lpNmlvdispInfo = (NMLVDISPINFO*)lParam;
             if (lpNmlvdispInfo->item.pszText != NULL) {
-                ::SetWindowLong(m_hWnd, DWL_MSGRESULT, TRUE);
+                ::SetWindowLongPtr(m_hWnd, DWLP_MSGRESULT, TRUE);
                 return TRUE;
             }
         }
