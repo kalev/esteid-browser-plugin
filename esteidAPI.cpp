@@ -87,9 +87,9 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_METHOD(signAsync);
 
 /*  FIXME: Investigate if this is needed at all?
-    registerEvent("OnCardInserted");
-    registerEvent("OnCardRemoved");
-    registerEvent("OnReadersChanged");
+    registerEvent("CardInserted");
+    registerEvent("CardRemoved");
+    registerEvent("ReadersChanged");
 */
 
 /*  FIXME: Those will be catched by firebreath itself for
@@ -244,9 +244,9 @@ void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
     std::string evtname;
 
     switch(e) {
-        case EstEIDService::CARD_INSERTED:   evtname = "OnCardInserted";  break;
-        case EstEIDService::CARD_REMOVED:    evtname = "OnCardRemoved";   break;
-        case EstEIDService::READERS_CHANGED: evtname = "OnReadersChanged";break;
+        case EstEIDService::CARD_INSERTED:   evtname = "CardInserted";  break;
+        case EstEIDService::CARD_REMOVED:    evtname = "CardRemoved";   break;
+        case EstEIDService::READERS_CHANGED: evtname = "ReadersChanged";break;
         default: throw std::runtime_error("Invalid message type"); break;
     }
     ESTEID_DEBUG("onMessage: %s %d", evtname.c_str(), i);

@@ -72,9 +72,9 @@ public:
     void onPinEntered(std::string hash);
 
    /**  Will fire event handlers
-   *        - OnCardInserted
-   *        - OnCardRemoved
-   *        - OnReadersChanged
+   *        - CardInserted
+   *        - CardRemoved
+   *        - ReadersChanged
    */
    virtual void onMessage(EstEIDService::msgType, readerID);
 
