@@ -420,7 +420,7 @@ std::vector<std::string> esteidAPI::stringSplit(std::string str, std::string sep
 {
     std::vector<std::string> results;
 
-    for (int found = 0; found != std::string::npos; found = str.find_first_of(separator)) {
+    for (size_t found = 0; found != std::string::npos; found = str.find_first_of(separator)) {
         if (found > 0) {
             results.push_back(str.substr(0, found));
             str = str.substr(found+1);
