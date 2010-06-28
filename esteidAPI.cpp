@@ -86,11 +86,11 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(signAsync);
 
-    registerEvent("CardInserted");
-    registerEvent("CardRemoved");
-    registerEvent("ReadersChanged");
-    registerEvent("SignSuccess");
-    registerEvent("SignFailure");
+    registerEvent("onCardInserted");
+    registerEvent("onCardRemoved");
+    registerEvent("onReadersChanged");
+    registerEvent("onSignSuccess");
+    registerEvent("onSignFailure");
 
 /*  FIXME: Those will be catched by firebreath itself for
            NPAPI plugins, but how about ActiveX?
