@@ -35,6 +35,16 @@ function initcerttable(n) {
 }
 
 
+function addEvent(obj, name, func)
+{
+    if (window.addEventListener) {
+        obj.addEventListener(name, func, false); 
+    } else {
+        obj.attachEvent("on"+name, func);
+    }
+}
+
+
 function inittest() {
     initpdatatable();
     initcerttable("auth");
@@ -52,10 +62,10 @@ function inittest() {
 	e.style.background = bgerr;
     }
     try {
-        esteid.addEventListener("CardInserted", cardInserted);
-        esteid.addEventListener("CardRemoved", cardRemoved);
-        esteid.addEventListener("SignSuccess", signSuccess);
-        esteid.addEventListener("SignFailure", signFailure);
+        addEvent(esteid, "CardInserted", cardInserted);
+        addEvent(esteid, "CardRemoved", cardRemoved);
+        addEvent(esteid, "SignSuccess", signSuccess);
+        addEvent(esteid, "SignFailure", signFailure);
     }
     catch(err) {
         var e = document.getElementById("cardstatus");
