@@ -52,10 +52,10 @@ function inittest() {
 	e.style.background = bgerr;
     }
     try {
-        esteid.addEventListener("CardInserted", cardInserted);
-        esteid.addEventListener("CardRemoved", cardRemoved);
-        esteid.addEventListener("SignSuccess", signSuccess);
-        esteid.addEventListener("SignFailure", signFailure);
+        esteid.addEventListener("cardinserted", cardInserted);
+        esteid.addEventListener("cardremoved", cardRemoved);
+        esteid.addEventListener("signsuccess", signSuccess);
+        esteid.addEventListener("signfailure", signFailure);
     }
     catch(err) {
         var e = document.getElementById("cardstatus");
@@ -208,9 +208,9 @@ function testCrash() {
     runCrashCode('esteid.addEventListener(null, null);');
     runCrashCode('esteid.addEventListener("huinamuina", null);');
     runCrashCode('esteid.addEventListener("", null);');
-    runCrashCode('esteid.addEventListener("CardInserted", null);');
-    runCrashCode('esteid.addEventListener("CardRemoved", "");');
-    runCrashCode('esteid.addEventListener("CardRemoved", 0);');
+    runCrashCode('esteid.addEventListener("cardinserted", null);');
+    runCrashCode('esteid.addEventListener("cardremoved", "");');
+    runCrashCode('esteid.addEventListener("cardremoved", 0);');
     runCrashCode('esteid.getCertificateByThumbprint(null);');
     runCrashCode('esteid.getCertificateByThumbprint(0);');
     runCrashCode('esteid.getCertificateByThumbprint("");');

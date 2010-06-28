@@ -86,11 +86,11 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(signAsync);
 
-    registerEvent("CardInserted");
-    registerEvent("CardRemoved");
-    registerEvent("ReadersChanged");
-    registerEvent("SignSuccess");
-    registerEvent("SignFailure");
+    registerEvent("cardinserted");
+    registerEvent("cardremoved");
+    registerEvent("readerschanged");
+    registerEvent("signsuccess");
+    registerEvent("signfailure");
 
 /*  FIXME: Those will be catched by firebreath itself for
            NPAPI plugins, but how about ActiveX?
@@ -244,9 +244,9 @@ void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
     std::string evtname;
 
     switch(e) {
-        case EstEIDService::CARD_INSERTED:   evtname = "CardInserted";  break;
-        case EstEIDService::CARD_REMOVED:    evtname = "CardRemoved";   break;
-        case EstEIDService::READERS_CHANGED: evtname = "ReadersChanged";break;
+        case EstEIDService::CARD_INSERTED:   evtname = "cardinserted";  break;
+        case EstEIDService::CARD_REMOVED:    evtname = "cardremoved";   break;
+        case EstEIDService::READERS_CHANGED: evtname = "readerschanged";break;
         default: throw std::runtime_error("Invalid message type"); break;
     }
     ESTEID_DEBUG("onMessage: %s %d", evtname.c_str(), i);
@@ -307,18 +307,18 @@ void esteidAPI::promptForSignPIN(bool retrying)
     bool pinpad;
 
     if (m_subject.empty()) {
-        FireEvent("onSignFailure", FB::variant_list_of("Empty subject"));
+        FireEvent("onsignfailure", FB::variant_list_of("Empty subject"));
         return;
     }
 
     if (m_url.empty()) {
-        FireEvent("onSignFailure", FB::variant_list_of("Partial document URL must be specified"));
+        FireEvent("onsignfailure", FB::variant_list_of("Partial document URL must be specified"));
         return;
     }
 
     // FIXME: Hardcoded SHA1 support
     if (m_hash.length() != 40) {
-        FireEvent("onSignFailure", FB::variant_list_of("Invalid hash"));
+        FireEvent("onsignfailure", FB::variant_list_of("Invalid hash"));
         return;
     }
 
@@ -326,7 +326,7 @@ void esteidAPI::promptForSignPIN(bool retrying)
     try {
         pinpad = m_service->hasSecurePinEntry();
     } catch(std::runtime_error &e) {
-        FireEvent("onSignFailure", FB::variant_list_of(e.what()));
+        FireEvent("onsignfailure", FB::variant_list_of(e.what()));
         return;
     }
 #else
@@ -336,7 +336,7 @@ void esteidAPI::promptForSignPIN(bool retrying)
     triesLeft = getPin2RetryCount();
     if (triesLeft <= 0) {
         m_UI->ShowPinBlockedMessage(2);
-        FireEvent("onSignFailure", FB::variant_list_of("PIN2 locked"));
+        FireEvent("onsignfailure", FB::variant_list_of("PIN2 locked"));
         return;
     }
 
@@ -352,7 +352,7 @@ void esteidAPI::onPinEntered(std::string pin)
     if (pin.empty()) {
         // Shouldn't happen
         ESTEID_DEBUG("sign: got empty PIN from UI");
-        FireEvent("onSignFailure", FB::variant_list_of("empty PIN"));
+        FireEvent("onsignfailure", FB::variant_list_of("empty PIN"));
         return;
     }
 
@@ -361,7 +361,7 @@ void esteidAPI::onPinEntered(std::string pin)
     } catch(AuthError &e) {
         if (e.m_aborted) { // pinpad
             ESTEID_DEBUG("sign: cancel pressed on PinPAD");
-            FireEvent("onSignFailure", FB::variant_list_of("pinpad operation cancelled"));
+            FireEvent("onsignfailure", FB::variant_list_of("pinpad operation cancelled"));
             return;
         }
 
@@ -370,17 +370,17 @@ void esteidAPI::onPinEntered(std::string pin)
         return;
     } catch(std::runtime_error &e) {
         ESTEID_ERROR_FROMCARD(e);
-        FireEvent("onSignFailure", FB::variant_list_of(e.what()));
+        FireEvent("onsignfailure", FB::variant_list_of(e.what()));
         return;
     }
 
     if (hash.empty()) {
         // Shouldn't happen
-        FireEvent("onSignFailure", FB::variant_list_of("empty hash"));
+        FireEvent("onsignfailure", FB::variant_list_of("empty hash"));
         return;
     }
 
-    FireEvent("onSignSuccess", FB::variant_list_of(hash));
+    FireEvent("onsignsuccess", FB::variant_list_of(hash));
 }
 
 
