@@ -1,11 +1,11 @@
-diff -r b893f12eb85c src/ActiveXPlugin/ActiveXBrowserHost.cpp
---- a/src/ActiveXPlugin/ActiveXBrowserHost.cpp	Mon May 10 14:15:18 2010 -0600
-+++ b/src/ActiveXPlugin/ActiveXBrowserHost.cpp	Mon May 24 17:54:54 2010 +0300
-@@ -66,6 +66,22 @@
+diff -r 5def419d742e src/ActiveXPlugin/ActiveXBrowserHost.cpp
+--- a/src/ActiveXPlugin/ActiveXBrowserHost.cpp	Fri Jun 25 15:32:34 2010 +0300
++++ b/src/ActiveXPlugin/ActiveXBrowserHost.cpp	Mon Jun 28 15:28:32 2010 +0300
+@@ -66,6 +66,25 @@
      return FB::JSAPI_DOMWindow(retObj);
  }
  
-+FB::variant ActiveXBrowserHost::evaluateJavaScript(std::string script)
++void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
 +{
 +    VARIANT res;
 +
@@ -16,22 +16,32 @@ diff -r b893f12eb85c src/ActiveXPlugin/ActiveXBrowserHost.cpp
 +    HRESULT hr = m_htmlWin->execScript(CComBSTR(script.c_str()),
 +                                       CComBSTR("javascript"), &res);
 +    if (SUCCEEDED(hr)) {
-+        return this->getVariant(&res);
++        /* Throw away returned VARIANT, this method always returns VT_EMPTY.
++           http://msdn.microsoft.com/en-us/library/aa741364(VS.85).aspx */
++        return;
 +    } else {
 +        throw FB::script_error("Error executing JavaScript code");
 +    }
 +}
++
  FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
  {
      CComVariant converted;
-diff -r b893f12eb85c src/ActiveXPlugin/ActiveXBrowserHost.h
---- a/src/ActiveXPlugin/ActiveXBrowserHost.h	Mon May 10 14:15:18 2010 -0600
-+++ b/src/ActiveXPlugin/ActiveXBrowserHost.h	Mon May 24 17:54:54 2010 +0300
+@@ -217,4 +236,4 @@
+         delete stream;
+         return 0;
+     }
+-}
+\ No newline at end of file
++}
+diff -r 5def419d742e src/ActiveXPlugin/ActiveXBrowserHost.h
+--- a/src/ActiveXPlugin/ActiveXBrowserHost.h	Fri Jun 25 15:32:34 2010 +0300
++++ b/src/ActiveXPlugin/ActiveXBrowserHost.h	Mon Jun 28 15:28:32 2010 +0300
 @@ -40,6 +40,7 @@
  public:
      FB::JSAPI_DOMDocument getDOMDocument();
      FB::JSAPI_DOMWindow getDOMWindow();
-+    FB::variant evaluateJavaScript(std::string script);
++    void evaluateJavaScript(const std::string &script);
  
  protected:
      HWND m_hWnd;
@@ -43,14 +53,15 @@ diff -r b893f12eb85c src/ActiveXPlugin/ActiveXBrowserHost.h
 \ No newline at end of file
 +#endif // H_ACTIVEXBROWSERHOST
 +
-diff -r b893f12eb85c src/NpapiPlugin/NpapiBrowserHost.cpp
---- a/src/NpapiPlugin/NpapiBrowserHost.cpp	Mon May 10 14:15:18 2010 -0600
-+++ b/src/NpapiPlugin/NpapiBrowserHost.cpp	Mon May 24 17:54:54 2010 +0300
-@@ -78,6 +78,26 @@
+diff -r 5def419d742e src/NpapiPlugin/NpapiBrowserHost.cpp
+--- a/src/NpapiPlugin/NpapiBrowserHost.cpp	Fri Jun 25 15:32:34 2010 +0300
++++ b/src/NpapiPlugin/NpapiBrowserHost.cpp	Mon Jun 28 15:28:32 2010 +0300
+@@ -78,6 +78,28 @@
      return FB::JSAPI_DOMWindow(m_htmlWin.ptr());
  }
  
-+FB::variant NpapiBrowserHost::evaluateJavaScript(std::string script) {
++void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
++{
 +    NPVariant retVal;
 +    NPVariant tmp;
 +
@@ -62,9 +73,10 @@ diff -r b893f12eb85c src/NpapiPlugin/NpapiBrowserHost.cpp
 +
 +    if (this->Evaluate(m_htmlWin->getNPObject(),
 +                       &tmp.value.stringValue, &retVal)) {
-+        FB::variant ret = this->getVariant(&retVal);
 +        this->ReleaseVariantValue(&retVal);
-+        return ret;
++        /* Throw away returned variant. NPN_Evaluate supports returning
++           stuff from JS, but ActiveX IHTMLWindow2::execScript does not */
++        return;
 +    } else {
 +        throw script_error("Error executing JavaScript code");
 +    }
@@ -73,25 +85,25 @@ diff -r b893f12eb85c src/NpapiPlugin/NpapiBrowserHost.cpp
  FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
  {
      FB::variant retVal;
-diff -r b893f12eb85c src/NpapiPlugin/NpapiBrowserHost.h
---- a/src/NpapiPlugin/NpapiBrowserHost.h	Mon May 10 14:15:18 2010 -0600
-+++ b/src/NpapiPlugin/NpapiBrowserHost.h	Mon May 24 17:54:54 2010 +0300
+diff -r 5def419d742e src/NpapiPlugin/NpapiBrowserHost.h
+--- a/src/NpapiPlugin/NpapiBrowserHost.h	Fri Jun 25 15:32:34 2010 +0300
++++ b/src/NpapiPlugin/NpapiBrowserHost.h	Mon Jun 28 15:28:32 2010 +0300
 @@ -44,6 +44,7 @@
      public:
          FB::JSAPI_DOMDocument getDOMDocument();
          FB::JSAPI_DOMWindow getDOMWindow();
-+        FB::variant evaluateJavaScript(std::string script);
++        void evaluateJavaScript(const std::string &script);
  
      public:
          FB::variant getVariant(const NPVariant *npVar);
-diff -r b893f12eb85c src/ScriptingCore/BrowserHostWrapper.h
---- a/src/ScriptingCore/BrowserHostWrapper.h	Mon May 10 14:15:18 2010 -0600
-+++ b/src/ScriptingCore/BrowserHostWrapper.h	Mon May 24 17:54:54 2010 +0300
+diff -r 5def419d742e src/ScriptingCore/BrowserHostWrapper.h
+--- a/src/ScriptingCore/BrowserHostWrapper.h	Fri Jun 25 15:32:34 2010 +0300
++++ b/src/ScriptingCore/BrowserHostWrapper.h	Mon Jun 28 15:28:32 2010 +0300
 @@ -55,6 +55,7 @@
      public:
          virtual JSAPI_DOMDocument getDOMDocument() = 0;
          virtual JSAPI_DOMWindow getDOMWindow() = 0;
-+        virtual FB::variant evaluateJavaScript(std::string script) = 0;
++        virtual void evaluateJavaScript(const std::string &script) = 0;
          virtual void htmlLog(const std::string& str);
  
      protected:
