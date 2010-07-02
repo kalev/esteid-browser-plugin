@@ -89,8 +89,6 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     registerEvent("onCardInserted");
     registerEvent("onCardRemoved");
     registerEvent("onReadersChanged");
-    registerEvent("onSignSuccess");
-    registerEvent("onSignFailure");
 
 /*  FIXME: Those will be catched by firebreath itself for
            NPAPI plugins, but how about ActiveX?
@@ -286,9 +284,11 @@ std::string esteidAPI::getVersion()
 }
 
 
-void esteidAPI::signAsync(std::string hash, std::string url)
+void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject callback)
 {
     WHITELIST_REQUIRED;
+
+    m_signCallback = callback;
 
     /* Extract subject line from Certificate */
     std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
@@ -307,18 +307,18 @@ void esteidAPI::promptForSignPIN(bool retrying)
     bool pinpad;
 
     if (m_subject.empty()) {
-        FireEvent("onSignFailure", FB::variant_list_of("Empty subject"));
+        returnSignFailure("Empty subject");
         return;
     }
 
     if (m_url.empty()) {
-        FireEvent("onSignFailure", FB::variant_list_of("Partial document URL must be specified"));
+        returnSignFailure("Partial document URL must be specified");
         return;
     }
 
     // FIXME: Hardcoded SHA1 support
     if (m_hash.length() != 40) {
-        FireEvent("onSignFailure", FB::variant_list_of("Invalid hash"));
+        returnSignFailure("Invalid hash");
         return;
     }
 
@@ -326,7 +326,7 @@ void esteidAPI::promptForSignPIN(bool retrying)
     try {
         pinpad = m_service->hasSecurePinEntry();
     } catch(std::runtime_error &e) {
-        FireEvent("onSignFailure", FB::variant_list_of(e.what()));
+        returnSignFailure(e.what());
         return;
     }
 #else
@@ -336,7 +336,7 @@ void esteidAPI::promptForSignPIN(bool retrying)
     triesLeft = getPin2RetryCount();
     if (triesLeft <= 0) {
         m_UI->ShowPinBlockedMessage(2);
-        FireEvent("onSignFailure", FB::variant_list_of("PIN2 locked"));
+        returnSignFailure("PIN2 locked");
         return;
     }
 
@@ -352,7 +352,7 @@ void esteidAPI::onPinEntered(std::string pin)
     if (pin.empty()) {
         // Shouldn't happen
         ESTEID_DEBUG("sign: got empty PIN from UI");
-        FireEvent("onSignFailure", FB::variant_list_of("empty PIN"));
+        returnSignFailure("empty PIN");
         return;
     }
 
@@ -361,7 +361,7 @@ void esteidAPI::onPinEntered(std::string pin)
     } catch(AuthError &e) {
         if (e.m_aborted) { // pinpad
             ESTEID_DEBUG("sign: cancel pressed on PinPAD");
-            FireEvent("onSignFailure", FB::variant_list_of("pinpad operation cancelled"));
+            returnSignFailure("pinpad operation cancelled");
             return;
         }
 
@@ -370,17 +370,37 @@ void esteidAPI::onPinEntered(std::string pin)
         return;
     } catch(std::runtime_error &e) {
         ESTEID_ERROR_FROMCARD(e);
-        FireEvent("onSignFailure", FB::variant_list_of(e.what()));
+        returnSignFailure(e.what());
         return;
     }
 
     if (hash.empty()) {
         // Shouldn't happen
-        FireEvent("onSignFailure", FB::variant_list_of("empty hash"));
+        returnSignFailure("empty hash");
         return;
     }
 
-    FireEvent("onSignSuccess", FB::variant_list_of(hash));
+    returnSignedData(hash);
+}
+
+
+void esteidAPI::returnSignedData(const std::string& data)
+{
+    try {
+        m_signCallback->Invoke("onSuccess", FB::variant_list_of(data));
+    } catch(const FB::script_error&) {
+        returnSignFailure("Error executing JavaScript code");
+    }
+}
+
+
+void esteidAPI::returnSignFailure(const std::string& msg)
+{
+    try {
+        m_signCallback->Invoke("onError", FB::variant_list_of(msg));
+    } catch(const FB::script_error&) {
+        // can't really do anything useful here
+    }
 }
 
 

@@ -177,7 +177,10 @@ function testSign() {
     try {
         e.innerHTML = "Started signing";
         e.style.background = "";
-        signedData = esteid.signAsync(hash, url);
+        esteid.signAsync(hash, url, {
+            onSuccess: function(hex) { signSuccess(hex); },
+            onError:   function(msg) { signFailure(msg); }
+        }); 
     } catch(err) {
         e.innerHTML = "Error: " + err.message;
         e.style.background = bgerr;

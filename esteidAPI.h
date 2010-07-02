@@ -45,7 +45,7 @@ public:
      * @param hash HEX encoded document hash to sign
      * @param url an URL to the document itself
      */
-    void signAsync(std::string hash, std::string url);
+    void signAsync(std::string hash, std::string url, const FB::JSObject callback);
 
     /** Certificates (read-only properties) */
     FB::JSOutObject get_authCert();
@@ -86,6 +86,7 @@ private:
     FB::JSOutObject m_settingsCallback;
     FB::JSOutObject m_closeCallback;
     FB::JSObject m_barJSO;
+    FB::JSObject m_signCallback;
     EstEIDService *m_service;
     vector <std::string> m_pdata;
     std::string m_pageURL;
@@ -128,6 +129,8 @@ private:
     bool IsSecure(void);
     bool IsLocal(void);
     bool IsWhiteListed(void);
+    void returnSignedData(const std::string& data);
+    void returnSignFailure(const std::string& msg);
 
     std::string EstEIDNotificationBarScript;
     static std::string subjectToHumanReadable(std::string& subject);
