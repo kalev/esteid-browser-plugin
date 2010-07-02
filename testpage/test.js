@@ -218,19 +218,19 @@ function runCrashCode(code) {
 function testCrash() {
     var e = document.getElementById("crashstatus");
     e.innerHTML = "";
-    runCrashCode('esteid.addEventListener(null, null);');
-    runCrashCode('esteid.addEventListener("huinamuina", null);');
-    runCrashCode('esteid.addEventListener("", null);');
-    runCrashCode('esteid.addEventListener("CardInserted", null);');
-    runCrashCode('esteid.addEventListener("CardRemoved", "");');
-    runCrashCode('esteid.addEventListener("CardRemoved", 0);');
-    runCrashCode('esteid.getCertificateByThumbprint(null);');
-    runCrashCode('esteid.getCertificateByThumbprint(0);');
-    runCrashCode('esteid.getCertificateByThumbprint("");');
-    runCrashCode('esteid.sign(null, null);');
-    runCrashCode('esteid.sign("","");');
-    runCrashCode('esteid.sign(0,0);');
-    runCrashCode('esteid.sign("",0);');
+    runCrashCode('addEvent(esteid, null, null);');
+    runCrashCode('addEvent(esteid, "huinamuina", null);');
+    runCrashCode('addEvent(esteid, "", null);');
+    runCrashCode('addEvent(esteid, "CardInserted", null);');
+    runCrashCode('addEvent(esteid, "CardRemoved", "");');
+    runCrashCode('addEvent(esteid, "CardRemoved", 0);');
+    runCrashCode('esteid.signAsync(null, null, null);');
+    runCrashCode('esteid.signAsync("", "", "");');
+    runCrashCode('esteid.signAsync(0, 0, 0);');
+    runCrashCode('esteid.signAsync("", "", { onSuccess: nosuchfunction, onError: nosuchfunction });'); 
+    runCrashCode('esteid.signAsync("", "", { onSuccess: function(hex) { }, });'); 
+    runCrashCode('esteid.signAsync("", "", { onError:   function(msg) { } });'); 
+    runCrashCode('esteid.signAsync("", "", {});');
 }
 
 function testWhatever() {
