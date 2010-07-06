@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/stock.h>
-#include <iostream>
+#include "debug.h"
 
 
 PinInputDialog::PinInputDialog(PinType pinType, const std::string& name)
@@ -97,18 +97,18 @@ void PinInputDialog::setMinPinLength(int len)
 
 void PinInputDialog::on_button_more_info_clicked()
 {
-    std::cout << "More Info clicked." << std::endl;
+    ESTEID_DEBUG("More Info clicked.");
 }
 
 void PinInputDialog::on_button_cancel_clicked()
 {
-    std::cout << "Cancel clicked." << std::endl;
+    ESTEID_DEBUG("Cancel clicked.");
     response(Gtk::RESPONSE_CANCEL);
 }
 
 void PinInputDialog::on_button_ok_clicked()
 {
-    std::cout << "OK clicked." << std::endl;
+    ESTEID_DEBUG("OK clicked.");
     response(Gtk::RESPONSE_OK);
 }
 
