@@ -22,6 +22,7 @@
 #define H_ESTEID_PLUGINUI
 
 #include <string>
+#include <AutoPtr.h>
 #include "PluginSettings.h"
 
 // Forward declaration
@@ -31,14 +32,32 @@ class esteidAPI;
 class PluginUI
 {
 public:
+    class UICallbacks {
+    public:
+        virtual void onPinEntered(std::string pin) = 0;
+        virtual void onPinCancelled() = 0;
+
+        // Support Reference counting
+        void AddRef();
+        unsigned int Release();
+
+    protected:
+        unsigned int m_refCount;
+    };
+
     /** Prompt for Signature PIN */
-    virtual std::string PromptForSignPIN(std::string subject,
+    virtual void PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout,
         bool retry, int tries) = 0;
 
     /** Close Signature PIN prompt (used when user hits cancel on pinpad) */
     virtual void ClosePinPrompt() = 0;
+
+#ifdef SUPPORT_OLD_APIS
+    /** Wait for PIN prompt to finish (used for old blocking API calls) */
+    virtual void WaitForPinPrompt() = 0;
+#endif
 
     /** Inform user that the PIN has been blocked */
     virtual void ShowPinBlockedMessage(int pin) = 0;
@@ -47,7 +66,7 @@ public:
     virtual void ShowSettings(PluginSettings &conf,
                               std::string pageUrl = "") = 0;
 
-    PluginUI(esteidAPI *esteidAPI = 0);
+    PluginUI(FB::AutoPtr<UICallbacks>);
     virtual ~PluginUI(void);
 
     // Support Reference counting
@@ -56,6 +75,7 @@ public:
 
 protected:
     unsigned int m_refCount;
-    esteidAPI *m_esteidAPI;
+    FB::AutoPtr<UICallbacks> m_callbacks;
 };
+
 #endif // H_ESTEID_PLUGINUI

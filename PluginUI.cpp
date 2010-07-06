@@ -20,9 +20,9 @@
 
 #include "PluginUI.h"
 
-PluginUI::PluginUI(esteidAPI *esteidAPI)
+PluginUI::PluginUI(FB::AutoPtr<UICallbacks> cb)
     : m_refCount(0),
-      m_esteidAPI(esteidAPI)
+      m_callbacks(cb)
 {
 }
 
@@ -36,6 +36,21 @@ void PluginUI::AddRef()
 }
 
 unsigned int PluginUI::Release()
+{
+    if (--m_refCount == 0) {
+        delete this;
+        return 0;
+    } else {
+        return m_refCount;
+    }
+}
+
+void PluginUI::UICallbacks::AddRef()
+{
+    ++m_refCount;
+}
+
+unsigned int PluginUI::UICallbacks::Release()
 {
     if (--m_refCount == 0) {
         delete this;

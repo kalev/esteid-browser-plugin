@@ -43,7 +43,12 @@ void initPluginModule()
 
 extern "C" char * NP_GetMIMEDescription()
 {
+// FIXME: Fix FireBreath!!!!
+#ifdef SUPPORT_OLD_APIS
+    return (char *)"application/x-esteid::Estonian ID-Card Plugin;application/x-idcard-plugin::Estonian ID-Card Plugin";
+#else
     return (char *)FBSTRING_X11MIMEType;
+#endif
 }
 
 extern "C" NPError NP_GetValue(void *future, NPPVariable variable, void *value)

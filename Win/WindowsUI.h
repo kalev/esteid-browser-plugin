@@ -34,14 +34,17 @@ struct pinDialogPriv_l {
 
 class WindowsUI : public PluginUI {
 public:
-    WindowsUI(esteidAPI *esteidAPI);
+    WindowsUI(FB::AutoPtr<UICallbacks>);
     virtual ~WindowsUI();
 
-    std::string PromptForSignPIN(std::string subject,
+    void PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout,
         bool retry, int tries);
     void ClosePinPrompt();
+#ifdef SUPPORT_OLD_APIS
+    void WaitForPinPrompt();
+#endif
     void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
     void ShowPinBlockedMessage(int pin);
 

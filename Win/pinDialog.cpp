@@ -10,7 +10,7 @@
 #include "precompiled.h"
 #include "pinDialog.h"
 #include "threadObj.h"
-#include "esteidAPI.h"
+#include "PluginUI.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -44,9 +44,9 @@ struct pinDialogPriv {
 	HWND m_hwnd;
 	std::vector<char,locked_allocator < char > > m_buffer;
 	iconHandle *dlgIcon,*appIcon;
-	esteidAPI *m_esteidAPI;
-	pinDialogPriv(pinDialog &ref,const void * opsysParam,esteidAPI *esteidAPI) : 
-		m_buffer(20,'0'),m_dlg(ref),m_esteidAPI(esteidAPI),dlgIcon(NULL),appIcon(NULL) {
+	FB::AutoPtr<PluginUI::UICallbacks> m_callbacks;
+	pinDialogPriv(pinDialog &ref,const void * opsysParam,FB::AutoPtr<PluginUI::UICallbacks> cb) : 
+		m_buffer(20,'0'),m_dlg(ref),m_callbacks(cb),dlgIcon(NULL),appIcon(NULL) {
 		params = *((pinDialogPriv_a*) opsysParam);
 		}
 	~pinDialogPriv() {
@@ -106,14 +106,16 @@ LRESULT pinDialogPriv::on_command(WPARAM wParam, LPARAM lParam) {
 			break;
 			}
 		case IDOK:
-			m_esteidAPI->onPinEntered(getPin().c_str());
+                        m_callbacks->onPinEntered(getPin().c_str());
 			DestroyWindow(m_hwnd);
 			return TRUE;
 			break;
 		case IDCANCEL:
 			GetDlgItemTextA(m_hwnd,IDC_PININPUT,&m_buffer[0],(int)m_buffer.size());
 			DestroyWindow(m_hwnd);
+                        m_callbacks->onPinCancelled();
 			return TRUE;
+                        break;
 		}
 	return FALSE;
 	}

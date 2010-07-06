@@ -29,8 +29,8 @@
 
 #include "debug.h"
 
-WindowsUI::WindowsUI(esteidAPI *esteidAPI)
-    : PluginUI(esteidAPI)
+WindowsUI::WindowsUI(FB::AutoPtr<UICallbacks> cb)
+    : PluginUI(cb)
 {
     ESTEID_DEBUG("WindowsUI initialized");
 }
@@ -50,14 +50,14 @@ std::string WindowsUI::PromptForSignPIN(std::string subject,
     PinString pin;
 
     pinDialogPriv_l params = {
-	    ATL::_AtlBaseModule.GetResourceInstance(),
+            ATL::_AtlBaseModule.GetResourceInstance(),
             IDD_PIN_DIALOG_ENG
     };
 
-    m_pinDialog = new pinDialog(&params, EstEidCard::SIGN, m_esteidAPI);
+    m_pinDialog = new pinDialog(&params, EstEidCard::SIGN, m_callbacks);
     m_pinDialog->doDialog();
 
-    return "";
+    return;
 }
 
 

@@ -67,7 +67,7 @@
 #define ESTEID_ERROR_INVALID_ARG { \
     throw FB::script_error("Invalid argument"); }
 #define ESTEID_ERROR_USER_ABORT { \
-    throw FB::script_error("User cancelled operation"); }
+    throw FB::script_error(CANCEL_MSG); }
 #define ESTEID_ERROR_NO_CARD { \
     throw FB::script_error("No cards found"); }
 #define ESTEID_ERROR_NO_PERMISSION ESTEID_ERROR_NO_CARD
@@ -76,7 +76,8 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     m_host(host), m_authCert(NULL), m_signCert(NULL),
     m_service(EstEIDService::getInstance()),
     m_settingsCallback(new SettingsCallback(host, *this)),
-    m_closeCallback(new CloseCallback(host, *this))
+    m_closeCallback(new CloseCallback(host, *this)),
+    m_uiCallback(new UICallback(*this))
 {
     ESTEID_DEBUG("esteidAPI::esteidAPI()");
 
@@ -115,20 +116,25 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_RO_PROPERTY(comment3);
     REGISTER_RO_PROPERTY(comment4);
 
+#ifdef SUPPORT_OLD_APIS
+    REGISTER_METHOD(getCertificates);
+    REGISTER_METHOD(sign);
+#endif
+
     m_pageURL = GetPageURL();
     ESTEID_DEBUG("esteidAPI: Page URL is %s", m_pageURL.c_str());
 
     /* Use platform specific UI */
 #ifdef _WIN32
     ESTEID_DEBUG("Trying to load WindowsUI");
-    m_UI = new WindowsUI(this);
+    m_UI = new WindowsUI(m_uiCallback);
 #else
 #ifdef __APPLE__
     ESTEID_DEBUG("Trying to load MacUI");
-    m_UI = new MacUI(this);
+    m_UI = new MacUI(m_uiCallback);
 #else
     ESTEID_DEBUG("Trying to load GtkUI");
-    m_UI = new GtkUI(this);
+    m_UI = new GtkUI(m_uiCallback);
 #endif
 #endif
 
@@ -290,6 +296,10 @@ void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject 
 
     m_signCallback = callback;
 
+    startSign(hash, url);
+}
+
+void esteidAPI::startSign(std::string hash, std::string url) {
     /* Extract subject line from Certificate */
     std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
 
@@ -386,6 +396,12 @@ void esteidAPI::onPinEntered(std::string pin)
 
 void esteidAPI::returnSignedData(const std::string& data)
 {
+#ifdef SUPPORT_OLD_APIS
+    m_hex = data;
+#endif
+
+    if(!m_signCallback) return;
+
     try {
         m_signCallback->Invoke("onSuccess", FB::variant_list_of(data));
     } catch(const FB::script_error&) {
@@ -396,12 +412,76 @@ void esteidAPI::returnSignedData(const std::string& data)
 
 void esteidAPI::returnSignFailure(const std::string& msg)
 {
+#ifdef SUPPORT_OLD_APIS
+    m_err = msg;
+#endif
+
+    if(!m_signCallback) return;
+
     try {
         m_signCallback->Invoke("onError", FB::variant_list_of(msg));
     } catch(const FB::script_error&) {
         // can't really do anything useful here
     }
 }
+
+#ifdef SUPPORT_OLD_APIS
+
+#define MAGIC_ID "37337F4CF4CE"
+#define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
+
+std::string esteidAPI::getCertificates() {
+    WHITELIST_REQUIRED;
+
+    try { RTERROR_TO_SCRIPT(
+        ByteVec bv = m_service->getSignCert();
+        X509Certificate cert(bv);
+        std::ostringstream buf;
+
+        /* Return "compatible" JSON */
+        buf << "({certificates:[{";
+        buf << "id:'" << MAGIC_ID << "',";
+        buf << "cert:'";
+        for(ByteVec::const_iterator it = bv.begin(); it!=bv.end();it++)
+            buf << std::setfill('0') << std::setw(2) << std::hex << (short)*it;
+        buf << "',";
+        buf << "CN:'" << cert.getSubjectCN() << "',";
+        buf << "issuerCN:'" << cert.getIssuerCN() << "',";
+        // buf << "keyUsage:'" << cert.getKeyUsage() << "',";
+        // keyUsage:"Data Encipherment,Digital Signature,Key Encipherment",
+        // keyUsage:'Non-Repudiation',
+        buf << "keyUsage:'Non-Repudiation',";
+        buf << "validFrom: new Date(),"; // TODO: Date(YYYY,MM,DD,HH,mm,SS)
+        buf << "validTo: new Date()}],"; // TODO: Date(YYYY,MM,DD,HH,mm,SS)
+        buf << "returnCode:0})";
+
+        return buf.str();
+
+    // TODO: Return proper error code from plugin (when it's implemented)
+    )} catch(...) { return "({returnCode: 12})"; }
+}
+
+std::string esteidAPI::sign(std::string a, std::string b) {
+    m_signCallback = NULL;
+    m_hex = "";
+
+    if(!a.compare(MAGIC_ID)) { // Old Mozilla Plugin compat mode
+        startSign(b, std::string(COMPAT_URL));
+        m_UI->WaitForPinPrompt();
+        if(!m_hex.empty()) {
+            std::string rv = "({signature:'" + m_hex + "', returnCode: 0})";
+            return rv;
+        // TODO: Return proper error code from plugin (when it's implemented)
+        } else { return "({returnCode: 12})"; }
+    } else { // New plugin blocking API compatibility mode
+        startSign(a , b);
+        m_UI->WaitForPinPrompt();
+
+        if(!m_hex.empty()) return m_hex;
+        else throw FB::script_error(m_err);
+    }
+}
+#endif
 
 
 int esteidAPI::getPin2RetryCount() {

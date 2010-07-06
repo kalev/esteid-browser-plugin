@@ -27,18 +27,21 @@
 
 class MacUI : public PluginUI {
 public:
-    MacUI();
+    MacUI(FB::AutoPtr<UICallbacks>);
     virtual ~MacUI();
-	
-    virtual std::string PromptForSignPIN(std::string subject,
-										 std::string docUrl, std::string docHash,
-										 std::string pageUrl, int pinPadTimeout,
-										 bool retry, int tries);
+        
+    virtual void PromptForSignPIN(std::string subject,
+                                  std::string docUrl, std::string docHash,
+                                  std::string pageUrl, int pinPadTimeout,
+                                  bool retry, int tries);
     virtual void ClosePinPrompt();
+#ifdef SUPPORT_OLD_APIS
+    void WaitForPinPrompt();
+#endif
     virtual void ShowPinBlockedMessage(int pin);
-	virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
-	
-	static void SetWindow(void *window);
+    virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
+        
+    static void SetWindow(void *window);
 private:
     void *m_internal;
 };

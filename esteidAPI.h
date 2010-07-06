@@ -29,6 +29,9 @@
 #include "EstEIDService.h"
 #include "CallbackAPI.h"
 
+// FIXME: Find a sane way to deal with error messages
+#define CANCEL_MSG "User cancelled operation"
+
 class esteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
 {
 public:
@@ -71,12 +74,18 @@ public:
 
     void onPinEntered(std::string hash);
 
-   /**  Will fire event handlers
-   *        - CardInserted
-   *        - CardRemoved
-   *        - ReadersChanged
-   */
-   virtual void onMessage(EstEIDService::msgType, readerID);
+    /**  Will fire event handlers
+    *        - CardInserted
+    *        - CardRemoved
+    *        - ReadersChanged
+    */
+    virtual void onMessage(EstEIDService::msgType, readerID);
+
+#ifdef SUPPORT_OLD_APIS
+    std::string sign(std::string, std::string);
+    std::string getCertificates();
+#endif
+
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
@@ -115,11 +124,23 @@ private:
         esteidAPI &m_eidp;
     };
 
+    class UICallback : public PluginUI::UICallbacks {
+    public:
+        UICallback(esteidAPI &eidp) : m_eidp(eidp) { }
+        virtual void onPinEntered(std::string p) { m_eidp.onPinEntered(p); }
+        virtual void onPinCancelled() { m_eidp.returnSignFailure(CANCEL_MSG); }
+
+    private:
+        esteidAPI &m_eidp;
+    };
+    FB::AutoPtr<PluginUI::UICallbacks> m_uiCallback;
+
     std::string GetHostName(void);
     std::string GetPageURL(void);
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
     void promptForSignPIN(bool retrying = false);
+    void startSign(std::string hash, std::string url);
     int getPin2RetryCount();
     void ShowSettings(void);
     void DisplayNotification(std::string msg);
@@ -137,4 +158,9 @@ private:
     static std::vector<std::string> stringSplit(std::string str, std::string separator);
     static std::string iconvConvert(const std::string&, const char*, const char*);
     static std::string CP1252_to_UTF8(const std::string&);
+
+#ifdef SUPPORT_OLD_APIS
+    std::string m_hex;
+    std::string m_err; // FIXME: Remove when "real" lastError is implemented
+#endif
 };

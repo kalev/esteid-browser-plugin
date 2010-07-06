@@ -35,8 +35,8 @@
 #endif
 
 
-GtkUI::GtkUI(esteidAPI *esteidAPI)
-    : PluginUI(esteidAPI),
+GtkUI::GtkUI(FB::AutoPtr<UICallbacks> cb)
+    : PluginUI(cb),
       m_dialog_up(false)
 {
     ESTEID_DEBUG("GtkUI intialized");
@@ -66,7 +66,7 @@ GtkUI::~GtkUI()
 }
 
 
-std::string GtkUI::PromptForSignPIN(std::string subject,
+void GtkUI::PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
         std::string pageUrl, int pinPadTimeout, bool retry, int tries)
 {
@@ -75,7 +75,7 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
     if (m_dialog_up) {
         // Bring the window to the front
         m_pinInputDialog->present();
-        return "";
+        return;
     }
 
     m_pinInputDialog = new PinInputDialog(PIN2, subject);
@@ -83,15 +83,18 @@ std::string GtkUI::PromptForSignPIN(std::string subject,
         m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
                     &GtkUI::on_pininputdialog_response) );
     } else {
-        return "";
+        return;
     }
 
     m_pinInputDialog->show_all();
     m_dialog_up = true;
-
-    return "";
 }
 
+#ifdef SUPPORT_OLD_APIS
+void GtkUI::WaitForPinPrompt() {
+    if(m_dialog_up) m_pinInputDialog->run();
+}
+#endif
 
 void GtkUI::ClosePinPrompt()
 {
@@ -151,10 +154,11 @@ void GtkUI::on_pininputdialog_response(int response_id)
 
     if (response_id == Gtk::RESPONSE_OK) {
         pin = m_pinInputDialog->getPin();
-        m_esteidAPI->onPinEntered(pin);
+        m_callbacks->onPinEntered(pin);
         ESTEID_DEBUG("GtkUI::on_pininputdialog_response(): got PIN");
     } else {
         ESTEID_DEBUG("GtkUI::on_pininputdialog_response(): cancelled");
+        m_callbacks->onPinCancelled();
     }
 }
 
