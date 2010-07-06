@@ -213,11 +213,7 @@ void esteidAPI::CreateNotificationBar(void) {
 
 void esteidAPI::DisplayError(std::string msg) {
     try {
-        if(!m_barJSO) {
-            m_host->evaluateJavaScript(EstEIDNotificationBarScript);
-            m_barJSO = m_host->getDOMDocument()
-                       .getProperty<FB::JSObject>("EstEIDNotificationBar");
-        }
+        OpenNotificationBar();
         m_barJSO->Invoke("showError", FB::variant_list_of(msg));
     } catch(std::exception &e) {
         ESTEID_DEBUG("Unable to display error: %s", e.what());
