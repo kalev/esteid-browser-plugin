@@ -19,6 +19,7 @@ document.EstEIDNotificationBar = { \
     bar.style.left = '0px'; \
     bar.style.right = '0px'; \
     bar.style.padding = '3px'; \
+    bar.style.zIndex = '2147483647'; /* Make sure the bar is always on top */ \
     /* Create button bar div */ \
     var btnbar = document.createElement('div'); \
     btnbar.style.cssFloat = 'right'; \
