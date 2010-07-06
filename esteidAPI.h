@@ -144,6 +144,7 @@ private:
     int getPin2RetryCount();
     void ShowSettings(void);
     void DisplayNotification(std::string msg);
+    void DisplayError(std::string msg);
     void CreateNotificationBar(void);
     void OpenNotificationBar(void);
     void CloseNotificationBar(void);

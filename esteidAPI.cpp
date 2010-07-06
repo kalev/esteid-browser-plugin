@@ -211,6 +211,19 @@ void esteidAPI::CreateNotificationBar(void) {
                      FB::variant_list_of(MSG_SETTINGS)(m_settingsCallback));
 }
 
+void esteidAPI::DisplayError(std::string msg) {
+    try {
+        if(!m_barJSO) {
+            m_host->evaluateJavaScript(EstEIDNotificationBarScript);
+            m_barJSO = m_host->getDOMDocument()
+                       .getProperty<FB::JSObject>("EstEIDNotificationBar");
+        }
+        m_barJSO->Invoke("showError", FB::variant_list_of(msg));
+    } catch(std::exception &e) {
+        ESTEID_DEBUG("Unable to display error: %s", e.what());
+    }
+}
+
 void esteidAPI::DisplayNotification(std::string msg) {
     try {
         OpenNotificationBar();
@@ -429,9 +442,11 @@ void esteidAPI::returnSignFailure(const std::string& msg)
 
 #define MAGIC_ID "37337F4CF4CE"
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
+#define DEPRECATED_CALL DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\">here</a> for details.");
 
 std::string esteidAPI::getCertificates() {
     WHITELIST_REQUIRED;
+    DEPRECATED_CALL;
 
     try { RTERROR_TO_SCRIPT(
         ByteVec bv = m_service->getSignCert();
@@ -462,6 +477,9 @@ std::string esteidAPI::getCertificates() {
 }
 
 std::string esteidAPI::sign(std::string a, std::string b) {
+    WHITELIST_REQUIRED;
+    DEPRECATED_CALL;
+
     m_signCallback = NULL;
     m_hex = "";
 

@@ -7,12 +7,15 @@
 <body>
 <script src="EstEIDNotificationBar.js" type="text/javascript"></script>
 <script>
-  function ShowSettings() {
-    alert('Buu');
-    document.EstEIDNotificationBar.close();
-  }
+  var callback = {
+    handleEvent: function() {
+      alert('Buu');
+      document.EstEIDNotificationBar.close();
+      document.EstEIDNotificationBar.showError("Urror!");
+    }
+  };
   eval(EstEIDNotificationBarScript);
-  document.EstEIDNotificationBar.create("Settings", ShowSettings);
+  document.EstEIDNotificationBar.create("Settings", callback);
   document.EstEIDNotificationBar.show("Hee!");
 </script>
 <div>

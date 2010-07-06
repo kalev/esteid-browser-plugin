@@ -8,10 +8,7 @@
 
 EstEIDNotificationBarScript = "\
 document.EstEIDNotificationBar = { \
-  create: function(slabel, sl) { \
-    this.callBack = sl; \
-    /* Create notification bar div */ \
-    var bar = document.createElement('div'); \
+  barStyle: function(bar) { \
     bar.style.fontSize = '110%'; \
     bar.style.backgroundColor = '#ffff66'; \
     bar.style.position = 'fixed'; \
@@ -20,6 +17,17 @@ document.EstEIDNotificationBar = { \
     bar.style.right = '0px'; \
     bar.style.padding = '3px'; \
     bar.style.zIndex = '2147483647'; /* Make sure the bar is always on top */ \
+  }, \
+  addToBody: function(bar) { \
+      /* We can't inject divs into DOMDocument, we MUST find body tag */ \
+      var body = document.getElementsByTagName('body')[0]; \
+      return body.appendChild(bar); \
+  }, \
+  create: function(slabel, sl) { \
+    this.callBack = sl; \
+    /* Create notification bar div */ \
+    var bar = document.createElement('div'); \
+    this.barStyle(bar); \
     /* Create button bar div */ \
     var btnbar = document.createElement('div'); \
     btnbar.style.cssFloat = 'right'; \
@@ -47,14 +55,22 @@ document.EstEIDNotificationBar = { \
     var text = document.createElement('div'); \
     text.style.marginLeft = '2em'; \
     this.textDiv = bar.appendChild(text); \
-    /* We can't inject divs into DOMDocument, we MUST find body tag */ \
-    var body = document.getElementsByTagName('body')[0]; \
-    this.barDiv = body.appendChild(bar); \
+    this.barDiv = this.addToBody(bar); \
   }, \
   show: function(msg) { \
     if(!this.barDiv) create(); \
     this.textDiv.innerHTML = msg; \
     this.barDiv.style.display = 'block'; \
+  }, \
+  showError: function(msg) { \
+    if(!this.errDiv) { \
+      /* Create div */ \
+      var bar = document.createElement('div'); \
+      this.barStyle(bar); \
+      bar.style.backgroundColor = '#ff6666'; \
+      this.errDiv = this.addToBody(bar); \
+    } \
+    this.errDiv.innerHTML = msg; \
   }, \
   settings: function(e) { \
     document.EstEIDNotificationBar.callBack.handleEvent(e); \
@@ -64,6 +80,7 @@ document.EstEIDNotificationBar = { \
   }, \
   barDiv: null, \
   textDiv: null, \
+  errDiv: null, \
   callBack: null, \
   settingsBtn: null \
 };\
