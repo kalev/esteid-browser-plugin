@@ -547,8 +547,6 @@ void esteidAPI::prepare(std::string onSuccess, std::string onCancel,
     WHITELIST_REQUIRED;
     DEPRECATED_CALL;
 
-    printf("prepare('%s', '%s', '%s')\n", onSuccess.c_str(), onCancel.c_str(), onError.c_str());
-
     try {
         ByteVec bv = m_service->getSignCert();
         std::ostringstream buf;
@@ -566,8 +564,6 @@ void esteidAPI::finalize(std::string slot, std::string hash,
     std::string onSuccess, std::string onCancel, std::string onError) {
     WHITELIST_REQUIRED;
     DEPRECATED_CALL;
-
-    printf("finalize('%s', '%s', '%s', '%s', '%s')\n", slot.c_str(), hash.c_str(), onSuccess.c_str(), onCancel.c_str(), onError.c_str());
 
     /* FIXME: The original API is non-blocking, but the callbacks
        are so braindead (callback function name is passed as a string)
