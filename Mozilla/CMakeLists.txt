@@ -15,6 +15,7 @@ add_custom_target(xpi-stage
 
     COMMAND ${RMDIR} ${XPI_STAGE_DIR}
     COMMAND ${CPDIR} ${CMAKE_CURRENT_SOURCE_DIR}/chrome ${XPI_STAGE_DIR}/chrome
+    COMMAND ${CPDIR} ${CMAKE_CURRENT_SOURCE_DIR}/components ${XPI_STAGE_DIR}/components
     COMMAND ${CP}    ${CMAKE_CURRENT_SOURCE_DIR}/chrome.manifest ${XPI_STAGE_DIR}
     COMMAND ${CP}    ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${XPI_STAGE_DIR}
     VERBATIM

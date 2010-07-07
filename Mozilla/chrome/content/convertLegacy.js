@@ -13,7 +13,6 @@ function esteidConvertObject(o, doc) {
     e.style.height = '1px';
 
     e = p.appendChild(e);
-    e = doc.getElementById(id);
 }
 
 function esteidConvertLegacy(doc) {
