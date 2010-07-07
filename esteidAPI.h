@@ -84,6 +84,9 @@ public:
 #ifdef SUPPORT_OLD_APIS
     std::string sign(std::string, std::string);
     std::string getCertificates();
+    std::string getInfo();
+    std::string getSigningCertificate();
+    std::string getSignedHash(std::string hash, int slot);
 #endif
 
 

@@ -119,6 +119,9 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
 #ifdef SUPPORT_OLD_APIS
     REGISTER_METHOD(getCertificates);
     REGISTER_METHOD(sign);
+    REGISTER_METHOD(getInfo);
+    REGISTER_METHOD(getSigningCertificate);
+    REGISTER_METHOD(getSignedHash);
 #endif
 
     m_pageURL = GetPageURL();
@@ -494,6 +497,40 @@ std::string esteidAPI::sign(std::string a, std::string b) {
         if(!m_hex.empty()) return m_hex;
         else throw FB::script_error(m_err);
     }
+}
+
+std::string esteidAPI::getInfo() {
+    DEPRECATED_CALL;
+
+    return getVersion();
+}
+
+std::string esteidAPI::getSigningCertificate() {
+    WHITELIST_REQUIRED;
+    DEPRECATED_CALL;
+
+    try {
+        ByteVec bv = m_service->getSignCert();
+        std::ostringstream buf;
+
+        for(ByteVec::const_iterator it = bv.begin(); it!=bv.end();it++)
+            buf << std::setfill('0') << std::setw(2) << std::hex << (short)*it;
+
+        return buf.str();
+    } catch(...) { return ""; } // This API returns nothing on Error
+}
+
+std::string esteidAPI::getSignedHash(std::string hash, int slot) {
+    WHITELIST_REQUIRED;
+    DEPRECATED_CALL;
+
+    m_signCallback = NULL;
+    m_hex = "";
+
+    startSign(hash, std::string(COMPAT_URL));
+    m_UI->WaitForPinPrompt();
+
+    return m_hex; // This API returns nothing on error
 }
 #endif
 
