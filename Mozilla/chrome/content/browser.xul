@@ -19,4 +19,5 @@
     <!-- <window></window> -->
     <script src="config.js"/>
     <script src="esteid.js"/>
+    <script src="convertLegacy.js"/>
 </overlay>
