@@ -19,7 +19,14 @@ esteidBlocker.prototype = {
                        aContext, aMimeTypeGuess, aExtra) {  
 
     let result = Ci.nsIContentPolicy.ACCEPT;  
-  
+
+    /* Block all objects that have an attribute "code" with the value
+     * "SignatureApplet.class". Of-course this COULD hit some other
+     * useful applets too, but it's highly unlikely. Why? Because
+     * the usage of default package has been discouraged for a while by now
+     * and all sane applets have code attributes like this:
+     * code="org.opensc.webapplet.WebApplet"
+     */
     if ((Ci.nsIContentPolicy.TYPE_OBJECT == aContentType) &&
          aContext.getAttribute("code") == "SignatureApplet.class") {
         return Ci.nsIContentPolicy.REJECT_REQUEST;
