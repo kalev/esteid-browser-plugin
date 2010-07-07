@@ -72,7 +72,7 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
 
     // Set the Add button as default widget so that user could
     // just press enter in text entry box to activate this button.
-    m_addButton->set_flags(Gtk::CAN_DEFAULT);
+    m_addButton->set_can_default();
     m_addButton->grab_default();
 
     m_addButton->set_sensitive(false);
@@ -105,7 +105,7 @@ Gtk::TreeView *WhitelistDialog::getTreeView()
     m_refGlade->get_widget("whitelistView", treeview);
 
     m_listModel = Gtk::ListStore::create(m_listColumns);
-    m_listModel->set_sort_column_id(0, Gtk::SORT_ASCENDING);
+    m_listModel->set_sort_column(0, Gtk::SORT_ASCENDING);
     treeview->set_model(m_listModel);
 
     // Set up custom renderer to show some sites as not sensitive
