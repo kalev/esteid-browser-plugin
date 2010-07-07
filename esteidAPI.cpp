@@ -122,6 +122,9 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_METHOD(getInfo);
     REGISTER_METHOD(getSigningCertificate);
     REGISTER_METHOD(getSignedHash);
+    REGISTER_RO_PROPERTY(selectedCertNumber);
+    REGISTER_METHOD(prepare);
+    REGISTER_METHOD(finalize);
 #endif
 
     m_pageURL = GetPageURL();
@@ -520,7 +523,7 @@ std::string esteidAPI::getSigningCertificate() {
     } catch(...) { return ""; } // This API returns nothing on Error
 }
 
-std::string esteidAPI::getSignedHash(std::string hash, size_t slot) {
+std::string esteidAPI::getSignedHash(std::string hash, std::string slot) {
     WHITELIST_REQUIRED;
     DEPRECATED_CALL;
 
@@ -532,8 +535,56 @@ std::string esteidAPI::getSignedHash(std::string hash, size_t slot) {
 
     return m_hex; // This API returns nothing on error
 }
-#endif
 
+std::string esteidAPI::get_selectedCertNumber() {
+    DEPRECATED_CALL;
+
+    return "10"; // Dummy number
+}
+
+void esteidAPI::prepare(std::string onSuccess, std::string onCancel,
+    std::string onError) {
+    WHITELIST_REQUIRED;
+    DEPRECATED_CALL;
+
+    printf("prepare('%s', '%s', '%s')\n", onSuccess.c_str(), onCancel.c_str(), onError.c_str());
+
+    try {
+        ByteVec bv = m_service->getSignCert();
+        std::ostringstream buf;
+
+        for(ByteVec::const_iterator it = bv.begin(); it!=bv.end();it++)
+            buf << std::setfill('0') << std::setw(2) << std::hex << (short)*it;
+
+        m_host->evaluateJavaScript(onSuccess + "(10, '" + buf.str() + "');");
+    } catch(std::runtime_error &e) {
+        m_host->evaluateJavaScript(onError + "(12, '" + e.what() + "');");
+    }
+}
+
+void esteidAPI::finalize(std::string slot, std::string hash,
+    std::string onSuccess, std::string onCancel, std::string onError) {
+    WHITELIST_REQUIRED;
+    DEPRECATED_CALL;
+
+    printf("finalize('%s', '%s', '%s', '%s', '%s')\n", slot.c_str(), hash.c_str(), onSuccess.c_str(), onCancel.c_str(), onError.c_str());
+
+    /* FIXME: The original API is non-blocking, but the callbacks
+       are so braindead (callback function name is passed as a string)
+       so we implement the compatibility version as a blocking call for now */
+
+    m_signCallback = NULL;
+    m_hex = "";
+
+    startSign(hash, std::string(COMPAT_URL));
+    m_UI->WaitForPinPrompt();
+
+    if(!m_hex.empty())
+        m_host->evaluateJavaScript(onSuccess + "('" + m_hex + "');");
+    else
+        m_host->evaluateJavaScript(onCancel + "();");
+}
+#endif
 
 int esteidAPI::getPin2RetryCount() {
     try {
