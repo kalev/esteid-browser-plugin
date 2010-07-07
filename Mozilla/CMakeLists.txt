@@ -31,3 +31,15 @@ add_custom_target(zip-xpi ALL
     VERBATIM
 )
 add_dependencies(zip-xpi xpi-stage)
+
+add_custom_target(runff
+        DEPENDS run-in-ff.sh
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/run-in-ff.sh ${XPI_OUT} "${BIN_DIR}/${PLUGIN_NAME}"
+)
+add_dependencies(runff zip-xpi)
+
+add_custom_target(runtb
+        DEPENDS run-in-tb.sh
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/run-in-tb.sh ${XPI_OUT} "${BIN_DIR}/${PLUGIN_NAME}"
+)
+add_dependencies(runtb zip-xpi)
