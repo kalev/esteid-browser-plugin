@@ -520,7 +520,7 @@ std::string esteidAPI::getSigningCertificate() {
     } catch(...) { return ""; } // This API returns nothing on Error
 }
 
-std::string esteidAPI::getSignedHash(std::string hash, int slot) {
+std::string esteidAPI::getSignedHash(std::string hash, size_t slot) {
     WHITELIST_REQUIRED;
     DEPRECATED_CALL;
 

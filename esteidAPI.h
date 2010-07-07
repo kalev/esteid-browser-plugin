@@ -86,7 +86,7 @@ public:
     std::string getCertificates();
     std::string getInfo();
     std::string getSigningCertificate();
-    std::string getSignedHash(std::string hash, int slot);
+    std::string getSignedHash(std::string hash, size_t slot);
 #endif
 
 
