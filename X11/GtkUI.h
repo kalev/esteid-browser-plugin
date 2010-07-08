@@ -26,7 +26,6 @@
 class PinInputDialog;
 class WhitelistDialog;
 class PluginSettings;
-class esteidAPI;
 
 class GtkUI : public PluginUI {
 public:

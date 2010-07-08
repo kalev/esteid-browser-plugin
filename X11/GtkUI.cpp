@@ -26,7 +26,6 @@
 #include "X11/pininputdialog.h"
 #include "X11/PluginWindowX11.h"
 #include "X11/whitelistdialog.h"
-#include "esteidAPI.h"
 
 #include "debug.h"
 
