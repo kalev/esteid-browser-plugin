@@ -28,28 +28,31 @@ enum PinType { PIN1, PIN2 };
 class PinInputDialog : public Gtk::Dialog
 {
 public:
-    PinInputDialog(PinType pinType = PIN2, const std::string& name = "ID-kaart");
+    PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
     virtual ~PinInputDialog();
-    void setMinPinLength(int len);
-    void setText(std::string text);
+
+    void setSubject(const std::string& subject);
+    void setUrl(const std::string& url);
+    void setHash(const std::string& hash);
+    void setPinPadTimeout(int timeout);
+    void setRetry(bool retry);
+    void setTries(int tries);
     std::string getPin();
+    void clearPin();
 
 protected:
     // Signal handlers:
-    void on_button_more_info_clicked();
-    void on_button_cancel_clicked();
-    void on_button_ok_clicked();
     void on_pin_changed();
 
+    Glib::RefPtr<Gtk::Builder> m_refGlade;
+
     // Child widgets:
-    Gtk::HButtonBox m_buttonBox;
-    Gtk::Alignment m_leftAlign;
-    Gtk::Alignment m_rightAlign;
-    Gtk::Button m_moreInfoButton;
-    Gtk::Button m_cancelButton;
-    Gtk::Button m_okButton;
-    Gtk::Entry m_entry;
-    Gtk::Label m_label;
+    Gtk::Button *m_okButton;
+    Gtk::Entry *m_entry;
+    Gtk::Label *m_label;
+    Gtk::Label *m_warningLabel;
+    Gtk::Label *m_url;
+    Gtk::Label *m_hash;
 
     int m_minPinLength;
 };

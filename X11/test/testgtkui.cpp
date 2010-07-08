@@ -54,8 +54,17 @@ TestGtkUI::TestGtkUI()
         std::cerr << ex.what() << std::endl;
         exit(1);
     }
-
     refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
+
+    Glib::RefPtr<Gtk::Builder> refGlade2 = Gtk::Builder::create();
+    // Load the GtkBuilder file
+    try {
+        refGlade2->add_from_file(PININPUTDIALOG_UI);
+    } catch(const Glib::Error& ex) {
+        std::cerr << ex.what() << std::endl;
+        exit(1);
+    }
+    refGlade2->get_widget_derived("PinInputDialog", m_pinInputDialog);
 
     // Insert dummy sites
     std::vector<std::string> sv;
@@ -94,31 +103,29 @@ void TestGtkUI::on_button_pinBlocked_clicked()
 
 void TestGtkUI::on_button_pinInput_clicked()
 {
-    PinInputDialog dialog(PIN1, "Mari-Liis Männik");
-
-    int result = dialog.run();
+    int result = m_pinInputDialog->run();
 
     //Handle the response:
     switch (result) {
     case Gtk::RESPONSE_OK:
         std::cout << "X: OK clicked." << std::endl;
-        std::cout << "X: PIN is " << dialog.getPin() << std::endl;
+        std::cout << "X: PIN is " << m_pinInputDialog->getPin() << std::endl;
         break;
     case Gtk::RESPONSE_CANCEL:
         std::cout << "X: Cancel clicked." << std::endl;
-        std::cout << "X: PIN is " << dialog.getPin() << std::endl;
+        std::cout << "X: PIN is " << m_pinInputDialog->getPin() << std::endl;
         break;
     case Gtk::RESPONSE_CLOSE:
         std::cout << "X: Close clicked." << std::endl;
-        std::cout << "X: PIN is " << dialog.getPin() << std::endl;
+        std::cout << "X: PIN is " << m_pinInputDialog->getPin() << std::endl;
         break;
     case Gtk::RESPONSE_DELETE_EVENT:
         std::cout << "X: DELETE_EVENT" << std::endl;
-        std::cout << "X: PIN is " << dialog.getPin() << std::endl;
+        std::cout << "X: PIN is " << m_pinInputDialog->getPin() << std::endl;
         break;
     default:
         std::cout << "X: Unexpected button clicked." << std::endl;
-        std::cout << "X: PIN is " << dialog.getPin() << std::endl;
+        std::cout << "X: PIN is " << m_pinInputDialog->getPin() << std::endl;
         break;
     }
 }

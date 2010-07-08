@@ -34,6 +34,10 @@
 #define WHITELISTDIALOG_UI "whitelistdialog.ui"
 #endif
 
+#ifndef PININPUTDIALOG_UI
+#define PININPUTDIALOG_UI "pininputdialog.ui"
+#endif
+
 
 GtkUI::GtkUI(FB::AutoPtr<UICallbacks> cb)
     : PluginUI(cb),
@@ -50,9 +54,22 @@ GtkUI::GtkUI(FB::AutoPtr<UICallbacks> cb)
     } catch(const Glib::Error& ex) {
         std::cerr << ex.what() << std::endl;
     }
-
     refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
 
+    Glib::RefPtr<Gtk::Builder> refGlade2 = Gtk::Builder::create();
+    // Load the GtkBuilder file
+    try {
+        refGlade2->add_from_file(PININPUTDIALOG_UI);
+    } catch(const Glib::Error& ex) {
+        std::cerr << ex.what() << std::endl;
+    }
+    refGlade2->get_widget_derived("PinInputDialog", m_pinInputDialog);
+
+    // connect signals
+    if (m_pinInputDialog) {
+        m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
+                    &GtkUI::on_pininputdialog_response) );
+    }
     if (m_whitelistDialog) {
         m_whitelistDialog->signal_response().connect( sigc::mem_fun(*this,
                     &GtkUI::on_whitelistdialog_response) );
@@ -72,21 +89,23 @@ void GtkUI::PromptForSignPIN(std::string subject,
 {
     ESTEID_DEBUG("GtkUI::PromptForSignPIN()");
 
+    if (!m_pinInputDialog)
+        return;
+
     if (m_dialog_up) {
         // Bring the window to the front
         m_pinInputDialog->present();
         return;
     }
 
-    m_pinInputDialog = new PinInputDialog(PIN2, subject);
-    if (m_pinInputDialog) {
-        m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
-                    &GtkUI::on_pininputdialog_response) );
-    } else {
-        return;
-    }
+    m_pinInputDialog->setSubject(subject);
+    m_pinInputDialog->setUrl(docUrl);
+    m_pinInputDialog->setHash(docHash);
+    m_pinInputDialog->setPinPadTimeout(pinPadTimeout);
+    m_pinInputDialog->setRetry(retry);
+    m_pinInputDialog->setTries(tries);
 
-    m_pinInputDialog->show_all();
+    m_pinInputDialog->show();
     m_dialog_up = true;
 }
 
@@ -160,6 +179,9 @@ void GtkUI::on_pininputdialog_response(int response_id)
         ESTEID_DEBUG("GtkUI::on_pininputdialog_response(): cancelled");
         m_callbacks->onPinCancelled();
     }
+
+    // make sure the dialog doesn't cache PIN
+    m_pinInputDialog->clearPin();
 }
 
 

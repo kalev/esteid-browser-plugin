@@ -23,6 +23,7 @@
 
 #include <gtkmm.h>
 
+#include "X11/pininputdialog.h"
 #include "X11/whitelistdialog.h"
 
 class TestGtkUI : public Gtk::Window
@@ -43,6 +44,7 @@ protected:
     Gtk::Button m_pinInputButton;
     Gtk::Button m_whitelistButton;
 
+    PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
 };
 
