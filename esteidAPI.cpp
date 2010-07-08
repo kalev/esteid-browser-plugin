@@ -494,7 +494,7 @@ std::string esteidAPI::sign(std::string a, std::string b) {
         // TODO: Return proper error code from plugin (when it's implemented)
         } else { return "({returnCode: 12})"; }
     } else { // New plugin blocking API compatibility mode
-        startSign(a , b);
+        startSign(a , (b.empty()) ? std::string(COMPAT_URL) : b);
         m_UI->WaitForPinPrompt();
 
         if(!m_hex.empty()) return m_hex;
