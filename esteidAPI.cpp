@@ -444,7 +444,7 @@ void esteidAPI::returnSignFailure(const std::string& msg)
 
 #define MAGIC_ID "37337F4CF4CE"
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
-#define DEPRECATED_CALL DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\">here</a> for details.");
+#define DEPRECATED_CALL DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
 
 std::string esteidAPI::getCertificates() {
     WHITELIST_REQUIRED;

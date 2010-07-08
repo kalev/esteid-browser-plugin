@@ -11,7 +11,8 @@ document.EstEIDNotificationBar = { \
   makeBar: function(color, slabel) { \
     /* Create notification bar div */ \
     var bar = document.createElement('div'); \
-    bar.style.fontSize = '110%'; \
+    bar.style.fontSize = '16px'; \
+    bar.style.color = 'black'; \
     bar.style.backgroundColor = color; \
     bar.style.position = 'fixed'; \
     bar.style.top = '0px'; \
