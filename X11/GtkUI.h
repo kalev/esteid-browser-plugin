@@ -35,8 +35,7 @@ public:
 
     void PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
-        std::string pageUrl, int pinPadTimeout,
-        bool retry, int tries);
+        int pinPadTimeout, bool retry, int tries);
     void ClosePinPrompt();
 #ifdef SUPPORT_OLD_APIS
     void WaitForPinPrompt();

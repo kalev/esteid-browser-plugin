@@ -43,7 +43,7 @@ WindowsUI::~WindowsUI()
 
 std::string WindowsUI::PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
-        std::string pageUrl, int pinPadTimeout, bool retry, int tries)
+        int pinPadTimeout, bool retry, int tries)
 {
     ESTEID_DEBUG("WindowsUI::PromptForSignPIN()");
 

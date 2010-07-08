@@ -68,7 +68,7 @@ GtkUI::~GtkUI()
 
 void GtkUI::PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
-        std::string pageUrl, int pinPadTimeout, bool retry, int tries)
+        int pinPadTimeout, bool retry, int tries)
 {
     ESTEID_DEBUG("GtkUI::PromptForSignPIN()");
 

@@ -365,7 +365,7 @@ void esteidAPI::promptForSignPIN(bool retrying)
         return;
     }
 
-    m_UI->PromptForSignPIN(m_subject, m_url, m_hash, "" /*pageUrl*/,
+    m_UI->PromptForSignPIN(m_subject, m_url, m_hash,
                            pinpad, retrying, triesLeft);
 }
 

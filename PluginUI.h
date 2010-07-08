@@ -48,8 +48,7 @@ public:
     /** Prompt for Signature PIN */
     virtual void PromptForSignPIN(std::string subject,
         std::string docUrl, std::string docHash,
-        std::string pageUrl, int pinPadTimeout,
-        bool retry, int tries) = 0;
+        int pinPadTimeout, bool retry, int tries) = 0;
 
     /** Close Signature PIN prompt (used when user hits cancel on pinpad) */
     virtual void ClosePinPrompt() = 0;
