@@ -41,7 +41,7 @@ WindowsUI::~WindowsUI()
 }
 
 
-std::string WindowsUI::PromptForSignPIN(const std::string& subject,
+void WindowsUI::PromptForSignPIN(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
 {

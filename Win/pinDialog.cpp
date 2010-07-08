@@ -268,14 +268,14 @@ bool pinDialogPriv::doDialog() {
 
 #endif
 
-pinDialog::pinDialog(const void * opsysParam,std::string prompt,esteidAPI *esteidAPI) : m_minLen(4),
+pinDialog::pinDialog(const void * opsysParam,std::string prompt,FB::AutoPtr<PluginUI::UICallbacks> cb) : m_minLen(4),
 	m_key((EstEidCard::KeyType)0) {
-	d = new pinDialogPriv(*this,opsysParam,esteidAPI);
+	d = new pinDialogPriv(*this,opsysParam,cb);
 	m_prompt = prompt;
 	}
 
-pinDialog::pinDialog(const void * opsysParam,EstEidCard::KeyType key, esteidAPI *esteidAPI) : m_key(key) {
-	d = new pinDialogPriv(*this,opsysParam,esteidAPI);
+pinDialog::pinDialog(const void * opsysParam,EstEidCard::KeyType key,FB::AutoPtr<PluginUI::UICallbacks> cb) : m_key(key) {
+	d = new pinDialogPriv(*this,opsysParam,cb);
 	if (m_key == EstEidCard::AUTH) {
 		m_prompt = "Enter ID-card (PIN1)";
 		m_minLen = 4;

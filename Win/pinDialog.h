@@ -11,9 +11,9 @@
 struct pinDialogPriv;
 #include <smartcardpp/esteid/EstEidCard.h>
 #include "pinDialog_res.h"
+#include "PluginUI.h"
 
 class mutexObj;
-class esteidAPI;
 
 class pinOpInterface
 {
@@ -38,8 +38,8 @@ protected:
 	friend struct pinDialogPriv;
 public:
 	EstEidCard::KeyType keyType() { return m_key; }
-	pinDialog(const void * opsysParam,std::string prompt,esteidAPI *esteidAPI = 0);
-	pinDialog(const void * opsysParam,EstEidCard::KeyType key,esteidAPI *esteidAPI = 0);
+	pinDialog(const void * opsysParam,std::string prompt,FB::AutoPtr<PluginUI::UICallbacks> cb);
+	pinDialog(const void * opsysParam,EstEidCard::KeyType key,FB::AutoPtr<PluginUI::UICallbacks> cb);
 	~pinDialog();
 	bool doDialog();
 	bool showPrompt(std::string,bool allowRetry = false);
