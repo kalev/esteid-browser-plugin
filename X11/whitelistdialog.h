@@ -36,6 +36,7 @@ public:
     void addSite(const std::string & site, bool defaultSite = false);
     void addDefaultSite(const std::string & site);
     void setEntryText(const std::string & site);
+    void clear();
 
     // Call this to retrieve modified whitelist
     std::vector<std::string> getWhitelist();

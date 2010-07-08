@@ -161,6 +161,12 @@ void WhitelistDialog::setEntryText(const std::string & site)
 }
 
 
+void WhitelistDialog::clear()
+{
+    m_listModel->clear();
+}
+
+
 void WhitelistDialog::on_entry_changed()
 {
     m_addButton->set_sensitive(m_entry->get_text_length() > 0);
