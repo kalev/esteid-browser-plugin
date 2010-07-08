@@ -37,14 +37,14 @@ public:
     WindowsUI(FB::AutoPtr<UICallbacks>);
     virtual ~WindowsUI();
 
-    void PromptForSignPIN(std::string subject,
-        std::string docUrl, std::string docHash,
+    void PromptForSignPIN(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries);
     void ClosePinPrompt();
 #ifdef SUPPORT_OLD_APIS
     void WaitForPinPrompt();
 #endif
-    void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
+    void ShowSettings(PluginSettings& conf, const std::string& pageUrl = "");
     void ShowPinBlockedMessage(int pin);
 
 protected:

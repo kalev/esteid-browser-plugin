@@ -83,8 +83,8 @@ GtkUI::~GtkUI()
 }
 
 
-void GtkUI::PromptForSignPIN(std::string subject,
-        std::string docUrl, std::string docHash,
+void GtkUI::PromptForSignPIN(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
 {
     ESTEID_DEBUG("GtkUI::PromptForSignPIN()");
@@ -136,7 +136,7 @@ void GtkUI::ShowPinBlockedMessage(int pin)
 }
 
 
-void GtkUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
+void GtkUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 {
     ESTEID_DEBUG("GtkUI::ShowSettings()");
 

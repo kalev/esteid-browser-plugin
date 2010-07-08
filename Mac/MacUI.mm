@@ -61,9 +61,9 @@ MacUI::~MacUI()
     ESTEID_DEBUG("~MacUI()");
 }
 
-std::string MacUI::PromptForSignPIN(std::string subject,
-                                        std::string docUrl, std::string docHash,
-                                        int pinPadTimeout, bool retry, int tries)
+std::string MacUI::PromptForSignPIN(const std::string& subject,
+                                    const std::string& docUrl, const std::string& docHash,
+                                    int pinPadTimeout, bool retry, int tries)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     std::string pin = "";
@@ -119,7 +119,7 @@ void MacUI::ShowPinBlockedMessage(int pin)
     [pool release];
 }
 
-void MacUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
+void MacUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     

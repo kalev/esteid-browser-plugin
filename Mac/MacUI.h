@@ -30,15 +30,15 @@ public:
     MacUI(FB::AutoPtr<UICallbacks>);
     virtual ~MacUI();
         
-    virtual void PromptForSignPIN(std::string subject,
-                                  std::string docUrl, std::string docHash,
+    virtual void PromptForSignPIN(const std::string& subject,
+                                  const std::string& docUrl, const std::string& docHash,
                                   int pinPadTimeout, bool retry, int tries);
     virtual void ClosePinPrompt();
 #ifdef SUPPORT_OLD_APIS
     void WaitForPinPrompt();
 #endif
     virtual void ShowPinBlockedMessage(int pin);
-    virtual void ShowSettings(PluginSettings &conf, std::string pageUrl = "");
+    virtual void ShowSettings(PluginSettings& conf, const std::string& pageUrl = "");
         
     static void SetWindow(void *window);
 private:

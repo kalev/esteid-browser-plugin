@@ -41,8 +41,8 @@ WindowsUI::~WindowsUI()
 }
 
 
-std::string WindowsUI::PromptForSignPIN(std::string subject,
-        std::string docUrl, std::string docHash,
+std::string WindowsUI::PromptForSignPIN(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
 {
     ESTEID_DEBUG("WindowsUI::PromptForSignPIN()");
@@ -77,7 +77,7 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 }
 
 
-void WindowsUI::ShowSettings(PluginSettings &conf, std::string pageUrl)
+void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 {
     ESTEID_DEBUG("WindowsUI::ShowSettings()");
 

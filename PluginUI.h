@@ -34,7 +34,7 @@ class PluginUI
 public:
     class UICallbacks {
     public:
-        virtual void onPinEntered(std::string pin) = 0;
+        virtual void onPinEntered(const std::string& pin) = 0;
         virtual void onPinCancelled() = 0;
 
         // Support Reference counting
@@ -46,8 +46,8 @@ public:
     };
 
     /** Prompt for Signature PIN */
-    virtual void PromptForSignPIN(std::string subject,
-        std::string docUrl, std::string docHash,
+    virtual void PromptForSignPIN(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries) = 0;
 
     /** Close Signature PIN prompt (used when user hits cancel on pinpad) */
@@ -62,8 +62,8 @@ public:
     virtual void ShowPinBlockedMessage(int pin) = 0;
 
     /** Open Settings dialog */
-    virtual void ShowSettings(PluginSettings &conf,
-                              std::string pageUrl = "") = 0;
+    virtual void ShowSettings(PluginSettings& conf,
+                              const std::string& pageUrl = "") = 0;
 
     PluginUI(FB::AutoPtr<UICallbacks>);
     virtual ~PluginUI(void);

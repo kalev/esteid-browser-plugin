@@ -133,7 +133,7 @@ private:
     class UICallback : public PluginUI::UICallbacks {
     public:
         UICallback(esteidAPI &eidp) : m_eidp(eidp) { }
-        virtual void onPinEntered(std::string p) { m_eidp.onPinEntered(p); }
+        virtual void onPinEntered(const std::string& p) { m_eidp.onPinEntered(p); }
         virtual void onPinCancelled() { m_eidp.returnSignFailure(CANCEL_MSG); }
 
     private:
