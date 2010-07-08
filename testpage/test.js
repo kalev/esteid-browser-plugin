@@ -172,7 +172,7 @@ function testPersonalData() {
 function testSign() {
     var e = document.getElementById("signCertStatus");
     var hash = document.getElementById("testhash").value;
-    var url = "https://id.smartlink.ee/plugin_tests/test.txt";
+    var url = "https://id.smartlink.ee/plugin_tests/test.ddoc";
 
     try {
         e.innerHTML = "Started signing";
