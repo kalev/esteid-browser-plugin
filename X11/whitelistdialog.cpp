@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <gtkmmconfig.h>
+
 #include "whitelistdialog.h"
 #include "debug.h"
 
@@ -72,7 +74,11 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
 
     // Set the Add button as default widget so that user could
     // just press enter in text entry box to activate this button.
+#if GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 20
+    m_addButton->set_flags(Gtk::CAN_DEFAULT);
+#else
     m_addButton->set_can_default();
+#endif
     m_addButton->grab_default();
 
     m_addButton->set_sensitive(false);
