@@ -34,6 +34,7 @@ class PluginUI
 public:
     class UICallbacks {
     public:
+        UICallbacks() : m_refCount(0) { }
         virtual void onPinEntered(const std::string& pin) = 0;
         virtual void onPinCancelled() = 0;
 
