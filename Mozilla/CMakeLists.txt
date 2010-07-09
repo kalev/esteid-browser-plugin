@@ -14,10 +14,14 @@ add_custom_target(xpi-stage
     COMMENT "Staging xpi content"
 
     COMMAND ${RMDIR} ${XPI_STAGE_DIR}
-    COMMAND ${CPDIR} ${CMAKE_CURRENT_SOURCE_DIR}/chrome ${XPI_STAGE_DIR}/chrome
-    COMMAND ${CPDIR} ${CMAKE_CURRENT_SOURCE_DIR}/components ${XPI_STAGE_DIR}/components
-    COMMAND ${CP}    ${CMAKE_CURRENT_SOURCE_DIR}/chrome.manifest ${XPI_STAGE_DIR}
+    COMMAND ${MKDIR} ${XPI_STAGE_DIR}
+
+    COMMAND ${CPDIR} chrome          ${XPI_STAGE_DIR}/chrome
+    COMMAND ${CPDIR} components      ${XPI_STAGE_DIR}/components
+    COMMAND ${CPDIR} defaults        ${XPI_STAGE_DIR}/defaults
+    COMMAND ${CP}    chrome.manifest ${XPI_STAGE_DIR}
     COMMAND ${CP}    ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${XPI_STAGE_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
 )
 
