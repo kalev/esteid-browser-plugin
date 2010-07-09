@@ -464,9 +464,7 @@ std::string esteidAPI::getCertificates() {
         buf << "',";
         buf << "CN:'" << cert.getSubjectCN() << "',";
         buf << "issuerCN:'" << cert.getIssuerCN() << "',";
-        // buf << "keyUsage:'" << cert.getKeyUsage() << "',";
-        // keyUsage:"Data Encipherment,Digital Signature,Key Encipherment",
-        // keyUsage:'Non-Repudiation',
+        // JS using this old API expects the exact string "Non-Repudiation"
         buf << "keyUsage:'Non-Repudiation',";
         buf << "validFrom: new Date(),"; // TODO: Date(YYYY,MM,DD,HH,mm,SS)
         buf << "validTo: new Date()}],"; // TODO: Date(YYYY,MM,DD,HH,mm,SS)

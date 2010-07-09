@@ -31,6 +31,7 @@
 #include <openssl/bio.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
+#include <openssl/x509v3.h>
 
 X509Certificate::X509Certificate(ByteVec bv) : m_cert(NULL) {
     if(bv.empty())
@@ -88,6 +89,24 @@ bool X509Certificate::isValid() {
 
     return X509_cmp_current_time(t1) < 0 && X509_cmp_current_time(t2) > 0;
 }
+
+std::string X509Certificate::getKeyUsage() {
+    int pos = X509_get_ext_by_NID(m_cert, NID_key_usage, -1);
+    if(pos < 0) THROW_API_ERROR("Failed to parse certificate");
+
+    X509_EXTENSION *keyUsage = X509_get_ext(m_cert, pos);
+    if(!keyUsage) THROW_API_ERROR("Failed to parse certificate");
+
+    char *data;
+    BIO *bio = BIO_new(BIO_s_mem());
+    X509V3_EXT_print(bio, keyUsage, 0, 0);
+    size_t len = BIO_get_mem_data(bio, &data);
+    std::string result(data, len);
+    BIO_free(bio);
+
+    return result;
+}
+
 std::string X509Certificate::X509TimeConvert(ASN1_TIME *date) {
     char *data;
     int len;

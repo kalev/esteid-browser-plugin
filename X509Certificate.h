@@ -42,6 +42,7 @@ public:
     std::string getIssuerCN();
     std::string getValidFrom();
     std::string getValidTo();
+    std::string getKeyUsage();
     std::string getPEM();
     long getSerial();
     bool isValid();

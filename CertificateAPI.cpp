@@ -61,7 +61,9 @@ std::string CertificateAPI::get_validTo() {
 std::string CertificateAPI::get_issuerCN() { 
     RTERROR_TO_SCRIPT(return m_cert.getIssuerCN());
 }
-std::string CertificateAPI::get_keyUsage() { return ""; } // FIXME: Implement
+std::string CertificateAPI::get_keyUsage() {
+    RTERROR_TO_SCRIPT(return m_cert.getKeyUsage());
+}
 std::string CertificateAPI::get_cert() {
     RTERROR_TO_SCRIPT(return m_cert.getPEM());
 }
