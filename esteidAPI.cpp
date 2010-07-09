@@ -315,8 +315,15 @@ void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject 
 }
 
 void esteidAPI::startSign(std::string hash, std::string url) {
+    std::string subjectRaw;
+
     /* Extract subject line from Certificate */
-    std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
+    try {
+        subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
+    } catch(const FB::script_error& e) {
+        returnSignFailure(e.what());
+        return;
+    }
 
     m_subject = subjectToHumanReadable(subjectRaw);
     m_hash = hash;

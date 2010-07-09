@@ -174,17 +174,12 @@ function testSign() {
     var hash = document.getElementById("testhash").value;
     var url = "https://id.smartlink.ee/plugin_tests/test.ddoc";
 
-    try {
-        e.innerHTML = "Started signing";
-        e.style.background = "";
-        esteid.signAsync(hash, url, {
-            onSuccess: function(hex) { signSuccess(hex); },
-            onError:   function(msg) { signFailure(msg); }
-        }); 
-    } catch(err) {
-        e.innerHTML = "Error: " + err.message;
-        e.style.background = bgerr;
-    }
+    e.innerHTML = "Started signing";
+    e.style.background = "";
+    esteid.signAsync(hash, url, {
+        onSuccess: function(hex) { signSuccess(hex); },
+        onError:   function(msg) { signFailure(msg); }
+    }); 
 }
 
 // Callback for returning signed hash
