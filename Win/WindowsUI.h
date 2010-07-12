@@ -34,7 +34,7 @@ struct pinDialogPriv_l {
 
 class WindowsUI : public PluginUI {
 public:
-    WindowsUI(FB::AutoPtr<UICallbacks>);
+    WindowsUI(boost::shared_ptr<UICallbacks>);
     virtual ~WindowsUI();
 
     void PromptForSignPIN(const std::string& subject,

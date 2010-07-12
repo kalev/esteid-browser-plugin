@@ -29,7 +29,7 @@
 
 #include "debug.h"
 
-WindowsUI::WindowsUI(FB::AutoPtr<UICallbacks> cb)
+WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
     : PluginUI(cb)
 {
     ESTEID_DEBUG("WindowsUI initialized");

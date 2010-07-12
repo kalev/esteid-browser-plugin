@@ -29,7 +29,7 @@ class PluginSettings;
 
 class GtkUI : public PluginUI {
 public:
-    GtkUI(FB::AutoPtr<UICallbacks>);
+    GtkUI(boost::shared_ptr<UICallbacks>);
     virtual ~GtkUI();
 
     void PromptForSignPIN(const std::string& subject,

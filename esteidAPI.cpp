@@ -133,14 +133,14 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     /* Use platform specific UI */
 #ifdef _WIN32
     ESTEID_DEBUG("Trying to load WindowsUI");
-    m_UI = new WindowsUI(m_uiCallback);
+    m_UI = boost::shared_ptr<PluginUI>(new WindowsUI(m_uiCallback));
 #else
 #ifdef __APPLE__
     ESTEID_DEBUG("Trying to load MacUI");
-    m_UI = new MacUI(m_uiCallback);
+    m_UI = boost::shared_ptr<PluginUI>(new MacUI(m_uiCallback));
 #else
     ESTEID_DEBUG("Trying to load GtkUI");
-    m_UI = new GtkUI(m_uiCallback);
+    m_UI = boost::shared_ptr<PluginUI>(new GtkUI(m_uiCallback));
 #endif
 #endif
 

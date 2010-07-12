@@ -95,7 +95,7 @@ public:
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
-    FB::AutoPtr<PluginUI> m_UI;
+    boost::shared_ptr<PluginUI> m_UI;
     FB::JSOutObject m_authCert;
     FB::JSOutObject m_signCert;
     FB::JSOutObject m_settingsCallback;
@@ -139,7 +139,7 @@ private:
     private:
         esteidAPI &m_eidp;
     };
-    FB::AutoPtr<PluginUI::UICallbacks> m_uiCallback;
+    boost::shared_ptr<PluginUI::UICallbacks> m_uiCallback;
 
     std::string GetHostName(void);
     std::string GetPageURL(void);

@@ -40,7 +40,7 @@ void MacUI::SetWindow(void *window)
 #endif
 }
 
-MacUI::MacUI(FB::AutoPtr<UICallbacks> cb) : PluginUI(cb)
+MacUI::MacUI(boost::shared_ptr<UICallbacks> cb) : PluginUI(cb)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     

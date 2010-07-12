@@ -44,8 +44,8 @@ struct pinDialogPriv {
 	HWND m_hwnd;
 	std::vector<char,locked_allocator < char > > m_buffer;
 	iconHandle *dlgIcon,*appIcon;
-	FB::AutoPtr<PluginUI::UICallbacks> m_callbacks;
-	pinDialogPriv(pinDialog &ref,const void * opsysParam,FB::AutoPtr<PluginUI::UICallbacks> cb) : 
+	boost::shared_ptr<PluginUI::UICallbacks> m_callbacks;
+	pinDialogPriv(pinDialog &ref,const void * opsysParam,boost::shared_ptr<PluginUI::UICallbacks> cb) : 
 		m_buffer(20,'0'),m_dlg(ref),m_callbacks(cb),dlgIcon(NULL),appIcon(NULL) {
 		params = *((pinDialogPriv_a*) opsysParam);
 		}
@@ -268,13 +268,13 @@ bool pinDialogPriv::doDialog() {
 
 #endif
 
-pinDialog::pinDialog(const void * opsysParam,std::string prompt,FB::AutoPtr<PluginUI::UICallbacks> cb) : m_minLen(4),
+pinDialog::pinDialog(const void * opsysParam,std::string prompt,boost::shared_ptr<PluginUI::UICallbacks> cb) : m_minLen(4),
 	m_key((EstEidCard::KeyType)0) {
 	d = new pinDialogPriv(*this,opsysParam,cb);
 	m_prompt = prompt;
 	}
 
-pinDialog::pinDialog(const void * opsysParam,EstEidCard::KeyType key,FB::AutoPtr<PluginUI::UICallbacks> cb) : m_key(key) {
+pinDialog::pinDialog(const void * opsysParam,EstEidCard::KeyType key,boost::shared_ptr<PluginUI::UICallbacks> cb) : m_key(key) {
 	d = new pinDialogPriv(*this,opsysParam,cb);
 	if (m_key == EstEidCard::AUTH) {
 		m_prompt = "Enter ID-card (PIN1)";

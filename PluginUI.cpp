@@ -20,42 +20,11 @@
 
 #include "PluginUI.h"
 
-PluginUI::PluginUI(FB::AutoPtr<UICallbacks> cb)
-    : m_refCount(0),
-      m_callbacks(cb)
+PluginUI::PluginUI(boost::shared_ptr<UICallbacks> cb)
+    : m_callbacks(cb)
 {
 }
 
 PluginUI::~PluginUI(void)
 {
-}
-
-void PluginUI::AddRef()
-{
-    ++m_refCount;
-}
-
-unsigned int PluginUI::Release()
-{
-    if (--m_refCount == 0) {
-        delete this;
-        return 0;
-    } else {
-        return m_refCount;
-    }
-}
-
-void PluginUI::UICallbacks::AddRef()
-{
-    ++m_refCount;
-}
-
-unsigned int PluginUI::UICallbacks::Release()
-{
-    if (--m_refCount == 0) {
-        delete this;
-        return 0;
-    } else {
-        return m_refCount;
-    }
 }

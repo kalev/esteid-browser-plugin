@@ -27,7 +27,7 @@
 
 class MacUI : public PluginUI {
 public:
-    MacUI(FB::AutoPtr<UICallbacks>);
+    MacUI(boost::shared_ptr<UICallbacks>);
     virtual ~MacUI();
         
     virtual void PromptForSignPIN(const std::string& subject,

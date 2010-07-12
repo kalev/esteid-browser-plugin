@@ -38,7 +38,7 @@
 #endif
 
 
-GtkUI::GtkUI(FB::AutoPtr<UICallbacks> cb)
+GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
     : PluginUI(cb),
       m_dialog_up(false)
 {

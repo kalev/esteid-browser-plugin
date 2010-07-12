@@ -22,7 +22,7 @@
 #define H_ESTEID_PLUGINUI
 
 #include <string>
-#include <AutoPtr.h>
+#include <boost/shared_ptr.hpp>
 #include "PluginSettings.h"
 
 // Forward declaration
@@ -34,16 +34,9 @@ class PluginUI
 public:
     class UICallbacks {
     public:
-        UICallbacks() : m_refCount(0) { }
+        UICallbacks() {}
         virtual void onPinEntered(const std::string& pin) = 0;
         virtual void onPinCancelled() = 0;
-
-        // Support Reference counting
-        void AddRef();
-        unsigned int Release();
-
-    protected:
-        unsigned int m_refCount;
     };
 
     /** Prompt for Signature PIN */
@@ -66,16 +59,11 @@ public:
     virtual void ShowSettings(PluginSettings& conf,
                               const std::string& pageUrl = "") = 0;
 
-    PluginUI(FB::AutoPtr<UICallbacks>);
+    PluginUI(boost::shared_ptr<UICallbacks>);
     virtual ~PluginUI(void);
 
-    // Support Reference counting
-    void AddRef();
-    unsigned int Release();
-
 protected:
-    unsigned int m_refCount;
-    FB::AutoPtr<UICallbacks> m_callbacks;
+    boost::shared_ptr<UICallbacks> m_callbacks;
 };
 
 #endif // H_ESTEID_PLUGINUI
