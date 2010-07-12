@@ -38,7 +38,7 @@ protected:
 	friend struct pinDialogPriv;
 public:
 	EstEidCard::KeyType keyType() { return m_key; }
-	pinDialog(const void * opsysParam,std::string prompt,boost::shared_ptr<PluginUI::UICallbacks> cb = shared_ptr<PluginUI::UICallbacks>());
+	pinDialog(const void * opsysParam,std::string prompt,boost::shared_ptr<PluginUI::UICallbacks> cb = boost::shared_ptr<PluginUI::UICallbacks>());
 	pinDialog(const void * opsysParam,EstEidCard::KeyType key,boost::shared_ptr<PluginUI::UICallbacks> cb);
 	~pinDialog();
 	bool doDialog();
