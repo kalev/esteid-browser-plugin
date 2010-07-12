@@ -28,7 +28,6 @@ add_definitions(
 
 if(BUILD_TESTGTKUI)
     set(testgtkui_SRCS
-        ${PLATFORM_NAME}/pinentry.cpp
         ${PLATFORM_NAME}/pininputdialog.cpp
         ${PLATFORM_NAME}/whitelistdialog.cpp
         ${PLATFORM_NAME}/test/main.cpp

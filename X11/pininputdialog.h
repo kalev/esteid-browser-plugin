@@ -23,8 +23,6 @@
 
 #include <gtkmm.h>
 
-class PinEntry;
-
 class PinInputDialog : public Gtk::Dialog
 {
 public:
@@ -48,7 +46,7 @@ protected:
 
     // Child widgets:
     Gtk::Button *m_okButton;
-    PinEntry *m_entry;
+    Gtk::Entry *m_entry;
     Gtk::Label *m_label;
     Gtk::Label *m_warningLabel;
     Gtk::Label *m_url;
