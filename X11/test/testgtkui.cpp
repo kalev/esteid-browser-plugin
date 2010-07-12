@@ -82,6 +82,8 @@ TestGtkUI::TestGtkUI()
 
 TestGtkUI::~TestGtkUI()
 {
+    delete m_whitelistDialog;
+    delete m_pinInputDialog;
 }
 
 

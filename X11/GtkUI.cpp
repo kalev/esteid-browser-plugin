@@ -79,6 +79,8 @@ GtkUI::GtkUI(FB::AutoPtr<UICallbacks> cb)
 GtkUI::~GtkUI()
 {
     ESTEID_DEBUG("~GtkUI()");
+    delete m_whitelistDialog;
+    delete m_pinInputDialog;
 }
 
 
