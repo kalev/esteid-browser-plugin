@@ -104,7 +104,7 @@ Gtk::TreeView *WhitelistDialog::getTreeView()
     treeview->set_model(m_listModel);
 
     // Set up custom renderer to show some sites as not sensitive
-    renderer = new Gtk::CellRendererText();
+    renderer = manage(new Gtk::CellRendererText());
     treeview->append_column("Sites", *renderer);
     col0 = treeview->get_column(0);
     col0->add_attribute(*renderer, "text", 0);
