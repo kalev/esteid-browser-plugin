@@ -19,6 +19,7 @@
  */
 
 #include "pininputdialog.h"
+#include "pinentry.h"
 #include <cassert>
 #include <sstream>
 #include <gtkmm.h>
@@ -41,7 +42,7 @@ PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::
 {
     // Get the Glade-instantiated widgets
     m_refGlade->get_widget("okButton", m_okButton);
-    m_refGlade->get_widget("pin_entry", m_entry);
+    m_refGlade->get_widget_derived("pin_entry", m_entry);
     m_refGlade->get_widget("subject_label", m_label);
     m_refGlade->get_widget("warning_label", m_warningLabel);
     m_refGlade->get_widget("url_value", m_url);

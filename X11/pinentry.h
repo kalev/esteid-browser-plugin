@@ -18,43 +18,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ESTEID_PININPUTDIALOG_H
-#define ESTEID_PININPUTDIALOG_H
+#ifndef ESTEID_PINENTRY_H
+#define ESTEID_PINENTRY_H
 
 #include <gtkmm.h>
 
-class PinEntry;
 
-class PinInputDialog : public Gtk::Dialog
+class PinEntry : public Gtk::Entry
 {
 public:
-    PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
-    virtual ~PinInputDialog();
-
-    void setSubject(const std::string& subject);
-    void setUrl(const std::string& url);
-    void setHash(const std::string& hash);
-    void setPinPadTimeout(int timeout);
-    void setRetry(bool retry);
-    void setTries(int tries);
-    std::string getPin();
-    void clearPin();
+    PinEntry(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
+    virtual ~PinEntry();
 
 protected:
     // Signal handlers:
-    void on_pin_changed();
+    virtual void on_insert_text(const Glib::ustring& text, int* position);
 
-    Glib::RefPtr<Gtk::Builder> m_refGlade;
-
-    // Child widgets:
-    Gtk::Button *m_okButton;
-    PinEntry *m_entry;
-    Gtk::Label *m_label;
-    Gtk::Label *m_warningLabel;
-    Gtk::Label *m_url;
-    Gtk::Label *m_hash;
-
-    int m_minPinLength;
+private:
+    static bool notDigit(char c);
+    bool containsOnlyNumbers(const std::string& str);
 };
 
-#endif //ESTEID_PININPUTDIALOG_H
+#endif //ESTEID_PINENTRY_H
