@@ -88,8 +88,6 @@ LRESULT WhitelistDialog::on_initdialog(WPARAM wParam)
     LVCOLUMN column;
     m_hList = GetDlgItem(m_hWnd, IDC_LIST);
 
-    OleInitialize(NULL);
-
     SendMessageA(m_hWnd, WM_SETICON, (WPARAM)1, (LPARAM)LoadIcon(m_hInst, MAKEINTRESOURCE(IDI_ICON1)));
 
     ListView_SetTextBkColor(m_hList, CLR_NONE);
