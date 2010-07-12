@@ -13,6 +13,8 @@ const nsLocalFile             = "@mozilla.org/file/local;1";
 const nsFileInputStream       = "@mozilla.org/network/file-input-stream;1";
 const nsScriptableInputStream = "@mozilla.org/scriptableinputstream;1";
 const nsPKCS11                = "@mozilla.org/security/pkcs11;1";
+const nsIPKCS11Slot           = Components.interfaces.nsIPKCS11Slot;
+const nsIPK11Token            = Components.interfaces.nsIPK11Token;
 const nsHttpProtocolHandler   = "@mozilla.org/network/protocol;1?name=http";
 const nsWindowsRegKey         = "@mozilla.org/windows-registry-key;1";
 
@@ -101,6 +103,47 @@ function doRestart() {
       return true;
    }
 }
+
+
+/* Return true if all slots associated with this module have
+ * friendly flag set.
+ */
+function allSlotsFriendly(module)
+{
+    var allFriendly = true;
+
+    var slots = module.listSlots();
+    var slots_done = false;
+    try {
+        slots.isDone();
+    } catch (e) { slots_done = true; }
+    while (!slots_done) {
+        var slot = null;
+        try {
+            slot = slots.currentItem().QueryInterface(nsIPKCS11Slot);
+        } catch (e) { slot = null; }
+        if (slot != null) {
+            var token = slot.getToken();
+            if (!token.isFriendly()) {
+                allFriendly = false;
+
+                var tokenName;
+                if (slot.tokenName)
+                    tokenName = slot.tokenName;
+                else
+                    tokenName = slot.name;
+
+                esteid_debug("Found non-friendly token: " + tokenName);
+            }
+        }
+        try {
+            slots.next();
+        } catch (e) { slots_done = true; }
+    }
+
+    return allFriendly;
+}
+
 
 function ConfigureEstEID() {
     const Ci = Components.interfaces;
@@ -213,7 +256,16 @@ function ConfigureEstEID() {
         /* Remove modules that have recognized names but different DLLs */
         if (module) {
             if(module.libName == EstEidDll && module.name == EstEidModName) {
-                needtoload = false;
+                if (allSlotsFriendly(module)) {
+                    needtoload = false;
+                } else {
+                    /* Remove modules with one or more slots marked as not friendly */
+                    esteid_debug("Marking non-friendly module for removal: " +
+                          module.name + ":" + module.libName);
+                    modulesToRemove.push(module.name);
+                    needtoload = true;
+                    restartNeeded = true;
+                }
             }
             else if(module.name == EstEidModName ||
                     /(opensc-pkcs11|esteid-pkcs11)\.(so|dll)$/
