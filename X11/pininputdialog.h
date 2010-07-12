@@ -23,8 +23,6 @@
 
 #include <gtkmm.h>
 
-enum PinType { PIN1, PIN2 };
-
 class PinInputDialog : public Gtk::Dialog
 {
 public:
