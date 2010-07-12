@@ -175,8 +175,6 @@ void WhitelistDialog::on_entry_changed()
 
 void WhitelistDialog::on_button_add()
 {
-    ESTEID_DEBUG("add pressed\n");
-
     addSite(m_entry->get_text());
     m_entry->set_text("");
 }
@@ -186,8 +184,6 @@ void WhitelistDialog::on_button_edit()
 {
     Gtk::TreeModel::iterator it;
     Gtk::TreePath path;
-
-    ESTEID_DEBUG("edit pressed\n");
 
     it = getCurrentSelection();
     if (it) {
@@ -201,8 +197,6 @@ void WhitelistDialog::on_button_delete()
 {
     Gtk::TreeModel::iterator it;
 
-    ESTEID_DEBUG("delete pressed\n");
-
     it = getCurrentSelection();
     if (it) {
         m_listModel->erase(it);
@@ -213,24 +207,18 @@ void WhitelistDialog::on_button_delete()
 
 void WhitelistDialog::on_button_ok()
 {
-    ESTEID_DEBUG("ok pressed\n");
-
     response(Gtk::RESPONSE_OK);
 }
 
 
 void WhitelistDialog::on_button_cancel()
 {
-    ESTEID_DEBUG("cancel pressed\n");
-
     response(Gtk::RESPONSE_CANCEL);
 }
 
 
 void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn * /* column */)
 {
-    ESTEID_DEBUG("row doubleclicked\n");
-
     /* FIXME: Not needed unless we are going to open
               a new dialog window in here. */
 }
@@ -238,8 +226,6 @@ void WhitelistDialog::on_treeview_row_activated(const Gtk::TreeModel::Path & pat
 
 void WhitelistDialog::on_treeview_cursor_changed()
 {
-    ESTEID_DEBUG("row clicked\n");
-
     enableDisableButtons();
 }
 
@@ -248,8 +234,6 @@ void WhitelistDialog::on_cellrenderer_edited(const Glib::ustring& path_string, c
 {
     Gtk::TreeModel::iterator it;
     Gtk::TreePath path(path_string);
-
-    ESTEID_DEBUG("finished editing\n");
 
     // Update the model with new value
     it = m_listModel->get_iter(path);
