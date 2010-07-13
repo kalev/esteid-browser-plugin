@@ -410,7 +410,6 @@ void esteidAPI::onPinEntered(std::string pin)
         promptForSignPIN(true);
         return;
     } catch(std::runtime_error &e) {
-        ESTEID_ERROR_FROMCARD(e);
         returnSignFailure(e.what());
         return;
     }
@@ -602,7 +601,8 @@ int esteidAPI::getPin2RetryCount() {
         m_service->getRetryCounts(puk, pin1, pin2);
         return pin2;
     } catch(std::runtime_error &e) {
-        ESTEID_ERROR_FROMCARD(e);
+        returnSignFailure(e.what());
+        return -1;
     }
 }
 
