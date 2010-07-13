@@ -409,7 +409,7 @@ void esteidAPI::onPinEntered(std::string pin)
         // ask again for PIN
         promptForSignPIN(true);
         return;
-    } catch(std::runtime_error &e) {
+    } catch(std::exception &e) {
         ESTEID_ERROR_FROMCARD(e);
         returnSignFailure(e.what());
         return;
