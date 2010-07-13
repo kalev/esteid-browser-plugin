@@ -358,27 +358,23 @@ void esteidAPI::promptForSignPIN(bool retrying)
         return;
     }
 
-#if 0
     try {
+#if 0
         pinpad = m_service->hasSecurePinEntry();
-    } catch(std::runtime_error &e) {
-        returnSignFailure(e.what());
-        return;
-    }
 #else
-    pinpad = false;
+        pinpad = false;
 #endif
 
-    triesLeft = getPin2RetryCount();
-    if (triesLeft <= 0) {
-        m_UI->ShowPinBlockedMessage(2);
-        returnSignFailure("PIN2 locked");
-        return;
-    }
+        triesLeft = getPin2RetryCount();
+        if (triesLeft <= 0) {
+            m_UI->ShowPinBlockedMessage(2);
+            returnSignFailure("PIN2 locked");
+            return;
+        }
 
-    try {
         m_UI->PromptForSignPIN(m_subject, m_url, m_hash,
                                pinpad, retrying, triesLeft);
+
     } catch(const std::exception& e) {
         returnSignFailure(e.what());
         return;
@@ -596,14 +592,9 @@ void esteidAPI::finalize(std::string slot, std::string hash,
 #endif
 
 int esteidAPI::getPin2RetryCount() {
-    try {
-        byte puk, pin1, pin2;
-        m_service->getRetryCounts(puk, pin1, pin2);
-        return pin2;
-    } catch(std::runtime_error &e) {
-        returnSignFailure(e.what());
-        return -1;
-    }
+    byte puk, pin1, pin2;
+    m_service->getRetryCounts(puk, pin1, pin2);
+    return pin2;
 }
 
 
