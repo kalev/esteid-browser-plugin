@@ -51,26 +51,11 @@
 #define WHITELIST_REQUIRED \
     if(!IsSecure()) { \
         DisplayNotification(MSG_INSECURE); \
-        ESTEID_ERROR_NO_PERMISSION; \
+        throw FB::script_error("No cards found"); \
     } else if(!IsWhiteListed()) { \
         DisplayNotification(MSG_SITEACCESS); \
-        ESTEID_ERROR_NO_PERMISSION; \
+        throw FB::script_error("No cards found"); \
     }
-
-// FIXME: Set error codes
-#define ESTEID_ERROR_FROMCARD(e) { \
-    ESTEID_DEBUG("Card error: %s", e.what()); \
-    throw FB::script_error(e.what()); }
-#define ESTEID_ERROR_CARD_ERROR(m) { \
-    ESTEID_DEBUG("Card error: %s", m); \
-    throw FB::script_error(m); }
-#define ESTEID_ERROR_INVALID_ARG { \
-    throw FB::script_error("Invalid argument"); }
-#define ESTEID_ERROR_USER_ABORT { \
-    throw FB::script_error(CANCEL_MSG); }
-#define ESTEID_ERROR_NO_CARD { \
-    throw FB::script_error("No cards found"); }
-#define ESTEID_ERROR_NO_PERMISSION ESTEID_ERROR_NO_CARD
 
 esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     m_host(host), m_authCert(NULL), m_signCert(NULL),
