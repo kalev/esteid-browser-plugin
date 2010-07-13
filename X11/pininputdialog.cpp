@@ -57,7 +57,7 @@ PinInputDialog::~PinInputDialog()
 
 void PinInputDialog::setSubject(const std::string& subject)
 {
-    m_label->set_text(subject + " (PIN2)");
+    m_label->set_label("<b>" + subject + " (PIN2)</b>");
 }
 
 void PinInputDialog::setUrl(const std::string& url)

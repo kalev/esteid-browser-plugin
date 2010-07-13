@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-requires gtk+ 2.12 -->
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="PinInputDialog">
     <property name="border_width">5</property>
@@ -47,10 +47,8 @@
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
                         <property name="label">Peeter Pakiraam (PIN2)</property>
+                        <property name="use_markup">True</property>
                         <property name="wrap">True</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"/>
-                        </attributes>
                       </object>
                       <packing>
                         <property name="position">0</property>
@@ -240,8 +238,8 @@
   </object>
   <object class="GtkSizeGroup" id="prompt_label_sizegroup">
     <widgets>
-      <widget name="url_label"/>
       <widget name="hash_label"/>
+      <widget name="url_label"/>
     </widgets>
   </object>
 </interface>
