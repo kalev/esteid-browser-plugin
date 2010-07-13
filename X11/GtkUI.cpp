@@ -86,7 +86,7 @@ void GtkUI::PromptForSignPIN(const std::string& subject,
         int pinPadTimeout, bool retry, int tries)
 {
     if (!m_pinInputDialog)
-        return;
+        throw std::runtime_error("PinInputDialog not loaded");
 
     if (m_dialog_up) {
         // Bring the window to the front
@@ -134,7 +134,7 @@ void GtkUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
     m_conf = &conf;
 
     if (!m_whitelistDialog)
-        return;
+        throw std::runtime_error("WhitelistDialog not loaded");
 
     if (m_dialog_up) {
         // Bring the window to the front

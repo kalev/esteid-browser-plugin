@@ -250,10 +250,14 @@ void esteidAPI::CloseNotificationBar(void) {
 void esteidAPI::ShowSettings(void) {
     ESTEID_DEBUG("esteidAPI::ShowSettings()");
 
-    if(IsSecure())
-        m_UI->ShowSettings(m_conf, GetHostName());
-    else
-        m_UI->ShowSettings(m_conf);
+    try {
+        if (IsSecure())
+            m_UI->ShowSettings(m_conf, GetHostName());
+        else
+            m_UI->ShowSettings(m_conf);
+    } catch(const std::exception& e) {
+        ESTEID_DEBUG("Unable to display whitelist editor: %s", e.what());
+    }
 
     CloseNotificationBar();
 }
@@ -372,8 +376,13 @@ void esteidAPI::promptForSignPIN(bool retrying)
         return;
     }
 
-    m_UI->PromptForSignPIN(m_subject, m_url, m_hash,
-                           pinpad, retrying, triesLeft);
+    try {
+        m_UI->PromptForSignPIN(m_subject, m_url, m_hash,
+                               pinpad, retrying, triesLeft);
+    } catch(const std::exception& e) {
+        returnSignFailure(e.what());
+        return;
+    }
 }
 
 
