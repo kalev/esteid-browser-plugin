@@ -43,12 +43,16 @@ set (SOURCES
     ${PLATFORM}
     )
 
+# use custom version script
+string(REGEX REPLACE " -Wl,--version-script=[^ ]*" "" ESTEID_LINK_FLAGS "${NPAPI_LINK_FLAGS}")
+set(ESTEID_LINK_FLAGS "${ESTEID_LINK_FLAGS} -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/X11/esteid_version_script.txt")
+
 add_library(${PROJNAME} SHARED ${SOURCES})
 
 set_target_properties (${PROJNAME} PROPERTIES
     OUTPUT_NAME np${PLUGIN_NAME}
     PROJECT_LABEL ${PROJNAME}
-    LINK_FLAGS "${NPAPI_LINK_FLAGS}"
+    LINK_FLAGS "${ESTEID_LINK_FLAGS}"
     PREFIX ""
     RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
