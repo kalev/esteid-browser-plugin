@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(testwindowsui)
+project(TestWindowsUI)
 
-set(SRCS
+set(testwhitelist_SRCS
     ../whitelistdialog.cpp
     ../../PluginSettings.cpp
     ../../converter.cpp
-    main.cpp
+    testwhitelist.cpp
 )
 
 add_definitions(
@@ -37,9 +37,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../utility
 )
 
-add_executable(testwindowsui WIN32
-    ${SRCS}
+add_executable(testwhitelist WIN32
+    ${testwhitelist_SRCS}
     ${WINRC}
 )
-
-target_link_libraries(testwindowsui iconv comctl32)
+target_link_libraries(testwhitelist iconv comctl32)
