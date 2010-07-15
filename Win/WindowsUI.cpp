@@ -83,10 +83,10 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 
     m_conf = &conf;
 
-    m_whitelistDialog = new WhitelistDialog();
+    m_whitelistDialog = new WhitelistDialog(ATL::_AtlBaseModule.GetResourceInstance(), conf);
     m_whitelistDialog->addDefaultSites(conf.default_whitelist);
     m_whitelistDialog->addSites(conf.whitelist);
-    m_whitelistDialog->doDialog(ATL::_AtlBaseModule.GetResourceInstance(), conf);
+    m_whitelistDialog->doDialog();
 
     if (pageUrl.length() > 0)
         m_whitelistDialog->setEntryText(pageUrl);

@@ -29,8 +29,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     InitCtrls.dwSize = sizeof(INITCOMMONCONTROLSEX);
     BOOL bRet = InitCommonControlsEx(&InitCtrls);
 
-    WhitelistDialog dialog;
     PluginSettings conf;
+    WhitelistDialog dialog(hInstance, conf);
 
     // Insert dummy sites
     std::vector<std::string> sv;
@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     sv.push_back("user.added.ee");
     dialog.addSites(sv);
 
-    dialog.doDialog(hInstance, conf);
+    dialog.doDialog();
 
     // Start the message loop. 
     MSG msg;

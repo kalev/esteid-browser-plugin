@@ -6,12 +6,14 @@
 #include <string>
 #include <vector>
 
+#include "Win/basedialog.h"
+
 class PluginSettings;
 
-class WhitelistDialog
+class WhitelistDialog : public BaseDialog
 {
 public:
-    WhitelistDialog();
+    WhitelistDialog(HINSTANCE hInst, PluginSettings &conf);
     virtual ~WhitelistDialog();
 
     // Functions for setting up data for displaying
@@ -23,7 +25,7 @@ public:
 
     void setEntryText(const std::string & site);
 
-    bool doDialog(HINSTANCE hInstance, PluginSettings &conf);
+    bool doDialog();
 
 protected:
     void insertItem(const std::wstring & name, bool editable);
@@ -35,13 +37,9 @@ protected:
     LRESULT on_command(WPARAM wParam, LPARAM lParam);
     LRESULT on_notify(WPARAM wParam, LPARAM lParam);
     LRESULT on_message(UINT message, WPARAM wParam, LPARAM lParam);
-    HWND m_hWnd;
-
-    static LRESULT CALLBACK dialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
     HWND m_hList;
-    HINSTANCE m_hInst;
     HWND m_hEdit;
     std::vector<std::string> m_sites;
     std::vector<std::string> m_defaultSites;

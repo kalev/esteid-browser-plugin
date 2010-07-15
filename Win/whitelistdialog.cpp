@@ -1,4 +1,5 @@
 #include "whitelistdialog.h"
+#include "basedialog.h"
 #include "converter.h"
 
 #include <windows.h>
@@ -9,7 +10,9 @@
 
 #define BUF_SIZE 100
 
-WhitelistDialog::WhitelistDialog()
+WhitelistDialog::WhitelistDialog(HINSTANCE hInst, PluginSettings &conf)
+    : BaseDialog(hInst),
+      m_conf(&conf)
 {
 }
 
@@ -194,34 +197,7 @@ LRESULT WhitelistDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-/* static */ LRESULT CALLBACK WhitelistDialog::dialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+bool WhitelistDialog::doDialog()
 {
-    WhitelistDialog *dlg = reinterpret_cast<WhitelistDialog*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    if (!dlg) {
-        if (message == WM_INITDIALOG) {
-            dlg = reinterpret_cast<WhitelistDialog*>(lParam);
-            dlg->m_hWnd = hWnd;
-            SetWindowLongPtr(hWnd, GWLP_USERDATA, lParam);
-        } else {
-            return 0; // let system deal with message
-        }
-    }
-
-    // forward message to member function handler
-    return dlg->on_message(message, wParam, lParam);
-}
-
-bool WhitelistDialog::doDialog(HINSTANCE hInstance, PluginSettings &conf)
-{
-    HWND hParent = GetForegroundWindow();
-    m_hInst = hInstance;
-    m_conf = &conf;
-
-    m_hWnd = CreateDialogParam(hInstance, MAKEINTRESOURCE(IDC_DIALOG), hParent, (DLGPROC)dialogProc,
-                         reinterpret_cast<LPARAM>(this));
-    if (!m_hWnd)
-        return false;
-
-    ShowWindow(m_hWnd, SW_NORMAL);
-    return true;
+    return BaseDialog::doDialog(IDC_DIALOG);
 }
