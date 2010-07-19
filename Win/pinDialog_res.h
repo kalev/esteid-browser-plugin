@@ -1,6 +1,0 @@
-#define IDD_PIN_DIALOG_ENG	3001
-#define IDC_PININPUT		3002
-#define IDI_DLGICON			3004
-#ifndef IDC_STATIC
-#define IDC_STATIC			65535
-#endif
