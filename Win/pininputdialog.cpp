@@ -47,7 +47,7 @@ void PinInputDialog::showPinBlocked()
 }
 
 
-void PinInputDialog::showWrongPin(bool tries)
+void PinInputDialog::showWrongPin(int tries)
 {
     HWND hParent = GetForegroundWindow();
 

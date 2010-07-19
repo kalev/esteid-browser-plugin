@@ -23,10 +23,8 @@
 
 #include "PluginUI.h"
 #include "Win/win_common.h"
-#include <boost/bind.hpp>
-#include <boost/signals.hpp>
+#include "Win/pininputdialog.h"
 
-class PinInputDialog;
 class WhitelistDialog;
 
 class WindowsUI : public PluginUI {

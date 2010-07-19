@@ -22,6 +22,8 @@
 
 #include <stdio.h>
 #include <vector>
+#include <boost/bind.hpp>
+#include <boost/signals.hpp>
 
 #include "Win/PluginWindowWin.h"
 #include "Win/pininputdialog.h"
@@ -35,7 +37,7 @@ WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
 {
     ESTEID_DEBUG("WindowsUI initialized");
     m_pinInputDialog = new PinInputDialog(ATL::_AtlBaseModule.GetResourceInstance());
-    m_connection = m_pinInputDialog->connect(boost::bind(&WindowsUI::on_pininputdialog_response, this, _1))
+    m_connection = m_pinInputDialog->connect(boost::bind(&WindowsUI::on_pininputdialog_response, this, _1));
 }
 
 WindowsUI::~WindowsUI()
@@ -56,7 +58,7 @@ void WindowsUI::PromptForSignPIN(const std::string& subject,
         throw std::runtime_error("PinInputDialog not loaded");
 
     if (retry)
-        m_pinInputDialog->showWrongPin(tries):
+        m_pinInputDialog->showWrongPin(tries);
 
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->doDialog();
@@ -96,7 +98,7 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 void WindowsUI::on_pininputdialog_response(bool okClicked)
 {
     if (okClicked) {
-        std::string pin = m_pinInputDialog.getPin();
+        std::string pin = m_pinInputDialog->getPin();
         m_callbacks->onPinEntered(pin);
     } else {
         m_callbacks->onPinCancelled();

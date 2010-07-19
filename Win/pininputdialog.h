@@ -50,7 +50,7 @@ public:
     }
 
     void showPinBlocked();
-    void showWrongPin(bool tries);
+    void showWrongPin(int tries);
     void setSubject(const std::string& subject);
     std::string getPin();
     void clearPin();
