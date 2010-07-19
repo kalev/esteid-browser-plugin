@@ -1,12 +1,28 @@
 cmake_minimum_required(VERSION 2.6)
 project(TestWindowsUI)
 
+#find_package(Boost COMPONENTS signals REQUIRED)
+
+# XXX
+find_package(Boost REQUIRED)
+set(Boost_LIBRARIES boost_signals-gcc44-1_41)
+
+include_directories(${Boost_INCLUDE_DIRS})
+
 set(testwhitelist_SRCS
     ../basedialog.cpp
     ../whitelistdialog.cpp
     ../../PluginSettings.cpp
     ../../converter.cpp
     testwhitelist.cpp
+)
+
+set(testpininput_SRCS
+    ../basedialog.cpp
+    ../pininputdialog.cpp
+    ../../PluginSettings.cpp
+    ../../converter.cpp
+    testpininput.cpp
 )
 
 add_definitions(
@@ -43,3 +59,9 @@ add_executable(testwhitelist WIN32
     ${WINRC}
 )
 target_link_libraries(testwhitelist iconv comctl32)
+
+add_executable(testpininput WIN32
+    ${testpininput_SRCS}
+    ${WINRC}
+)
+target_link_libraries(testpininput iconv comctl32 ${Boost_LIBRARIES})
