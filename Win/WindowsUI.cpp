@@ -24,20 +24,25 @@
 #include <vector>
 
 #include "Win/PluginWindowWin.h"
-#include "Win/pinDialog.h"
+#include "Win/pininputdialog.h"
 #include "Win/whitelistdialog.h"
 
 #include "debug.h"
 
 WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
-    : PluginUI(cb)
+    : PluginUI(cb),
+      m_pinInputDialog(NULL)
 {
     ESTEID_DEBUG("WindowsUI initialized");
+    m_pinInputDialog = new PinInputDialog(ATL::_AtlBaseModule.GetResourceInstance());
+    m_connection = m_pinInputDialog->connect(boost::bind(&WindowsUI::on_pininputdialog_response, this, _1))
 }
 
 WindowsUI::~WindowsUI()
 {
     ESTEID_DEBUG("~WindowsUI()");
+    m_pinInputDialog->disconnect(m_connection);
+    delete m_pinInputDialog;
 }
 
 
@@ -47,17 +52,14 @@ void WindowsUI::PromptForSignPIN(const std::string& subject,
 {
     ESTEID_DEBUG("WindowsUI::PromptForSignPIN()");
 
-    PinString pin;
+    if (!m_pinInputDialog)
+        throw std::runtime_error("PinInputDialog not loaded");
 
-    pinDialogPriv_l params = {
-            ATL::_AtlBaseModule.GetResourceInstance(),
-            IDD_PIN_DIALOG_ENG
-    };
+    if (retry)
+        m_pinInputDialog->showWrongPin(tries):
 
-    m_pinDialog = new pinDialog(&params, EstEidCard::SIGN, m_callbacks);
-    m_pinDialog->doDialog();
-
-    return;
+    m_pinInputDialog->setSubject(subject);
+    m_pinInputDialog->doDialog();
 }
 
 
@@ -71,9 +73,7 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 {
     ESTEID_DEBUG("WindowsUI::ShowPinBlockedMessage()");
 
-    pinDialogPriv_l params = { NULL, NULL };
-    pinDialog dlg(&params, "");
-    dlg.showPrompt("PIN2 blocked.\nPlease run ID-card Utility to unlock the PIN.", false);
+    m_pinInputDialog->showPinBlocked();
 }
 
 
@@ -90,4 +90,18 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 
     if (pageUrl.length() > 0)
         m_whitelistDialog->setEntryText(pageUrl);
+}
+
+
+void WindowsUI::on_pininputdialog_response(bool okClicked)
+{
+    if (okClicked) {
+        std::string pin = m_pinInputDialog.getPin();
+        m_callbacks->onPinEntered(pin);
+    } else {
+        m_callbacks->onPinCancelled();
+    }
+
+    // make sure the dialog doesn't cache PIN
+    m_pinInputDialog->clearPin();
 }

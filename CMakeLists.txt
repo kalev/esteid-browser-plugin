@@ -33,6 +33,10 @@ find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
 
+if(WIN32)
+    find_package(Boost COMPONENTS signals REQUIRED)
+endif(WIN32)
+
 if(UNIX AND NOT APPLE)
     if(NOT GTKMM_INCLUDE_DIRS)
         pkg_check_modules(GTKMM REQUIRED gtkmm-2.4)
@@ -71,6 +75,7 @@ endif(ENABLE_OLD_APIS)
 
 
 include_directories(
+    ${Boost_INCLUDE_DIRS}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${GTKMM_INCLUDE_DIRS}
     ${ICONV_INCLUDE_DIR}

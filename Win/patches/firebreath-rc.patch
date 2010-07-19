@@ -5,8 +5,8 @@ diff -r 669c88c52f79 gen_templates/firebreathWin.rc
  //
  #include "winres.h"
  
-+#include "utility/pinDialog_res.h"
-+#include "utility/pinDialog.rc"
++#include "Win/pininputdialog_res.h"
++#include "Win/pininputdialog.rc"
 +#include "Win/whitelistdialog_res.h"
 +#include "Win/whitelistdialog.rc"
 +
@@ -33,8 +33,8 @@ diff -r 669c88c52f79 gen_templates/firebreathWin.rc
 +2 TEXTINCLUDE
 +BEGIN
 +    "#include ""winres.h""\r\n"
-+    "#include ""utility/pinDialog_res.h""\r\n"
-+    "#include ""utility/pinDialog.rc""\r\n"
++    "#include ""Win/pininputdialog_res.h""\r\n"
++    "#include ""Win/pininputdialog.rc""\r\n"
 +    "#include ""Win/whitelistdialog_res.h""\r\n"
 +    "#include ""Win/whitelistdialog.rc""\r\n\0"
 +END

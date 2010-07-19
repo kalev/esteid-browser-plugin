@@ -23,14 +23,11 @@
 
 #include "PluginUI.h"
 #include "Win/win_common.h"
+#include <boost/bind.hpp>
+#include <boost/signals.hpp>
 
-class pinDialog;
+class PinInputDialog;
 class WhitelistDialog;
-
-struct pinDialogPriv_l {
-    HINSTANCE m_hInst;
-    WORD m_resourceID;
-};
 
 class WindowsUI : public PluginUI {
 public:
@@ -48,9 +45,12 @@ public:
     void ShowPinBlockedMessage(int pin);
 
 protected:
-    pinDialog *m_pinDialog;
+    void on_pininputdialog_response(bool okClicked);
+
+    PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;
+    PinInputDialog::connection_t m_connection;
 };
 
 #endif /* WINDOWSUI_H */
