@@ -34,6 +34,9 @@ find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
 
 if(WIN32)
+    # FindBoost.cmake isn't up to date wrt new boost versions
+    set(Boost_ADDITIONAL_VERSIONS "1.44" "1.44.0" "1.43" "1.43.0" "1.42" "1.42.0")
+    # need to link against boost_signals; the rest is header-only
     find_package(Boost COMPONENTS signals REQUIRED)
 endif(WIN32)
 
