@@ -23,35 +23,14 @@
 
 #include <windows.h>
 #include <string>
-#include <boost/signals.hpp>
 
 #include "Win/basedialog.h"
 
 class PinInputDialog : public BaseDialog
 {
 public:
-    enum ResponseType
-    {
-        RESPONSE_OK = -5,
-        RESPONSE_CANCEL = -6,
-    };
-
-    typedef boost::signal<void (int)> ResponseSignal;
-    typedef boost::signals::connection Connection;
-
-public:
     PinInputDialog(HINSTANCE hInst);
     virtual ~PinInputDialog();
-
-    Connection connect(const ResponseSignal::slot_type& subscriber)
-    {
-        return signalResponse.connect(subscriber);
-    }
-
-    void disconnect(Connection subscriber)
-    {
-        subscriber.disconnect();
-    }
 
     void showPinBlocked();
     void showWrongPin(int tries);
@@ -68,7 +47,6 @@ private:
 
     std::string m_subject;
     size_t m_minPinLength;
-    ResponseSignal signalResponse;
 };
 
 #endif //ESTEID_PININPUTDIALOG_H

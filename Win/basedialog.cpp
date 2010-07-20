@@ -1,6 +1,7 @@
 #include "basedialog.h"
 #include <windows.h>
 
+typedef BaseDialog::Connection Connection;
 
 BaseDialog::BaseDialog(HINSTANCE hInst)
     : m_hInst(hInst),
@@ -10,6 +11,16 @@ BaseDialog::BaseDialog(HINSTANCE hInst)
 
 BaseDialog::~BaseDialog()
 {
+}
+
+Connection BaseDialog::connect(const ResponseSignal::slot_type& subscriber)
+{
+    return signalResponse.connect(subscriber);
+}
+
+void BaseDialog::disconnect(Connection subscriber)
+{
+    subscriber.disconnect();
 }
 
 /* static */ LRESULT CALLBACK BaseDialog::dialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

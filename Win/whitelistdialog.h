@@ -5,35 +5,14 @@
 #include <commctrl.h>
 #include <string>
 #include <vector>
-#include <boost/signals.hpp>
 
 #include "Win/basedialog.h"
 
 class WhitelistDialog : public BaseDialog
 {
 public:
-    enum ResponseType
-    {
-        RESPONSE_OK = -5,
-        RESPONSE_CANCEL = -6,
-    };
-
-    typedef boost::signal<void (int)> ResponseSignal;
-    typedef boost::signals::connection Connection;
-
-public:
     WhitelistDialog(HINSTANCE hInst);
     virtual ~WhitelistDialog();
-
-    Connection connect(const ResponseSignal::slot_type& subscriber)
-    {
-        return signalResponse.connect(subscriber);
-    }
-
-    void disconnect(Connection subscriber)
-    {
-        subscriber.disconnect();
-    }
 
     // Functions for setting up data for displaying
     void addSites(const std::vector<std::string> & sv);
@@ -62,7 +41,6 @@ private:
     HWND m_hEdit;
     std::vector<std::string> m_sites;
     std::vector<std::string> m_defaultSites;
-    ResponseSignal signalResponse;
 };
 
 #endif //ESTEID_WHITELISTDIALOG_H
