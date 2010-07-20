@@ -12,7 +12,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 set(testwhitelist_SRCS
     ../basedialog.cpp
     ../whitelistdialog.cpp
-    ../../PluginSettings.cpp
     ../../converter.cpp
     testwhitelist.cpp
 )
@@ -20,7 +19,6 @@ set(testwhitelist_SRCS
 set(testpininput_SRCS
     ../basedialog.cpp
     ../pininputdialog.cpp
-    ../../PluginSettings.cpp
     ../../converter.cpp
     testpininput.cpp
 )
@@ -30,7 +28,6 @@ add_definitions(
     -D_WIN32_WINNT=0x501
     -D_WIN32_IE=0x0600
     -DWIN32_LEAN_AND_MEAN
-    -DFBSTRING_PluginName="shut_up"
 )
 
 set(WINDRES "i686-pc-mingw32-windres")
@@ -50,15 +47,13 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${CMAKE_CURRENT_SOURCE_DIR}/../..
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../..
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../utility
 )
 
 add_executable(testwhitelist WIN32
     ${testwhitelist_SRCS}
     ${WINRC}
 )
-target_link_libraries(testwhitelist iconv comctl32)
+target_link_libraries(testwhitelist iconv comctl32 ${Boost_LIBRARIES})
 
 add_executable(testpininput WIN32
     ${testpininput_SRCS}

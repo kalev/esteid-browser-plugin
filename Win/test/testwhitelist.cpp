@@ -19,8 +19,49 @@
  */
 
 #include "whitelistdialog.h"
-#include "PluginSettings.h"
-#include <cstdio>
+#include <iostream>
+#include <boost/bind.hpp>
+#include <boost/signals.hpp>
+
+class TestWindowsUI
+{
+public:
+    TestWindowsUI(WhitelistDialog& m)
+        : m_whitelistDialog(m)
+    {
+        m_connection = m_whitelistDialog.connect(boost::bind(&TestWindowsUI::on_whitelistdialog_response, this, _1));
+    }
+
+    virtual ~TestWindowsUI()
+    {
+        m_whitelistDialog.disconnect(m_connection);
+    }
+
+    void on_whitelistdialog_response(int response)
+    {
+        std::cout << "on_whitelistdialog_response: ";
+        typedef std::vector<std::string>::const_iterator Iter;
+
+        if (response == WhitelistDialog::RESPONSE_OK) {
+            std::cout << "OK" << std::endl;
+
+            std::vector<std::string> sv = m_whitelistDialog.getWhitelist();
+            for (Iter it = sv.begin(); it != sv.end(); ++it)
+                std::cout << "--> " << *it << std::endl;
+
+        } else {
+            std::cout << "Cancel" << std::endl;
+        }
+    }
+
+
+protected:
+    WhitelistDialog& m_whitelistDialog;
+
+private:
+    WhitelistDialog::Connection m_connection;
+};
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
@@ -29,8 +70,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     InitCtrls.dwSize = sizeof(INITCOMMONCONTROLSEX);
     BOOL bRet = InitCommonControlsEx(&InitCtrls);
 
-    PluginSettings conf;
-    WhitelistDialog dialog(hInstance, conf);
+    WhitelistDialog dialog(hInstance);
+    TestWindowsUI ui(dialog);
 
     // Insert dummy sites
     std::vector<std::string> sv;

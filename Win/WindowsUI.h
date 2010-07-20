@@ -24,8 +24,7 @@
 #include "PluginUI.h"
 #include "Win/win_common.h"
 #include "Win/pininputdialog.h"
-
-class WhitelistDialog;
+#include "Win/whitelistdialog.h"
 
 class WindowsUI : public PluginUI {
 public:
@@ -44,11 +43,13 @@ public:
 
 protected:
     void on_pininputdialog_response(int response);
+    void on_whitelistdialog_response(int response);
 
     PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;
-    PinInputDialog::Connection m_connection;
+    PinInputDialog::Connection m_pinInputConnection;
+    WhitelistDialog::Connection m_whitelistConnection;
 };
 
 #endif /* WINDOWSUI_H */

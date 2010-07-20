@@ -33,18 +33,25 @@
 
 WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
     : PluginUI(cb),
-      m_pinInputDialog(NULL)
+      m_pinInputDialog(NULL),
+      m_whitelistDialog(NULL)
 {
     ESTEID_DEBUG("WindowsUI initialized");
     m_pinInputDialog = new PinInputDialog(ATL::_AtlBaseModule.GetResourceInstance());
-    m_connection = m_pinInputDialog->connect(boost::bind(&WindowsUI::on_pininputdialog_response, this, _1));
+    m_whitelistDialog = new WhitelistDialog(ATL::_AtlBaseModule.GetResourceInstance());
+
+    // connect signals
+    m_pinInputConnection = m_pinInputDialog->connect(boost::bind(&WindowsUI::on_pininputdialog_response, this, _1));
+    m_whitelistConnection = m_whitelistDialog->connect(boost::bind(&WindowsUI::on_whitelistdialog_response, this, _1));
 }
 
 WindowsUI::~WindowsUI()
 {
     ESTEID_DEBUG("~WindowsUI()");
-    m_pinInputDialog->disconnect(m_connection);
+    m_pinInputDialog->disconnect(m_pinInputConnection);
+    m_whitelistDialog->disconnect(m_whitelistConnection);
     delete m_pinInputDialog;
+    delete m_whitelistDialog;
 }
 
 
@@ -83,9 +90,11 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 {
     ESTEID_DEBUG("WindowsUI::ShowSettings()");
 
+    if (!m_whitelistDialog)
+        throw std::runtime_error("WhitelistDialog not loaded");
+
     m_conf = &conf;
 
-    m_whitelistDialog = new WhitelistDialog(ATL::_AtlBaseModule.GetResourceInstance(), conf);
     m_whitelistDialog->addDefaultSites(conf.default_whitelist);
     m_whitelistDialog->addSites(conf.whitelist);
     m_whitelistDialog->doDialog();
@@ -106,4 +115,12 @@ void WindowsUI::on_pininputdialog_response(int response)
 
     // make sure the dialog doesn't cache PIN
     m_pinInputDialog->clearPin();
+}
+
+void WindowsUI::on_whitelistdialog_response(int response)
+{
+    if (response == WhitelistDialog::RESPONSE_OK) {
+        m_conf->whitelist = m_whitelistDialog->getWhitelist();
+        m_conf->Save();
+    }
 }

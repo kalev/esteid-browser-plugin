@@ -4,15 +4,13 @@
 
 #include <windows.h>
 #include "Win/whitelistdialog_res.h"
-#include "PluginSettings.h"
 #include <commctrl.h>
 #include <stdio.h>
 
 #define BUF_SIZE 100
 
-WhitelistDialog::WhitelistDialog(HINSTANCE hInst, PluginSettings &conf)
-    : BaseDialog(hInst),
-      m_conf(&conf)
+WhitelistDialog::WhitelistDialog(HINSTANCE hInst)
+    : BaseDialog(hInst)
 {
 }
 
@@ -148,8 +146,7 @@ LRESULT WhitelistDialog::on_command(WPARAM wParam, LPARAM lParam)
 
     case IDC_CLOSEBUTTON:
         storeItems();
-        m_conf->whitelist = getWhitelist();
-        m_conf->Save();
+        signalResponse(RESPONSE_OK);
 
         DestroyWindow(m_hWnd);
         break;
