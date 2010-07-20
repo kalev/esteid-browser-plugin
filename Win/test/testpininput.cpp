@@ -38,11 +38,11 @@ public:
         m_pinInputDialog.disconnect(m_connection);
     }
 
-    void on_pininputdialog_response(bool okClicked)
+    void on_pininputdialog_response(int response)
     {
         std::cout << "on_pininputdialog_response: ";
 
-        if (okClicked) {
+        if (response == PinInputDialog::RESPONSE_OK) {
             std::cout << "OK" << std::endl;
             std::cout << "PIN is " << m_pinInputDialog.getPin() << std::endl;
         } else {
@@ -55,7 +55,7 @@ protected:
     PinInputDialog& m_pinInputDialog;
 
 private:
-    PinInputDialog::connection_t m_connection;
+    PinInputDialog::Connection m_connection;
 };
 
 

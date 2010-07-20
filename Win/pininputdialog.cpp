@@ -121,14 +121,14 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         break;
 
     case IDOK:
-        m_signalResponse(true);
+        signalResponse(RESPONSE_OK);
 
         DestroyWindow(m_hWnd);
         return TRUE;
         break;
 
     case IDCANCEL:
-        m_signalResponse(false);
+        signalResponse(RESPONSE_CANCEL);
 
         DestroyWindow(m_hWnd);
         return TRUE;

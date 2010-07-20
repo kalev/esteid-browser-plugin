@@ -27,24 +27,28 @@
 
 #include "Win/basedialog.h"
 
-class PluginSettings;
-
 class PinInputDialog : public BaseDialog
 {
 public:
-    typedef boost::signal<void (bool)>  signal_t;
-    typedef boost::signals::connection  connection_t;
+    enum ResponseType
+    {
+        RESPONSE_OK = -5,
+        RESPONSE_CANCEL = -6,
+    };
+
+    typedef boost::signal<void (int)> ResponseSignal;
+    typedef boost::signals::connection Connection;
 
 public:
     PinInputDialog(HINSTANCE hInst);
     virtual ~PinInputDialog();
 
-    connection_t connect(signal_t::slot_function_type subscriber)
+    Connection connect(const ResponseSignal::slot_type& subscriber)
     {
-        return m_signalResponse.connect(subscriber);
+        return signalResponse.connect(subscriber);
     }
 
-    void disconnect(connection_t subscriber)
+    void disconnect(Connection subscriber)
     {
         subscriber.disconnect();
     }
@@ -64,7 +68,7 @@ private:
 
     std::string m_subject;
     size_t m_minPinLength;
-    signal_t m_signalResponse;
+    ResponseSignal signalResponse;
 };
 
 #endif //ESTEID_PININPUTDIALOG_H

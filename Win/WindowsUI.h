@@ -43,12 +43,12 @@ public:
     void ShowPinBlockedMessage(int pin);
 
 protected:
-    void on_pininputdialog_response(bool okClicked);
+    void on_pininputdialog_response(int response);
 
     PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;
-    PinInputDialog::connection_t m_connection;
+    PinInputDialog::Connection m_connection;
 };
 
 #endif /* WINDOWSUI_H */

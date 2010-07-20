@@ -95,9 +95,9 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 }
 
 
-void WindowsUI::on_pininputdialog_response(bool okClicked)
+void WindowsUI::on_pininputdialog_response(int response)
 {
-    if (okClicked) {
+    if (response == PinInputDialog::RESPONSE_OK) {
         std::string pin = m_pinInputDialog->getPin();
         m_callbacks->onPinEntered(pin);
     } else {
