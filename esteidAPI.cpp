@@ -307,14 +307,17 @@ void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject 
     m_signCallback = callback;
 
     try {
-        startSign(hash, url);
+        prepareSign(hash, url);
+        promptForPinAsync();
     } catch(const std::exception& e) {
         returnSignFailure(e.what());
         return;
     }
 }
 
-void esteidAPI::startSign(std::string hash, std::string url) {
+
+void esteidAPI::prepareSign(const std::string& hash, const std::string& url)
+{
     if (hash.length() != 40)
         throw std::runtime_error("Invalid hash");
 
@@ -335,12 +338,10 @@ void esteidAPI::startSign(std::string hash, std::string url) {
 #else
     m_pinpad = false;
 #endif
-
-    promptForSignPIN();
 }
 
 
-void esteidAPI::promptForSignPIN(bool retrying)
+void esteidAPI::promptForPinAsync(bool retrying)
 {
     int triesLeft = getPin2RetryCount();
     if (triesLeft <= 0) {
@@ -348,7 +349,7 @@ void esteidAPI::promptForSignPIN(bool retrying)
         throw std::runtime_error("PIN2 locked");
     }
 
-    m_UI->PromptForSignPIN(m_subject, m_url, m_hash,
+    m_UI->PromptForPinAsync(m_subject, m_url, m_hash,
                            m_pinpad, retrying, triesLeft);
 }
 
@@ -385,7 +386,7 @@ void esteidAPI::onPinEntered(std::string pin)
 
         try {
             // ask again for PIN
-            promptForSignPIN(true);
+            promptForPinAsync(true);
         } catch(const std::exception& e) {
             returnSignFailure(e.what());
         }
@@ -397,12 +398,6 @@ void esteidAPI::onPinEntered(std::string pin)
 
 void esteidAPI::returnSignedData(const std::string& data)
 {
-#ifdef SUPPORT_OLD_APIS
-    m_hex = data;
-#endif
-
-    if(!m_signCallback) return;
-
     try {
         m_signCallback->Invoke("onSuccess", FB::variant_list_of(data));
     } catch(const FB::script_error&) {
@@ -413,12 +408,6 @@ void esteidAPI::returnSignedData(const std::string& data)
 
 void esteidAPI::returnSignFailure(const std::string& msg)
 {
-#ifdef SUPPORT_OLD_APIS
-    m_err = msg;
-#endif
-
-    if(!m_signCallback) return;
-
     try {
         m_signCallback->Invoke("onError", FB::variant_list_of(msg));
     } catch(const FB::script_error&) {
@@ -431,6 +420,45 @@ void esteidAPI::returnSignFailure(const std::string& msg)
 #define MAGIC_ID "37337F4CF4CE"
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
 #define DEPRECATED_CALL DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
+
+
+std::string esteidAPI::promptForPin(bool retrying)
+{
+    int triesLeft = getPin2RetryCount();
+    if (triesLeft <= 0) {
+        m_UI->ShowPinBlockedMessage(2);
+        throw std::runtime_error("PIN2 locked");
+    }
+
+    std::string pin = m_UI->PromptForPin(m_subject, m_url, m_hash,
+                                         m_pinpad, retrying, triesLeft);
+
+    if (pin.empty())
+        throw std::runtime_error(CANCEL_MSG);
+
+    return pin;
+}
+
+std::string esteidAPI::askPinAndSign(const std::string& hash, const std::string& url)
+{
+    prepareSign(hash, url);
+
+    bool retrying = false;
+    for (;;) {
+        std::string pin = promptForPin(retrying);
+
+        try {
+            std::string signedHash = signSHA1(hash, pin);
+            return signedHash;
+        } catch(AuthError &e) {
+            if (e.m_aborted) // pinpad
+                throw std::runtime_error("pinpad operation cancelled");
+
+            // ask again for PIN
+            retrying = true;
+        }
+    }
+}
 
 std::string esteidAPI::getCertificates() {
     WHITELIST_REQUIRED;
@@ -466,23 +494,24 @@ std::string esteidAPI::sign(std::string a, std::string b) {
     WHITELIST_REQUIRED;
     DEPRECATED_CALL;
 
-    m_signCallback = NULL;
-    m_hex = "";
+    std::string signedHash;
 
     if(!a.compare(MAGIC_ID)) { // Old Mozilla Plugin compat mode
-        startSign(b, std::string(COMPAT_URL));
-        m_UI->WaitForPinPrompt();
-        if(!m_hex.empty()) {
-            std::string rv = "({signature:'" + m_hex + "', returnCode: 0})";
-            return rv;
-        // TODO: Return proper error code from plugin (when it's implemented)
-        } else { return "({returnCode: 12})"; }
+        try {
+            signedHash = askPinAndSign(b, std::string(COMPAT_URL));
+            return "({signature:'" + signedHash + "', returnCode: 0})";
+        } catch(std::runtime_error &e) {
+            // TODO: Return proper error code from plugin (when it's implemented)
+            return "({returnCode: 12})";
+        }
     } else { // New plugin blocking API compatibility mode
-        startSign(a , (b.empty()) ? std::string(COMPAT_URL) : b);
-        m_UI->WaitForPinPrompt();
+        try {
+            signedHash = askPinAndSign(a , (b.empty()) ? std::string(COMPAT_URL) : b);
+        } catch(std::runtime_error &e) {
+            throw FB::script_error(e.what());
+        }
 
-        if(!m_hex.empty()) return m_hex;
-        else throw FB::script_error(m_err);
+        return signedHash;
     }
 }
 
@@ -511,13 +540,13 @@ std::string esteidAPI::getSignedHash(std::string hash, std::string slot) {
     WHITELIST_REQUIRED;
     DEPRECATED_CALL;
 
-    m_signCallback = NULL;
-    m_hex = "";
-
-    startSign(hash, std::string(COMPAT_URL));
-    m_UI->WaitForPinPrompt();
-
-    return m_hex; // This API returns nothing on error
+    try {
+        std::string signedHash = askPinAndSign(hash, std::string(COMPAT_URL));
+        return signedHash;
+    } catch(std::runtime_error &e) {
+        // This API returns nothing on error
+        return "";
+    }
 }
 
 std::string esteidAPI::get_selectedCertNumber() {
@@ -552,17 +581,13 @@ void esteidAPI::finalize(std::string slot, std::string hash,
     /* FIXME: The original API is non-blocking, but the callbacks
        are so braindead (callback function name is passed as a string)
        so we implement the compatibility version as a blocking call for now */
+    try {
+        std::string signedHash = askPinAndSign(hash, std::string(COMPAT_URL));
 
-    m_signCallback = NULL;
-    m_hex = "";
-
-    startSign(hash, std::string(COMPAT_URL));
-    m_UI->WaitForPinPrompt();
-
-    if(!m_hex.empty())
-        m_host->evaluateJavaScript(onSuccess + "('" + m_hex + "');");
-    else
+        m_host->evaluateJavaScript(onSuccess + "('" + signedHash + "');");
+    } catch(std::runtime_error &e) {
         m_host->evaluateJavaScript(onCancel + "();");
+    }
 }
 #endif
 

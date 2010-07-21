@@ -30,12 +30,14 @@ public:
     MacUI(boost::shared_ptr<UICallbacks>);
     virtual ~MacUI();
         
-    virtual void PromptForSignPIN(const std::string& subject,
+    virtual void PromptForPinAsync(const std::string& subject,
                                   const std::string& docUrl, const std::string& docHash,
                                   int pinPadTimeout, bool retry, int tries);
     virtual void ClosePinPrompt();
 #ifdef SUPPORT_OLD_APIS
-    void WaitForPinPrompt();
+    std::string PromptForPin(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
+        int pinPadTimeout, bool retry, int tries);
 #endif
     virtual void ShowPinBlockedMessage(int pin);
     virtual void ShowSettings(PluginSettings& conf, const std::string& pageUrl = "");

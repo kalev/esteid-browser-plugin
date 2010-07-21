@@ -83,6 +83,8 @@ public:
 
 #ifdef SUPPORT_OLD_APIS
     std::string sign(std::string, std::string);
+    std::string promptForPin(bool retrying = false);
+    std::string askPinAndSign(const std::string& hash, const std::string& url);
     std::string getCertificates();
     std::string getInfo();
     std::string getSigningCertificate();
@@ -146,8 +148,8 @@ private:
     std::string GetPageURL(void);
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
-    void promptForSignPIN(bool retrying = false);
-    void startSign(std::string hash, std::string url);
+    void prepareSign(const std::string& hash, const std::string& url);
+    void promptForPinAsync(bool retrying = false);
     std::string signSHA1(const std::string& hash, const std::string& pin);
     int getPin2RetryCount();
     void ShowSettings(void);
@@ -167,9 +169,4 @@ private:
     static std::vector<std::string> stringSplit(std::string str, std::string separator);
     static std::string iconvConvert(const std::string&, const char*, const char*);
     static std::string CP1252_to_UTF8(const std::string&);
-
-#ifdef SUPPORT_OLD_APIS
-    std::string m_hex;
-    std::string m_err; // FIXME: Remove when "real" lastError is implemented
-#endif
 };

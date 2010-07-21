@@ -64,7 +64,7 @@ GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
 
     // connect signals
     if (m_pinInputDialog) {
-        m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
+        m_pinInputConnection = m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
                     &GtkUI::on_pininputdialog_response) );
     }
     if (m_whitelistDialog) {
@@ -81,7 +81,7 @@ GtkUI::~GtkUI()
 }
 
 
-void GtkUI::PromptForSignPIN(const std::string& subject,
+void GtkUI::PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
 {
@@ -106,8 +106,34 @@ void GtkUI::PromptForSignPIN(const std::string& subject,
 }
 
 #ifdef SUPPORT_OLD_APIS
-void GtkUI::WaitForPinPrompt() {
-    if(m_dialog_up) m_pinInputDialog->run();
+std::string GtkUI::PromptForPin(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
+        int pinPadTimeout, bool retry, int tries)
+{
+    if (!m_pinInputDialog)
+        throw std::runtime_error("PinInputDialog not loaded");
+
+    m_pinInputDialog->setSubject(subject);
+    m_pinInputDialog->setUrl(docUrl);
+    m_pinInputDialog->setHash(docHash);
+    m_pinInputDialog->setPinPadTimeout(pinPadTimeout);
+    m_pinInputDialog->setRetry(retry);
+    m_pinInputDialog->setTries(tries);
+
+    // temporarily block asynchronous API signals
+    m_pinInputConnection.block();
+    // run dialog
+    m_pinInputDialog->run();
+    m_pinInputDialog->hide();
+    // unblock the signal
+    m_pinInputConnection.unblock();
+
+    std::string pin = m_pinInputDialog->getPin();
+
+    // make sure the dialog doesn't cache PIN
+    m_pinInputDialog->clearPin();
+
+    return pin;
 }
 #endif
 

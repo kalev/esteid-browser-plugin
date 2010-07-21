@@ -40,7 +40,7 @@ public:
     };
 
     /** Prompt for Signature PIN */
-    virtual void PromptForSignPIN(const std::string& subject,
+    virtual void PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries) = 0;
 
@@ -48,8 +48,9 @@ public:
     virtual void ClosePinPrompt() = 0;
 
 #ifdef SUPPORT_OLD_APIS
-    /** Wait for PIN prompt to finish (used for old blocking API calls) */
-    virtual void WaitForPinPrompt() = 0;
+    virtual std::string PromptForPin(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
+        int pinPadTimeout, bool retry, int tries) = 0;
 #endif
 
     /** Inform user that the PIN has been blocked */

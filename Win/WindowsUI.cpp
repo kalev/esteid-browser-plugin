@@ -51,11 +51,11 @@ WindowsUI::~WindowsUI()
 }
 
 
-void WindowsUI::PromptForSignPIN(const std::string& subject,
+void WindowsUI::PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
 {
-    ESTEID_DEBUG("WindowsUI::PromptForSignPIN()");
+    ESTEID_DEBUG("WindowsUI::PromptForPinAsync()");
 
     if (retry)
         m_pinInputDialog->showWrongPin(tries);

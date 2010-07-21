@@ -32,12 +32,14 @@ public:
     GtkUI(boost::shared_ptr<UICallbacks>);
     virtual ~GtkUI();
 
-    void PromptForSignPIN(const std::string& subject,
+    void PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries);
     void ClosePinPrompt();
 #ifdef SUPPORT_OLD_APIS
-    void WaitForPinPrompt();
+    std::string PromptForPin(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
+        int pinPadTimeout, bool retry, int tries);
 #endif
     void ShowSettings(PluginSettings& conf, const std::string& pageUrl = "");
     void ShowPinBlockedMessage(int pin);
@@ -52,4 +54,5 @@ protected:
 
 private:
     bool m_dialog_up;
+    sigc::connection m_pinInputConnection;
 };

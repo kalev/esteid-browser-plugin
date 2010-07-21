@@ -61,7 +61,7 @@ MacUI::~MacUI()
     ESTEID_DEBUG("~MacUI()");
 }
 
-std::string MacUI::PromptForSignPIN(const std::string& subject,
+std::string MacUI::PromptForPinAsync(const std::string& subject,
                                     const std::string& docUrl, const std::string& docHash,
                                     int pinPadTimeout, bool retry, int tries)
 {
