@@ -108,6 +108,7 @@ private:
     std::string m_subject;
     std::string m_hash;
     std::string m_url;
+    bool m_pinpad;
     PluginSettings m_conf; // TODO: Optimize this?
 
     class SettingsCallback : public CallbackAPI {
@@ -147,6 +148,7 @@ private:
     void UpdatePersonalData(void);
     void promptForSignPIN(bool retrying = false);
     void startSign(std::string hash, std::string url);
+    std::string signSHA1(const std::string& hash, const std::string& pin);
     int getPin2RetryCount();
     void ShowSettings(void);
     void DisplayNotification(std::string msg);

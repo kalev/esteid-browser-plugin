@@ -296,29 +296,45 @@ std::string esteidAPI::getVersion()
 }
 
 
+/*
+ * Ask for PIN and return; the signed hash is later asynchronously returned
+ * through callback.
+ */
 void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject callback)
 {
     WHITELIST_REQUIRED;
 
     m_signCallback = callback;
 
-    startSign(hash, url);
-}
-
-void esteidAPI::startSign(std::string hash, std::string url) {
-    std::string subjectRaw;
-
-    /* Extract subject line from Certificate */
     try {
-        subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
-    } catch(const FB::script_error& e) {
+        startSign(hash, url);
+    } catch(const std::exception& e) {
         returnSignFailure(e.what());
         return;
     }
+}
+
+void esteidAPI::startSign(std::string hash, std::string url) {
+    if (hash.length() != 40)
+        throw std::runtime_error("Invalid hash");
+
+    if (url.empty())
+        throw std::runtime_error("Partial document URL must be specified");
+
+    /* Extract subject line from Certificate */
+    std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
+    if (subjectRaw.empty())
+        throw std::runtime_error("Empty subject");
 
     m_subject = subjectToHumanReadable(subjectRaw);
     m_hash = hash;
     m_url = url;
+
+#if 0
+    m_pinpad = m_service->hasSecurePinEntry();
+#else
+    m_pinpad = false;
+#endif
 
     promptForSignPIN();
 }
@@ -326,84 +342,56 @@ void esteidAPI::startSign(std::string hash, std::string url) {
 
 void esteidAPI::promptForSignPIN(bool retrying)
 {
-    int triesLeft;
-    bool pinpad;
-
-    if (m_subject.empty()) {
-        returnSignFailure("Empty subject");
-        return;
+    int triesLeft = getPin2RetryCount();
+    if (triesLeft <= 0) {
+        m_UI->ShowPinBlockedMessage(2);
+        throw std::runtime_error("PIN2 locked");
     }
 
-    if (m_url.empty()) {
-        returnSignFailure("Partial document URL must be specified");
-        return;
-    }
-
-    // FIXME: Hardcoded SHA1 support
-    if (m_hash.length() != 40) {
-        returnSignFailure("Invalid hash");
-        return;
-    }
-
-    try {
-#if 0
-        pinpad = m_service->hasSecurePinEntry();
-#else
-        pinpad = false;
-#endif
-
-        triesLeft = getPin2RetryCount();
-        if (triesLeft <= 0) {
-            m_UI->ShowPinBlockedMessage(2);
-            returnSignFailure("PIN2 locked");
-            return;
-        }
-
-        m_UI->PromptForSignPIN(m_subject, m_url, m_hash,
-                               pinpad, retrying, triesLeft);
-
-    } catch(const std::exception& e) {
-        returnSignFailure(e.what());
-        return;
-    }
+    m_UI->PromptForSignPIN(m_subject, m_url, m_hash,
+                           m_pinpad, retrying, triesLeft);
 }
 
 
+std::string esteidAPI::signSHA1(const std::string& hash, const std::string& pin)
+{
+    if (pin.empty()) // shouldn't happen
+        throw std::runtime_error("empty PIN");
+
+    std::string signedHash = m_service->signSHA1(hash, EstEidCard::SIGN, pin);
+    if (signedHash.empty()) // shouldn't happen
+        throw std::runtime_error("empty hash");
+
+    return signedHash;
+}
+
+
+/*
+ * Callback from UI code.
+ *
+ * Make sure the function doesn't throw to avoid
+ * unwinding through foreign frames.
+ */
 void esteidAPI::onPinEntered(std::string pin)
 {
-    std::string hash;
-
-    if (pin.empty()) {
-        // Shouldn't happen
-        ESTEID_DEBUG("sign: got empty PIN from UI");
-        returnSignFailure("empty PIN");
-        return;
-    }
-
     try {
-        hash = m_service->signSHA1(m_hash, EstEidCard::SIGN, pin);
+        std::string signedHash = signSHA1(m_hash, pin);
+        returnSignedData(signedHash);
     } catch(AuthError &e) {
         if (e.m_aborted) { // pinpad
-            ESTEID_DEBUG("sign: cancel pressed on PinPAD");
             returnSignFailure("pinpad operation cancelled");
             return;
         }
 
-        // ask again for PIN
-        promptForSignPIN(true);
-        return;
-    } catch(std::runtime_error &e) {
+        try {
+            // ask again for PIN
+            promptForSignPIN(true);
+        } catch(const std::exception& e) {
+            returnSignFailure(e.what());
+        }
+    } catch(const std::exception& e) {
         returnSignFailure(e.what());
-        return;
     }
-
-    if (hash.empty()) {
-        // Shouldn't happen
-        returnSignFailure("empty hash");
-        return;
-    }
-
-    returnSignedData(hash);
 }
 
 
