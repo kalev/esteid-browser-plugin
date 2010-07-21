@@ -73,6 +73,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     dialog.showPinBlocked();
 
     dialog.setSubject("Peeter Pakiraam");
+
+    std::cout << "Starting modal dialog:" << std::endl;
+    int response = dialog.doModalDialog();
+    if (response == PinInputDialog::RESPONSE_OK) {
+        std::cout << "OK" << std::endl;
+        std::cout << "PIN is " << dialog.getPin() << std::endl;
+    } else {
+        std::cout << "Cancel" << std::endl;
+    }
+
+    std::cout << "Starting non-modal dialog:" << std::endl;
     dialog.doDialog();
 
     // Start the message loop.

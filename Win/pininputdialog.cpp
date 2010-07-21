@@ -66,7 +66,7 @@ void PinInputDialog::setSubject(const std::string& subject)
 }
 
 
-std::string PinInputDialog::getPin()
+std::string PinInputDialog::getPinInternal()
 {
     char *buf = new char[BUF_SIZE];
 
@@ -79,9 +79,15 @@ std::string PinInputDialog::getPin()
 }
 
 
+std::string PinInputDialog::getPin()
+{
+    return m_pin;
+}
+
+
 void PinInputDialog::clearPin()
 {
-    SetDlgItemTextA(m_hWnd, IDC_PININPUT, "");
+    m_pin = "";
 }
 
 
@@ -109,7 +115,7 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
 
     case IDC_PININPUT:
         if (HIWORD(wParam) == EN_CHANGE) {
-            std::string pin = getPin();
+            std::string pin = getPinInternal();
 
             if (pin.size() >= m_minPinLength) {
                 EnableWindow(GetDlgItem(m_hWnd, IDOK), TRUE);
@@ -122,6 +128,9 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         break;
 
     case IDOK:
+        m_pin = getPinInternal();
+        SetDlgItemTextA(m_hWnd, IDC_PININPUT, "");
+
         if (m_modalDialog) {
             EndDialog(m_hWnd, wParam);
         } else {
@@ -132,6 +141,9 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         break;
 
     case IDCANCEL:
+        m_pin = "";
+        SetDlgItemTextA(m_hWnd, IDC_PININPUT, "");
+
         if (m_modalDialog) {
             EndDialog(m_hWnd, wParam);
         } else {
@@ -171,13 +183,13 @@ bool PinInputDialog::doDialog()
     return BaseDialog::doDialog(IDD_PIN_DIALOG_ENG);
 }
 
-bool PinInputDialog::doModalDialog()
+int PinInputDialog::doModalDialog()
 {
     m_modalDialog = true;
 
     int rv = BaseDialog::doModalDialog(IDD_PIN_DIALOG_ENG);
     if (rv == IDOK)
-        return true;
+        return RESPONSE_OK;
     else
-        return false;
+        return RESPONSE_CANCEL;
 }
