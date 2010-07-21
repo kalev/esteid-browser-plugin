@@ -39,6 +39,7 @@ public:
     void clearPin();
 
     bool doDialog();
+    bool doModalDialog();
 
 private:
     LRESULT on_initdialog(WPARAM wParam);
@@ -47,6 +48,7 @@ private:
 
     std::string m_subject;
     size_t m_minPinLength;
+    bool m_modalDialog;
 };
 
 #endif //ESTEID_PININPUTDIALOG_H

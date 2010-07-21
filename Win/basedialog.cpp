@@ -72,3 +72,11 @@ bool BaseDialog::doDialog(int resourceID)
     ShowWindow(m_hWnd, SW_NORMAL);
     return true;
 }
+
+int BaseDialog::doModalDialog(int resourceID)
+{
+    HWND hParent = GetForegroundWindow();
+
+    return DialogBoxParam(m_hInst, MAKEINTRESOURCE(resourceID), hParent, (DLGPROC)dialogProc,
+                         reinterpret_cast<LPARAM>(this));
+}

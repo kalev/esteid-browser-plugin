@@ -6,10 +6,6 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-if(UNIX)
-    set (ENABLE_OLD_APIS 1)
-endif()
-
 find_package(Subversion)
 if(Subversion_FOUND AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
     Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} PROJECT)
@@ -71,6 +67,7 @@ if(ENABLE_DEBUG)
     add_definitions(-DDEBUG)
 endif(ENABLE_DEBUG)
 
+option(ENABLE_OLD_APIS "Support OLD API-s" ON)
 if(ENABLE_OLD_APIS)
     message(STATUS "Support for OLD API-s is enabled")
     add_definitions(-DSUPPORT_OLD_APIS)

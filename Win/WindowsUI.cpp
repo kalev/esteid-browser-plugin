@@ -65,6 +65,27 @@ void WindowsUI::PromptForPinAsync(const std::string& subject,
 }
 
 
+#ifdef SUPPORT_OLD_APIS
+std::string WindowsUI::PromptForPin(const std::string& subject,
+        const std::string& docUrl, const std::string& docHash,
+        int pinPadTimeout, bool retry, int tries)
+{
+    if (retry)
+        m_pinInputDialog->showWrongPin(tries);
+
+    m_pinInputDialog->setSubject(subject);
+    m_pinInputDialog->doModalDialog();
+
+    std::string pin = m_pinInputDialog->getPin();
+
+    // make sure the dialog doesn't cache PIN
+    m_pinInputDialog->clearPin();
+
+    return pin;
+}
+#endif
+
+
 void WindowsUI::ClosePinPrompt()
 {
     ESTEID_DEBUG("WindowsUI::ClosePinPrompt()");
