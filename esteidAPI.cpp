@@ -403,6 +403,7 @@ void esteidAPI::returnSignedData(const std::string& data)
     } catch(const FB::script_error&) {
         returnSignFailure("Error executing JavaScript code");
     }
+    m_signCallback = NULL;
 }
 
 
@@ -413,6 +414,7 @@ void esteidAPI::returnSignFailure(const std::string& msg)
     } catch(const FB::script_error&) {
         // can't really do anything useful here
     }
+    m_signCallback = NULL;
 }
 
 #ifdef SUPPORT_OLD_APIS
