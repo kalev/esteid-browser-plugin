@@ -117,15 +117,16 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 
 void WindowsUI::on_pininputdialog_response(int response)
 {
+    std::string pin = m_pinInputDialog->getPin();
+
+    // make sure the dialog doesn't cache PIN
+    m_pinInputDialog->clearPin();
+
     if (response == PinInputDialog::RESPONSE_OK) {
-        std::string pin = m_pinInputDialog->getPin();
         m_callbacks->onPinEntered(pin);
     } else {
         m_callbacks->onPinCancelled();
     }
-
-    // make sure the dialog doesn't cache PIN
-    m_pinInputDialog->clearPin();
 }
 
 void WindowsUI::on_whitelistdialog_response(int response)
