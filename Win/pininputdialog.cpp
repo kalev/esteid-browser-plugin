@@ -134,8 +134,8 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         if (m_modalDialog) {
             EndDialog(m_hWnd, wParam);
         } else {
-            signalResponse(RESPONSE_OK);
             DestroyWindow(m_hWnd);
+            signalResponse(RESPONSE_OK);
         }
         return TRUE;
         break;
@@ -147,8 +147,8 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         if (m_modalDialog) {
             EndDialog(m_hWnd, wParam);
         } else {
-            signalResponse(RESPONSE_CANCEL);
             DestroyWindow(m_hWnd);
+            signalResponse(RESPONSE_CANCEL);
         }
         return TRUE;
         break;
@@ -168,11 +168,17 @@ LRESULT PinInputDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
         return on_command(wParam, lParam);
         break;
     case WM_CLOSE:
-        DestroyWindow(m_hWnd);
+        if (m_modalDialog) {
+            EndDialog(m_hWnd, wParam);
+        } else {
+            DestroyWindow(m_hWnd);
+            signalResponse(RESPONSE_CANCEL);
+        }
+        return TRUE;
         break;
     }
 
-    return 0;
+    return FALSE;
 }
 
 
