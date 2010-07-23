@@ -25,7 +25,8 @@ typedef BaseDialog::Connection Connection;
 
 BaseDialog::BaseDialog(HINSTANCE hInst)
     : m_hInst(hInst),
-      m_hWnd(NULL)
+      m_hWnd(NULL),
+      m_modalDialog(false)
 {
 }
 
@@ -60,9 +61,41 @@ void BaseDialog::disconnect(Connection subscriber)
     return dlg->on_message(message, wParam, lParam);
 }
 
+LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_INITDIALOG:
+        return on_initdialog(wParam);
+        break;
+    case WM_COMMAND:
+        return on_command(wParam, lParam);
+        break;
+    case WM_NOTIFY:
+        return on_notify(wParam, lParam);
+        break;
+    case WM_CLOSE:
+        if (m_modalDialog) {
+            EndDialog(m_hWnd, wParam);
+        } else {
+            DestroyWindow(m_hWnd);
+            signalResponse(RESPONSE_CANCEL);
+        }
+        return TRUE;
+        break;
+    }
+
+    return FALSE;
+}
+
+LRESULT BaseDialog::on_notify(WPARAM wParam, LPARAM lParam)
+{
+    return FALSE;
+}
+
 bool BaseDialog::doDialog(int resourceID)
 {
     HWND hParent = GetForegroundWindow();
+    m_modalDialog = false;
 
     m_hWnd = CreateDialogParam(m_hInst, MAKEINTRESOURCE(resourceID), hParent, (DLGPROC)dialogProc,
                          reinterpret_cast<LPARAM>(this));
@@ -76,6 +109,7 @@ bool BaseDialog::doDialog(int resourceID)
 int BaseDialog::doModalDialog(int resourceID)
 {
     HWND hParent = GetForegroundWindow();
+    m_modalDialog = true;
 
     return DialogBoxParam(m_hInst, MAKEINTRESOURCE(resourceID), hParent, (DLGPROC)dialogProc,
                          reinterpret_cast<LPARAM>(this));

@@ -47,9 +47,13 @@ public:
 protected:
     HINSTANCE m_hInst;
     HWND m_hWnd;
+    bool m_modalDialog;
 
     static LRESULT CALLBACK dialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-    virtual LRESULT on_message(UINT message, WPARAM wParam, LPARAM lParam) = 0;
+    virtual LRESULT on_message(UINT message, WPARAM wParam, LPARAM lParam);
+    virtual LRESULT on_initdialog(WPARAM wParam) = 0;
+    virtual LRESULT on_command(WPARAM wParam, LPARAM lParam) = 0;
+    virtual LRESULT on_notify(WPARAM wParam, LPARAM lParam);
     ResponseSignal signalResponse;
 };
 

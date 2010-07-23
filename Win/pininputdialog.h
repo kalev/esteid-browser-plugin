@@ -44,14 +44,12 @@ public:
 private:
     LRESULT on_initdialog(WPARAM wParam);
     LRESULT on_command(WPARAM wParam, LPARAM lParam);
-    LRESULT on_message(UINT message, WPARAM wParam, LPARAM lParam);
 
     std::string getPinInternal();
 
     std::string m_subject;
     std::string m_pin;
     size_t m_minPinLength;
-    bool m_modalDialog;
 };
 
 #endif //ESTEID_PININPUTDIALOG_H

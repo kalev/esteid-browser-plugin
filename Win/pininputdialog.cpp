@@ -28,8 +28,7 @@
 
 PinInputDialog::PinInputDialog(HINSTANCE hInst)
     : BaseDialog(hInst),
-      m_minPinLength(5),
-      m_modalDialog(false)
+      m_minPinLength(5)
 {
 }
 
@@ -158,41 +157,13 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
 }
 
 
-LRESULT PinInputDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message) {
-    case WM_INITDIALOG:
-        return on_initdialog(wParam);
-        break;
-    case WM_COMMAND:
-        return on_command(wParam, lParam);
-        break;
-    case WM_CLOSE:
-        if (m_modalDialog) {
-            EndDialog(m_hWnd, wParam);
-        } else {
-            DestroyWindow(m_hWnd);
-            signalResponse(RESPONSE_CANCEL);
-        }
-        return TRUE;
-        break;
-    }
-
-    return FALSE;
-}
-
-
 bool PinInputDialog::doDialog()
 {
-    m_modalDialog = false;
-
     return BaseDialog::doDialog(IDD_PIN_DIALOG_ENG);
 }
 
 int PinInputDialog::doModalDialog()
 {
-    m_modalDialog = true;
-
     int rv = BaseDialog::doModalDialog(IDD_PIN_DIALOG_ENG);
     if (rv == IDOK)
         return RESPONSE_OK;

@@ -54,7 +54,6 @@ protected:
     LRESULT on_initdialog(WPARAM wParam);
     LRESULT on_command(WPARAM wParam, LPARAM lParam);
     LRESULT on_notify(WPARAM wParam, LPARAM lParam);
-    LRESULT on_message(UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
     HWND m_hList;

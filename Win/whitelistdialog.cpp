@@ -195,25 +195,6 @@ LRESULT WhitelistDialog::on_notify(WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-LRESULT WhitelistDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message) {
-    case WM_INITDIALOG:
-        return on_initdialog(wParam);
-        break;
-    case WM_COMMAND:
-        return on_command(wParam, lParam);
-        break;
-    case WM_NOTIFY:
-        return on_notify(wParam, lParam);
-    case WM_CLOSE:
-        DestroyWindow(m_hWnd);
-        break;
-    }
-
-    return 0;
-}
-
 bool WhitelistDialog::doDialog()
 {
     return BaseDialog::doDialog(IDC_DIALOG);
