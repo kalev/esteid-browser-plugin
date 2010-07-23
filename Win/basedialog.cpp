@@ -61,10 +61,38 @@ void BaseDialog::disconnect(Connection subscriber)
     return dlg->on_message(message, wParam, lParam);
 }
 
+
+static HHOOK s_hHook = NULL;
+static HWND s_hWnd = NULL;
+
+LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+    LPMSG lpMsg = reinterpret_cast<LPMSG>(lParam);
+
+    if (nCode >= 0 && wParam == PM_REMOVE &&
+              lpMsg->message >= WM_KEYFIRST &&
+              lpMsg->message <= WM_KEYLAST) {
+
+        if (IsWindow(s_hWnd) && IsDialogMessage(s_hWnd, lpMsg)) {
+            // The value returned from this hookproc is ignored, and it cannot
+            // be used to tell Windows the message has been handled. To avoid
+            // further processing, convert the message to WM_NULL before
+            // returning.
+            lpMsg->message = WM_NULL;
+            lpMsg->lParam = 0L;
+            lpMsg->wParam = 0;
+        }
+    }
+
+    return CallNextHookEx(s_hHook, nCode, wParam, lParam);
+}
+
 LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
     case WM_INITDIALOG:
+        s_hWnd = m_hWnd;
+        s_hHook = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, NULL, GetCurrentThreadId());
         return on_initdialog(wParam);
         break;
     case WM_COMMAND:
@@ -81,6 +109,10 @@ LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
             signalResponse(RESPONSE_CANCEL);
         }
         return TRUE;
+        break;
+    case WM_DESTROY:
+        UnhookWindowsHookEx(s_hHook);
+        return FALSE;
         break;
     }
 
