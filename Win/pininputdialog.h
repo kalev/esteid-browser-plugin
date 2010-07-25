@@ -33,8 +33,9 @@ public:
     virtual ~PinInputDialog();
 
     void showPinBlocked();
-    void showWrongPin(int tries);
     void setSubject(const std::string& subject);
+    void setRetry(bool retry);
+    void setTries(int tries);
     std::string getPin();
     void clearPin();
 
@@ -46,8 +47,14 @@ private:
     LRESULT on_command(WPARAM wParam, LPARAM lParam);
 
     std::string getPinInternal();
+    HICON getCreduiIcon();
+    HICON getIcon();
+    void setFontSize(HWND hText, int fontSize);
+    void showWrongPin(HWND hWnd, int tries);
 
     std::string m_subject;
+    bool m_retry;
+    int m_triesLeft;
     std::string m_pin;
     size_t m_minPinLength;
 };

@@ -69,7 +69,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     PinInputDialog dialog(hInstance);
     TestWindowsUI ui(dialog);
 
-    dialog.showWrongPin(2);
     dialog.showPinBlocked();
 
     dialog.setSubject("Peeter Pakiraam");
@@ -84,6 +83,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     }
 
     std::cout << "Starting non-modal dialog:" << std::endl;
+    dialog.setRetry(true);
+    dialog.setTries(2);
     dialog.doDialog();
 
     // Start the message loop.
