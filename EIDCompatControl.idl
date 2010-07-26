@@ -1,0 +1,10 @@
+    [
+        uuid(FC5B7BD2-584A-4153-92D7-4C5840E4BC28),
+        control,
+        helpstring("Compatibility Sign Class")
+    ]
+    coclass EIDCompatControl
+    {
+        [default] interface IFBControl;
+        [default, source] dispinterface IFBComEventSource;
+    };

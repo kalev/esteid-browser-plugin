@@ -1,0 +1,34 @@
+HKCU
+{
+    NoRemove Software
+    {
+        NoRemove Classes
+        {
+            EIDCard.Sign.1 = s 'Compatibility Sign Class'
+            {
+                CLSID = s '{FC5B7BD2-584A-4153-92D7-4C5840E4BC28}'
+            }
+            EIDCard.Sign = s 'Compatibility Sign Class'
+			{
+                CLSID = s '{FC5B7BD2-584A-4153-92D7-4C5840E4BC28}'
+                CurVer = s 'EIDCard.Sign.1'
+			}
+            NoRemove CLSID
+            {
+                ForceRemove {FC5B7BD2-584A-4153-92D7-4C5840E4BC28} = s 'Compatibility Sign Class'
+                {
+                    ProgID = s 'EIDCard.Sign.1'
+                    VersionIndependentProgID = s 'EIDCard.Sign'
+                    ForceRemove 'Programmable'
+                    InprocServer32 = s '%MODULE%'
+                    {
+                        val ThreadingModel = s '%THREADING%'
+                    }
+                    val AppID = s '%APPID%'
+                    'TypeLib' = s '%LIBID%'
+                    'Version' = s '%VERSION%'
+                }
+            }            
+        }
+    }
+}
