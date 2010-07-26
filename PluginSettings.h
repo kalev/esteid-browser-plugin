@@ -44,6 +44,6 @@ public:
 private:
     void removeDuplicateEntries(std::vector<std::string>& v);
     void removeDefaultEntries(std::vector<std::string>& v);
-    bool inDefaultWhitelist(const std::string s);
+    bool inDefaultWhitelist(const std::string& s);
 };
 #endif

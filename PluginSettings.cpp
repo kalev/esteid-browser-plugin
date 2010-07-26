@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <boost/bind.hpp>
 
 #include "PluginSettings.h"
 #include "config.h"
@@ -103,11 +104,11 @@ void PluginSettings::removeDuplicateEntries(std::vector<std::string>& v)
 // remove all entries which are also in default whitelist
 void PluginSettings::removeDefaultEntries(std::vector<std::string>& v)
 {
-    v.erase(remove_if(v.begin(), v.end(), bind1st(mem_fun(&PluginSettings::inDefaultWhitelist), this)), v.end());
+    v.erase(remove_if(v.begin(), v.end(), boost::bind(&PluginSettings::inDefaultWhitelist, this, _1)), v.end());
 }
 
 // predicate for removeDefaultEntries
-bool PluginSettings::inDefaultWhitelist(const std::string s)
+bool PluginSettings::inDefaultWhitelist(const std::string& s)
 {
     return find(default_whitelist.begin(), default_whitelist.end(), s) != default_whitelist.end();
 }
