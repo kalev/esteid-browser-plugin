@@ -74,6 +74,9 @@ void PluginSettings::Load() {
 void PluginSettings::Save() {
     std::vector<std::string>::const_iterator i;
 
+    removeDuplicateEntries(whitelist);
+    removeDefaultEntries(whitelist);
+
     std::ofstream output;
     output.exceptions( std::ofstream::failbit | std::ofstream::badbit );
 
@@ -89,4 +92,22 @@ bool PluginSettings::InWhitelist(std::string s) {
     return (allowDefaults && \
             default_whitelist.end() != find(default_whitelist.begin(), default_whitelist.end(), s)) || \
             whitelist.end() != find(whitelist.begin(), whitelist.end(), s);
+}
+
+void PluginSettings::removeDuplicateEntries(std::vector<std::string>& v)
+{
+    std::sort(v.begin(), v.end());
+    v.erase(std::unique(v.begin(), v.end()), v.end());
+}
+
+// remove all entries which are also in default whitelist
+void PluginSettings::removeDefaultEntries(std::vector<std::string>& v)
+{
+    v.erase(remove_if(v.begin(), v.end(), bind1st(mem_fun(&PluginSettings::inDefaultWhitelist), this)), v.end());
+}
+
+// predicate for removeDefaultEntries
+bool PluginSettings::inDefaultWhitelist(const std::string s)
+{
+    return find(default_whitelist.begin(), default_whitelist.end(), s) != default_whitelist.end();
 }

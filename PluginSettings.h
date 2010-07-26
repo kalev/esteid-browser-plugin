@@ -41,5 +41,9 @@ public:
     void Load();
     /** Saves config. Will throw ios_base::failure on failure */
     void Save();
+private:
+    void removeDuplicateEntries(std::vector<std::string>& v);
+    void removeDefaultEntries(std::vector<std::string>& v);
+    bool inDefaultWhitelist(const std::string s);
 };
 #endif
