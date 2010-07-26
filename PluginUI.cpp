@@ -21,10 +21,16 @@
 #include "PluginUI.h"
 
 PluginUI::PluginUI(boost::shared_ptr<UICallbacks> cb)
-    : m_callbacks(cb)
+    : m_callbacks(cb),
+      m_window(NULL)
 {
 }
 
 PluginUI::~PluginUI(void)
 {
+}
+
+void PluginUI::setWindow(FB::PluginWindow* win)
+{
+    m_window = win;
 }

@@ -64,6 +64,7 @@ public:
 
 private:
     FB::AutoPtr<esteidAPI> m_esteidAPI;
+    FB::PluginWindow* m_window;
 };
 
 extern logger eidlog;

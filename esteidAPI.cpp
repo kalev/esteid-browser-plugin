@@ -147,6 +147,11 @@ esteidAPI::~esteidAPI()
     m_service->RemoveObserver(this);
 }
 
+void esteidAPI::setWindow(FB::PluginWindow* win)
+{
+    m_UI->setWindow(win);
+}
+
 bool esteidAPI::IsLocal() {
     // FIXME: This code is butt-ugly!
     if(!m_pageURL.compare(0,  7, "file://"))            return true;

@@ -38,6 +38,8 @@ public:
     esteidAPI(FB::BrowserHostWrapper *host);
     virtual ~esteidAPI();
 
+    void setWindow(FB::PluginWindow*);
+
     /** get plugin version 
       * @returns string version number
       */

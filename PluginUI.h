@@ -23,6 +23,7 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include "PluginWindow.h"
 #include "PluginSettings.h"
 
 // Forward declaration
@@ -63,8 +64,11 @@ public:
     PluginUI(boost::shared_ptr<UICallbacks>);
     virtual ~PluginUI(void);
 
+    virtual void setWindow(FB::PluginWindow*);
+
 protected:
     boost::shared_ptr<UICallbacks> m_callbacks;
+    FB::PluginWindow* m_window;
 };
 
 #endif // H_ESTEID_PLUGINUI

@@ -48,7 +48,8 @@ void esteid::StaticDeinitialize()
 
 
 esteid::esteid()
-    : m_esteidAPI()
+    : m_esteidAPI(),
+      m_window(NULL)
 {
 }
 
@@ -60,6 +61,7 @@ FB::JSAPI* esteid::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
     m_esteidAPI = new esteidAPI(m_host);
+    m_esteidAPI->setWindow(m_window);
     return m_esteidAPI.ptr();
 }
 
@@ -77,14 +79,18 @@ bool esteid::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *)
 {
     return false;
 }
-bool esteid::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *)
+bool esteid::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win)
 {
-    // The window is attached; act appropriately
-    return false;
+    m_window = win;
+    if (m_esteidAPI)
+        m_esteidAPI->setWindow(win);
+    return true;
 }
 
 bool esteid::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *)
 {
-    // The window is about to be detached; act appropriately
-    return false;
+    m_window = NULL;
+    if (m_esteidAPI)
+        m_esteidAPI->setWindow(NULL);
+    return true;
 }
