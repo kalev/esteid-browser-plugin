@@ -43,7 +43,7 @@ public:
 
     void setEntryText(const std::string & site);
 
-    bool doDialog();
+    bool doDialog(HWND hParent = NULL);
 
 protected:
     void insertItem(const std::wstring & name, bool editable);

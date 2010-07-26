@@ -33,6 +33,7 @@
 
 WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
     : PluginUI(cb),
+      m_hParent(NULL),
       m_pinInputDialog(new PinInputDialog(ATL::_AtlBaseModule.GetResourceInstance())),
       m_whitelistDialog(new WhitelistDialog(ATL::_AtlBaseModule.GetResourceInstance()))
 {
@@ -51,6 +52,15 @@ WindowsUI::~WindowsUI()
 }
 
 
+void WindowsUI::setWindow(FB::PluginWindow* pluginWindow)
+{
+    if (pluginWindow) {
+        FB::PluginWindowWin* wnd = reinterpret_cast<FB::PluginWindowWin*>(pluginWindow);
+        m_hParent = wnd->getHWND();
+    }
+}
+
+
 void WindowsUI::PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
@@ -60,7 +70,7 @@ void WindowsUI::PromptForPinAsync(const std::string& subject,
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
-    m_pinInputDialog->doDialog();
+    m_pinInputDialog->doDialog(m_hParent);
 }
 
 
@@ -72,7 +82,7 @@ std::string WindowsUI::PromptForPin(const std::string& subject,
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
-    m_pinInputDialog->doModalDialog();
+    m_pinInputDialog->doModalDialog(m_hParent);
 
     std::string pin = m_pinInputDialog->getPin();
 
@@ -94,7 +104,7 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 {
     ESTEID_DEBUG("WindowsUI::ShowPinBlockedMessage()");
 
-    m_pinInputDialog->showPinBlocked();
+    m_pinInputDialog->showPinBlocked(m_hParent);
 }
 
 
@@ -106,7 +116,7 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 
     m_whitelistDialog->addDefaultSites(conf.default_whitelist);
     m_whitelistDialog->addSites(conf.whitelist);
-    m_whitelistDialog->doDialog();
+    m_whitelistDialog->doDialog(m_hParent);
 
     if (pageUrl.length() > 0)
         m_whitelistDialog->setEntryText(pageUrl);
