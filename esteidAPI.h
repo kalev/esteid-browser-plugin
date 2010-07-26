@@ -167,6 +167,4 @@ private:
     std::string EstEIDNotificationBarScript;
     static std::string subjectToHumanReadable(std::string& subject);
     static std::vector<std::string> stringSplit(std::string str, std::string separator);
-    static std::string iconvConvert(const std::string&, const char*, const char*);
-    static std::string CP1252_to_UTF8(const std::string&);
 };
