@@ -125,6 +125,77 @@ void PinInputDialog::setFontSize(HWND hText, int fontSize)
 }
 
 
+// calculate control's width needed to fit text
+int PinInputDialog::preferredWidth(HWND hWnd, const std::wstring& text)
+{
+    HDC hdc;
+    SIZE size;
+
+    hdc = GetDC(hWnd);
+    GetTextExtentPoint32(hdc, text.c_str(), (int)text.size(), &size);
+    ReleaseDC(hWnd, hdc);
+
+    return size.cx;
+}
+
+
+// get control's current width
+int PinInputDialog::currentWidth(HWND hWnd)
+{
+    RECT rect;
+    POINT ptDiff;
+
+    GetClientRect(hWnd, &rect);
+    ptDiff.x = (rect.right - rect.left);
+    ptDiff.y = (rect.bottom - rect.top);
+
+    return ptDiff.x;
+}
+
+
+void PinInputDialog::resizeWindow(HWND hWnd, int width, int height)
+{
+    RECT rect;
+    POINT ptDiff;
+
+    GetWindowRect(hWnd, &rect);
+    ptDiff.x = (rect.right - rect.left);
+    ptDiff.y = (rect.bottom - rect.top);
+
+    MoveWindow(hWnd, rect.left, rect.top, ptDiff.x + width, ptDiff.y + height, TRUE);
+}
+
+
+void PinInputDialog::resizeControl(HWND hWnd, HWND hControl, int width, int height)
+{
+    RECT rect;
+    POINT point;
+
+    GetWindowRect(hControl, &rect);
+    point.x = rect.left;
+    point.y = rect.top;
+    ScreenToClient(hWnd, &point);
+    GetClientRect(hControl, &rect);
+
+    MoveWindow(hControl, point.x, point.y, (rect.right - rect.left) + width, (rect.bottom - rect.top) + height, TRUE);
+}
+
+
+void PinInputDialog::moveControl(HWND hWnd, HWND hControl, int dx, int dy)
+{
+    RECT rect;
+    POINT point;
+
+    GetWindowRect(hControl, &rect);
+    point.x = rect.left;
+    point.y = rect.top;
+    ScreenToClient(hWnd, &point);
+    GetClientRect(hControl, &rect);
+
+    MoveWindow(hControl, point.x + dx, point.y + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
+}
+
+
 void PinInputDialog::showWrongPin(HWND hWnd, int tries)
 {
     static const std::wstring title = L"Wrong PIN!";
@@ -150,9 +221,12 @@ void PinInputDialog::showWrongPin(HWND hWnd, int tries)
 
 LRESULT PinInputDialog::on_initdialog(WPARAM wParam)
 {
+    HWND hLabel = GetDlgItem(m_hWnd, IDC_LABEL);
+    HWND hPinedit = GetDlgItem(m_hWnd, IDC_PINEDIT);
+
     SetDlgItemText(m_hWnd, IDC_LABEL, const_cast<wchar_t *>(m_subject.c_str()));
 
-    setFontSize(GetDlgItem(m_hWnd, IDC_LABEL), 10);
+    setFontSize(hLabel, 10);
 
     // set icon
     HICON icon = getIcon();
@@ -161,11 +235,24 @@ LRESULT PinInputDialog::on_initdialog(WPARAM wParam)
     // set maximum pin length
     SendDlgItemMessage(m_hWnd, IDC_PINEDIT, EM_SETLIMITTEXT, 12, 0);
 
+    // resize dialog to fit long names
+    if (currentWidth(hLabel) < preferredWidth(hLabel, m_subject)) {
+        int dx = preferredWidth(hLabel, m_subject) - currentWidth(hLabel);
+        // for reasons unknown, the width of IDC_LABEL and IDC_PINEDIT differ a little bit
+        int dx2 = preferredWidth(hLabel, m_subject) - currentWidth(hPinedit);
+
+        resizeWindow(m_hWnd, dx, 0);
+        resizeControl(m_hWnd, hLabel, dx, 0);
+        resizeControl(m_hWnd, hPinedit, dx2, 0);
+        moveControl(m_hWnd, GetDlgItem(m_hWnd, IDOK), dx, 0);
+        moveControl(m_hWnd, GetDlgItem(m_hWnd, IDCANCEL), dx, 0);
+    }
+
     if (m_retry)
-        showWrongPin(GetDlgItem(m_hWnd, IDC_PINEDIT), m_triesLeft);
+        showWrongPin(hPinedit, m_triesLeft);
 
     if (GetDlgCtrlID((HWND) wParam) != IDC_PINEDIT) {
-        SetFocus(GetDlgItem(m_hWnd, IDC_PINEDIT));
+        SetFocus(hPinedit);
         return FALSE;
     }
 
