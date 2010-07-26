@@ -52,7 +52,7 @@ private:
     void setFontSize(HWND hText, int fontSize);
     void showWrongPin(HWND hWnd, int tries);
 
-    std::string m_subject;
+    std::wstring m_subject;
     bool m_retry;
     int m_triesLeft;
     std::string m_pin;

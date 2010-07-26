@@ -20,6 +20,7 @@
 
 #include "pininputdialog.h"
 #include "basedialog.h"
+#include "converter.h"
 
 #include <windows.h>
 #include <commctrl.h>
@@ -52,7 +53,7 @@ void PinInputDialog::showPinBlocked()
 
 void PinInputDialog::setSubject(const std::string& subject)
 {
-    m_subject = subject + " (PIN2)";
+    m_subject = Converter::string_to_wstring(subject) + L" (PIN2)";
 }
 
 
@@ -149,7 +150,7 @@ void PinInputDialog::showWrongPin(HWND hWnd, int tries)
 
 LRESULT PinInputDialog::on_initdialog(WPARAM wParam)
 {
-    SetDlgItemTextA(m_hWnd, IDC_LABEL, m_subject.c_str());
+    SetDlgItemText(m_hWnd, IDC_LABEL, const_cast<wchar_t *>(m_subject.c_str()));
 
     setFontSize(GetDlgItem(m_hWnd, IDC_LABEL), 10);
 
