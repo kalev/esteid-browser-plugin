@@ -29,8 +29,11 @@
 
 #include "NpapiTypes.h"
 #include "esteidAPI.h"
-
 #include "esteid.h"
+
+#if defined(SUPPORT_OLD_APIS) && defined(_WIN32)
+#include "EIDCompatControl.h" // Support loading by old ActiveX CLSID
+#endif
 
 logger eidlog("npesteid");
 
