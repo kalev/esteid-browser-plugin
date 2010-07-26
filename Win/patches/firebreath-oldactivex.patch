@@ -1,0 +1,23 @@
+diff -up firebreath/gen_templates/FireBreathWin.idl.orig firebreath/gen_templates/FireBreathWin.idl
+--- firebreath/gen_templates/FireBreathWin.idl.orig	2010-07-27 00:43:21.000000000 +0300
++++ firebreath/gen_templates/FireBreathWin.idl	2010-07-27 00:44:06.000000000 +0300
+@@ -75,5 +75,6 @@ library ${FBTYPELIB_NAME}
+         [default] interface IFBComJavascriptObject;
+         [default, source] dispinterface IFBComEventSource;
+     }
++#include "${CMAKE_CURRENT_SOURCE_DIR}/EIDCompatControl.idl"
+ 
+ };
+diff -up firebreath/gen_templates/firebreathWin.rc.orig firebreath/gen_templates/firebreathWin.rc
+--- firebreath/gen_templates/firebreathWin.rc.orig	2010-07-27 00:43:08.000000000 +0300
++++ firebreath/gen_templates/firebreathWin.rc	2010-07-27 00:15:47.000000000 +0300
+@@ -20,6 +20,9 @@
+ #include "Win/pininputdialog.rc"
+ #include "Win/whitelistdialog_res.h"
+ #include "Win/whitelistdialog.rc"
++#ifdef SUPPORT_OLD_APIS
++#include "EIDCompatControl.rc"
++#endif
+ 
+ /////////////////////////////////////////////////////////////////////////////
+ #undef APSTUDIO_READONLY_SYMBOLS
