@@ -1,0 +1,3 @@
+#include "EIDCompatControl_res.h"
+
+IDR_EIDCOMPATCONTROL    REGISTRY                "EIDCompatControl.rgs"
