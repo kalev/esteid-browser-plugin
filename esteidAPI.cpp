@@ -552,6 +552,7 @@ std::string esteidAPI::getSignedHash(std::string hash, std::string slot) {
 }
 
 std::string esteidAPI::get_selectedCertNumber() {
+    WHITELIST_REQUIRED;
     DEPRECATED_CALL;
 
     return "10"; // Dummy number

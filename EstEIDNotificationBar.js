@@ -55,8 +55,8 @@ document.EstEIDNotificationBar = { \
   }, \
   create: function(slabel, sl) { \
     this.callBack = sl; \
-    this.warnObj = this.makeBar('#ffff66', slabel); \
     this.errObj = this.makeBar('#ff6666', null); \
+    this.warnObj = this.makeBar('#ffff66', slabel); \
   }, \
   show: function(msg) { \
     if(!this.warnObj) return; \
