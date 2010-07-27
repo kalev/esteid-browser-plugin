@@ -31,8 +31,6 @@ public:
     WindowsUI(boost::shared_ptr<UICallbacks>);
     virtual ~WindowsUI();
 
-    void setWindow(FB::PluginWindow*);
-
     void PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries);
@@ -49,7 +47,6 @@ protected:
     void on_pininputdialog_response(int response);
     void on_whitelistdialog_response(int response);
 
-    HWND m_hParent;
     PluginSettings *m_conf;
     std::auto_ptr<PinInputDialog> m_pinInputDialog;
     std::auto_ptr<WhitelistDialog> m_whitelistDialog;

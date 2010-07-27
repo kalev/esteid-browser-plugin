@@ -195,7 +195,7 @@ LRESULT WhitelistDialog::on_notify(WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-bool WhitelistDialog::doDialog(HWND hParent)
+bool WhitelistDialog::doDialog()
 {
-    return BaseDialog::doDialog(IDC_DIALOG, hParent);
+    return BaseDialog::doDialog(IDC_DIALOG);
 }
