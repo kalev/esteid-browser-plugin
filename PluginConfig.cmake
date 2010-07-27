@@ -43,8 +43,22 @@ set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "esteid")
 set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "esteid")
-if(ENABLE_OLD_APIS)
-    set(FBSTRING_MIMEType "application/x-esteid|application/x-idcard-plugin")
-else(ENABLE_OLD_APIS)
-    set(FBSTRING_MIMEType "application/x-esteid")
-endif(ENABLE_OLD_APIS)
+set(FBSTRING_MIMEType "application/x-esteid")
+
+# FIXME: Unfortunately this does not work :(
+#        we should fix firebreath to support multiple mime types along
+#        with multiple FileExtents
+#        Doing so requires quite a few changes:
+#        1. Generate proper MIME type strings for UNIX NPAPI browsers
+#           and return those via NP_GetMIMEDescription in X11/np_x11main.cpp
+#           The strings are in format: type:ext:desc;type:ext:desc;...
+#        2. Generate Windows registry map for all supported mime types
+#           and write it to gen/FBControl.rgs
+#        3. Generate DLL FileInfo block in gen/firebreathWin.rc
+#           MIMEType and FileExtents in format: one|two|three|... 
+#           
+#if(ENABLE_OLD_APIS)
+#    set(FBSTRING_MIMEType "application/x-esteid|application/x-idcard-plugin")
+#else(ENABLE_OLD_APIS)
+#    set(FBSTRING_MIMEType "application/x-esteid")
+#endif(ENABLE_OLD_APIS)

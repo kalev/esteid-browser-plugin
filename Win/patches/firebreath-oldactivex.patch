@@ -21,3 +21,27 @@ diff -up firebreath/gen_templates/firebreathWin.rc.orig firebreath/gen_templates
  
  /////////////////////////////////////////////////////////////////////////////
  #undef APSTUDIO_READONLY_SYMBOLS
+@@ -72,8 +72,8 @@
+ //
+ 
+ VS_VERSION_INFO VERSIONINFO
+- FILEVERSION 1,0,0,1
+- PRODUCTVERSION 1,0,0,1
++ FILEVERSION 2,0,0,1
++ PRODUCTVERSION 2,0,0,1
+  FILEFLAGSMASK 0x3fL
+ #ifdef _DEBUG
+  FILEFLAGS 0x1L
+@@ -98,7 +98,11 @@
+             VALUE "ProductVersion", FBSTRING_PLUGIN_VERSION
+             VALUE "FileExtents", FBSTRING_FileExtents
+             VALUE "FileOpenName", FBSTRING_PluginName
+-            VALUE "MIMEType", FBSTRING_MIMEType
++#ifdef SUPPORT_OLD_APIS
++            VALUE "MIMEType", "application/x-esteid|application/x-idcard-plugin"
++#else
++            VALUE "MIMEType", FBSTRING_MIMEType
++#endif
+         END
+     END
+     BLOCK "VarFileInfo"
