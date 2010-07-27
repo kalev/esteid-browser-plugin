@@ -35,22 +35,3 @@ diff -r cc96f8c51ec0 src/NpapiPlugin/NPObjectAPI.cpp
      }
  }
  
-@@ -148,4 +166,4 @@
-         browser->ReleaseVariantValue(&retVal);  // Always release the return value!
-         return ret;
-     }
--}
-\ No newline at end of file
-+}
-diff -r cc96f8c51ec0 src/NpapiPlugin/NpapiPluginModule_NPP.cpp
---- a/src/NpapiPlugin/NpapiPluginModule_NPP.cpp	Thu Jul 15 13:49:51 2010 -0600
-+++ b/src/NpapiPlugin/NpapiPluginModule_NPP.cpp	Wed Jul 21 22:03:17 2010 +0300
-@@ -112,8 +112,6 @@
- NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc,
-                                    char* argn[], char* argv[], NPSavedData* saved)
- {
--    printf("NPP_New()\n");
--    
-     if (instance == NULL) {
-         return NPERR_INVALID_INSTANCE_ERROR;
-     }
