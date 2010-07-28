@@ -196,7 +196,7 @@ void PinInputDialog::moveControl(HWND hWnd, HWND hControl, int dx, int dy)
 }
 
 
-void PinInputDialog::showWrongPin(HWND hWnd, int tries)
+void PinInputDialog::showWrongPin(HWND hParent, int tries)
 {
     static const std::wstring title = L"Wrong PIN!";
     std::wstringstream out;
@@ -210,9 +210,9 @@ void PinInputDialog::showWrongPin(HWND hWnd, int tries)
     ebt.pszTitle = const_cast<wchar_t *>(title.c_str());
     ebt.pszText = const_cast<wchar_t *>(text.c_str());
     ebt.ttiIcon = TTI_ERROR;
-    if (!SendMessage(hWnd, EM_SHOWBALLOONTIP, 0, (LPARAM)&ebt)) {
+    if (!SendMessage(hParent, EM_SHOWBALLOONTIP, 0, (LPARAM)&ebt)) {
 #endif
-        MessageBox(hWnd, const_cast<wchar_t *>((title + L"\n" + text).c_str()), L"Warning", MB_OK | MB_ICONHAND);
+        MessageBox(hParent, const_cast<wchar_t *>((title + L"\n" + text).c_str()), L"Warning", MB_OK | MB_ICONHAND);
 #ifdef EM_SHOWBALLOONTIP
     }
 #endif

@@ -55,7 +55,7 @@ private:
     void resizeWindow(HWND hWnd, int width, int height);
     void resizeControl(HWND hWnd, HWND hControl, int width, int height);
     void moveControl(HWND hWnd, HWND hControl, int dx, int dy);
-    void showWrongPin(HWND hWnd, int tries);
+    void showWrongPin(HWND hParent, int tries);
 
     std::wstring m_subject;
     bool m_retry;
