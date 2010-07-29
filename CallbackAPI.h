@@ -34,7 +34,7 @@ class CallbackAPI : public FB::JSAPIAuto
 public:
     CallbackAPI(FB::BrowserHostWrapper *host);
     virtual ~CallbackAPI();
-    virtual bool handleEvent(FB::JSObject evt);
+    virtual bool handleEvent(const FB::JSObject& evt);
 
     /** Override this */
     virtual bool eventHandler() = 0;

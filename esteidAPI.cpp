@@ -305,7 +305,7 @@ std::string esteidAPI::getVersion()
  * Ask for PIN and return; the signed hash is later asynchronously returned
  * through callback.
  */
-void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject callback)
+void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject& callback)
 {
     WHITELIST_REQUIRED;
 
@@ -408,7 +408,6 @@ void esteidAPI::returnSignedData(const std::string& data)
     } catch(const FB::script_error&) {
         returnSignFailure("Error executing JavaScript code");
     }
-    m_signCallback = NULL;
 }
 
 
@@ -419,7 +418,6 @@ void esteidAPI::returnSignFailure(const std::string& msg)
     } catch(const FB::script_error&) {
         // can't really do anything useful here
     }
-    m_signCallback = NULL;
 }
 
 #ifdef SUPPORT_OLD_APIS

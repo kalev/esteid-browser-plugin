@@ -50,7 +50,7 @@ public:
      * @param hash HEX encoded document hash to sign
      * @param url an URL to the document itself
      */
-    void signAsync(std::string hash, std::string url, const FB::JSObject callback);
+    void signAsync(std::string hash, std::string url, const FB::JSObject& callback);
 
     /** Certificates (read-only properties) */
     FB::JSOutObject get_authCert();

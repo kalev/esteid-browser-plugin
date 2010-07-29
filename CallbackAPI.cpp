@@ -33,7 +33,7 @@ CallbackAPI::~CallbackAPI()
 {
 }
 
-bool CallbackAPI::handleEvent(FB::JSObject evt) {
+bool CallbackAPI::handleEvent(const FB::JSObject& evt) {
     return eventHandler();
 }
 
