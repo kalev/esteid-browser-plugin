@@ -35,6 +35,7 @@ public:
     void setPinPadTimeout(int timeout);
     void setRetry(bool retry);
     void setTries(int tries);
+    void setParent(GdkWindow* parent);
     std::string getPin();
     void clearPin();
 

@@ -47,6 +47,9 @@ protected:
     void on_pininputdialog_response(int response);
     void on_whitelistdialog_response(int response);
 
+    HWND browserHWND();
+    HWND parentHWND();
+
     PluginSettings *m_conf;
     std::auto_ptr<PinInputDialog> m_pinInputDialog;
     std::auto_ptr<WhitelistDialog> m_whitelistDialog;

@@ -97,6 +97,12 @@ void PinInputDialog::setTries(int tries)
     m_warningLabel->set_label(out.str());
 }
 
+void PinInputDialog::setParent(GdkWindow* parent)
+{
+    GdkWindow* window = get_window()->gobj();
+    gdk_window_set_transient_for(window, parent);
+}
+
 std::string PinInputDialog::getPin()
 {
     return m_entry->get_text();

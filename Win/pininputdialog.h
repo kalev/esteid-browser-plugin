@@ -32,15 +32,15 @@ public:
     PinInputDialog(HINSTANCE hInst);
     virtual ~PinInputDialog();
 
-    void showPinBlocked();
+    void showPinBlocked(HWND hParent = NULL);
     void setSubject(const std::string& subject);
     void setRetry(bool retry);
     void setTries(int tries);
     std::string getPin();
     void clearPin();
 
-    bool doDialog();
-    int doModalDialog();
+    bool doDialog(HWND hParent = NULL);
+    int doModalDialog(HWND hParent = NULL);
 
 private:
     LRESULT on_initdialog(WPARAM wParam);

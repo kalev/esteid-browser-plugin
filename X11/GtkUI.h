@@ -48,6 +48,8 @@ protected:
     void on_pininputdialog_response(int response_id);
     void on_whitelistdialog_response(int response_id);
 
+    GdkWindow* browserWindow();
+
     PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_conf;

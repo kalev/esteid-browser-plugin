@@ -51,6 +51,27 @@ WindowsUI::~WindowsUI()
 }
 
 
+HWND WindowsUI::browserHWND()
+{
+    if (m_window) {
+        FB::PluginWindowWin* wnd = reinterpret_cast<FB::PluginWindowWin*>(m_window);
+        return wnd->getBrowserHWND();
+    } else {
+        return NULL;
+    }
+}
+
+
+HWND WindowsUI::parentHWND()
+{
+    HWND hWnd = browserHWND();
+    if (hWnd)
+        return hWnd;
+    else
+        return GetForegroundWindow();
+}
+
+
 void WindowsUI::PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
@@ -60,7 +81,7 @@ void WindowsUI::PromptForPinAsync(const std::string& subject,
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
-    m_pinInputDialog->doDialog();
+    m_pinInputDialog->doDialog(parentHWND());
 }
 
 
@@ -72,7 +93,7 @@ std::string WindowsUI::PromptForPin(const std::string& subject,
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
-    m_pinInputDialog->doModalDialog();
+    m_pinInputDialog->doModalDialog(parentHWND());
 
     std::string pin = m_pinInputDialog->getPin();
 
@@ -94,7 +115,7 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 {
     ESTEID_DEBUG("WindowsUI::ShowPinBlockedMessage()");
 
-    m_pinInputDialog->showPinBlocked();
+    m_pinInputDialog->showPinBlocked(parentHWND());
 }
 
 
@@ -106,7 +127,7 @@ void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
 
     m_whitelistDialog->addDefaultSites(conf.default_whitelist);
     m_whitelistDialog->addSites(conf.whitelist);
-    m_whitelistDialog->doDialog();
+    m_whitelistDialog->doDialog(parentHWND());
 
     if (pageUrl.length() > 0)
         m_whitelistDialog->setEntryText(pageUrl);

@@ -42,10 +42,8 @@ PinInputDialog::~PinInputDialog()
 }
 
 
-void PinInputDialog::showPinBlocked()
+void PinInputDialog::showPinBlocked(HWND hParent)
 {
-    HWND hParent = GetForegroundWindow();
-
     MessageBox(hParent, L"PIN2 blocked.\nPlease run ID-card Utility to unlock the PIN.",
                L"Error", MB_OK | MB_ICONHAND);
 }
@@ -305,14 +303,14 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
 }
 
 
-bool PinInputDialog::doDialog()
+bool PinInputDialog::doDialog(HWND hParent)
 {
-    return BaseDialog::doDialog(IDD_PINDIALOG);
+    return BaseDialog::doDialog(IDD_PINDIALOG, hParent);
 }
 
-int PinInputDialog::doModalDialog()
+int PinInputDialog::doModalDialog(HWND hParent)
 {
-    int rv = BaseDialog::doModalDialog(IDD_PINDIALOG);
+    int rv = BaseDialog::doModalDialog(IDD_PINDIALOG, hParent);
     if (rv == IDOK)
         return RESPONSE_OK;
     else

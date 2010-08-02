@@ -81,6 +81,17 @@ GtkUI::~GtkUI()
 }
 
 
+GdkWindow* GtkUI::browserWindow()
+{
+    if (m_window) {
+        FB::PluginWindowX11* wnd = dynamic_cast<FB::PluginWindowX11*>(m_window);
+        return gdk_window_foreign_new(wnd->getBrowserWindow());
+    }
+
+    return NULL;
+}
+
+
 void GtkUI::PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries)
@@ -103,6 +114,10 @@ void GtkUI::PromptForPinAsync(const std::string& subject,
 
     m_pinInputDialog->show();
     m_dialog_up = true;
+
+    GdkWindow* window = browserWindow();
+    if (window)
+        m_pinInputDialog->setParent(window);
 }
 
 #ifdef SUPPORT_OLD_APIS

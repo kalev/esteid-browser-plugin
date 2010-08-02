@@ -124,9 +124,8 @@ LRESULT BaseDialog::on_notify(WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-bool BaseDialog::doDialog(int resourceID)
+bool BaseDialog::doDialog(int resourceID, HWND hParent)
 {
-    HWND hParent = GetForegroundWindow();
     m_modalDialog = false;
 
     m_hWnd = CreateDialogParam(m_hInst, MAKEINTRESOURCE(resourceID), hParent, (DLGPROC)dialogProc,
@@ -138,9 +137,8 @@ bool BaseDialog::doDialog(int resourceID)
     return true;
 }
 
-int BaseDialog::doModalDialog(int resourceID)
+int BaseDialog::doModalDialog(int resourceID, HWND hParent)
 {
-    HWND hParent = GetForegroundWindow();
     m_modalDialog = true;
 
     return DialogBoxParam(m_hInst, MAKEINTRESOURCE(resourceID), hParent, (DLGPROC)dialogProc,
