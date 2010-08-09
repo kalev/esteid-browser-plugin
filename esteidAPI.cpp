@@ -112,6 +112,7 @@ esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
     REGISTER_RO_PROPERTY(selectedCertNumber);
     REGISTER_METHOD(prepare);
     REGISTER_METHOD(finalize);
+    REGISTER_METHOD(isActive);
 #endif
 
     m_pageURL = GetPageURL();
@@ -594,6 +595,11 @@ void esteidAPI::finalize(std::string slot, std::string hash,
     } catch(std::runtime_error &e) {
         m_host->evaluateJavaScript(onCancel + "();");
     }
+}
+
+bool esteidAPI::isActive()
+{
+    return true;
 }
 #endif
 

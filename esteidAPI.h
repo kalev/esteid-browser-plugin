@@ -94,6 +94,7 @@ public:
     std::string get_selectedCertNumber();
     void prepare(std::string, std::string, std::string);
     void finalize(std::string, std::string, std::string, std::string, std::string);
+    bool isActive();
 #endif
 
 
