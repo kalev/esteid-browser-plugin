@@ -62,3 +62,12 @@ set(FBSTRING_MIMEType "application/x-esteid")
 #else(ENABLE_OLD_APIS)
 #    set(FBSTRING_MIMEType "application/x-esteid")
 #endif(ENABLE_OLD_APIS)
+
+# mac settings
+# The plugin doesn't do any drawing and doesn't need mouse / keyboard events,
+# so turn the following off:
+set (FBMAC_USE_CARBON        0)
+set (FBMAC_USE_COCOA         0)
+set (FBMAC_USE_QUICKDRAW     0)
+set (FBMAC_USE_COREGRAPHICS  0)
+set (FBMAC_USE_COREANIMATION 0)
