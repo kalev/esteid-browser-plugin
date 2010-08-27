@@ -28,6 +28,7 @@
 
 #include "NpapiTypes.h"
 #include "NpapiPluginModule.h"
+#include "debug.h"
 
 using namespace FB::Npapi;
 FB::Npapi::NpapiPluginModule *module = NULL;
