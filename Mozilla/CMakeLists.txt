@@ -27,7 +27,6 @@ add_custom_target(xpi-stage
 
 # Compress the XPI
 add_custom_target(zip-xpi ALL
-    DEPENDS ${PROJNAME}
     COMMENT "Compressing xpi file"
 
     WORKING_DIRECTORY ${XPI_STAGE_DIR}
