@@ -158,6 +158,8 @@ void MacUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     if(![(MacUIPrivate *)m_internal isLocked]) {
+        [(MacUIPrivate *)m_internal setConf:&conf];
+
         MacSettingsPanel *panel = [[MacSettingsPanel alloc] init];
         NSMutableArray *websites = [NSMutableArray array];
         
@@ -167,29 +169,7 @@ void MacUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
         
         [panel setWebsite:CPlusStringToNSString(pageUrl)];
         [panel setWebsites:websites];
-        [(MacUIPrivate *)m_internal runModal:panel];
-        
-        if(![websites isEqualToArray:[panel websites]]) {
-            NSEnumerator *enumerator = [[panel websites] objectEnumerator];
-            NSString *website;
-            
-            conf.whitelist.clear();
-            
-            while((website = [enumerator nextObject]) != nil) {
-                conf.whitelist.push_back([website UTF8String]);
-            }
-            
-            if([panel shouldSaveOnClose]) {
-                try {
-                    conf.Save();
-                }
-                catch(std::runtime_error err) {
-                    NSLog(@"%@: Couldn't save configuration!", NSStringFromClass([panel class]));
-                }
-            }
-        }
-        
-        [panel release];
+        [(MacUIPrivate *)m_internal runAsync:panel];
     }
     
     [pool release];

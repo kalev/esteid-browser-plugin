@@ -21,6 +21,7 @@
 #import "MacUIPanel.h"
 #import "MacUIPrivate.h"
 #import "MacPINPanel.h"
+#import "MacSettingsPanel.h"
 #import "MacUI.h"
 
 static inline NSString *CPlusStringToNSString(std::string str)
@@ -50,6 +51,11 @@ static inline NSString *CPlusStringToNSString(std::string str)
 - (void)registerCallbacks:(boost::shared_ptr<MacUI::UICallbacks>)cb
 {
 	self->m_callbacks = cb;
+}
+
+- (void)setConf:(PluginSettings *)conf
+{
+	self->m_conf = conf;
 }
 
 - (void)abortModal
@@ -145,6 +151,24 @@ static inline NSString *CPlusStringToNSString(std::string str)
 	self->m_callbacks->onPinCancelled();
 }
 
+- (void)whitelistOKPressed:(NSNotification *)notification
+{
+	MacSettingsPanel *panel = [notification object];
+	NSEnumerator *enumerator = [[panel websites] objectEnumerator];
+	NSString *website;
+
+	m_conf->whitelist.clear();
+	while ((website = [enumerator nextObject]) != nil) {
+		m_conf->whitelist.push_back([website UTF8String]);
+	}
+
+	try {
+		m_conf->Save();
+	} catch(std::runtime_error err) {
+		NSLog(@"%@: Couldn't save configuration!", NSStringFromClass([panel class]));
+	}
+}
+
 #pragma mark NSObject
 
 - (id)init
@@ -166,6 +190,12 @@ static inline NSString *CPlusStringToNSString(std::string str)
   [[NSNotificationCenter defaultCenter] addObserver:self
                          selector:@selector(pinPanelCancelPressed:)
                          name:@"PinPanelCancel"
+                         object:nil];
+
+  // Register observer to be called when whitelist is closed
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                         selector:@selector(whitelistOKPressed:)
+                         name:@"WhitelistOKPressed"
                          object:nil];
 	
 	return self;

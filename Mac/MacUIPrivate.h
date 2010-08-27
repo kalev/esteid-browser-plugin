@@ -29,6 +29,7 @@
 	BOOL m_locked;
 	NSWindow *m_window;
 	boost::shared_ptr<MacUI::UICallbacks> m_callbacks;
+	PluginSettings *m_conf;
 }
 
 - (NSWindow *)window;
@@ -37,6 +38,7 @@
 - (void)setLocked:(BOOL)locked;
 
 - (void)registerCallbacks:(boost::shared_ptr<MacUI::UICallbacks>)cb;
+- (void)setConf:(PluginSettings *)conf;
 
 - (void)abortModal;
 - (void)runAsync:(id <MacUIPanel>)panel;
@@ -44,5 +46,6 @@
 
 - (void)pinPanelOKPressed:(NSNotification *)notification;
 - (void)pinPanelCancelPressed:(NSNotification *)notification;
+- (void)whitelistOKPressed:(NSNotification *)notification;
 
 @end

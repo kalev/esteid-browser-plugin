@@ -77,6 +77,9 @@ static NSString *MacSettingsPanelWebsiteColumn = @"website";
 {
 	self->m_shouldSaveOnClose = YES;
 	
+	// Post notification
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"WhitelistOKPressed" object:self];
+
 	[[self retain] autorelease];
 	[[self window] orderOut:sender];
 	[[NSApplication sharedApplication] endSheet:[self window] returnCode:NSRunStoppedResponse];
