@@ -61,9 +61,10 @@ MacUI::~MacUI()
     ESTEID_DEBUG("~MacUI()");
 }
 
-std::string MacUI::PromptForPinAsync(const std::string& subject,
-                                    const std::string& docUrl, const std::string& docHash,
-                                    int pinPadTimeout, bool retry, int tries)
+#ifdef SUPPORT_OLD_APIS
+std::string MacUI::PromptForPin(const std::string& subject,
+                                const std::string& docUrl, const std::string& docHash,
+                                int pinPadTimeout, bool retry, int tries)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     std::string pin = "";
@@ -92,6 +93,7 @@ std::string MacUI::PromptForPinAsync(const std::string& subject,
     
     return pin;
 }
+#endif
 
 void MacUI::ClosePinPrompt()
 {
