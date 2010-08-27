@@ -20,12 +20,9 @@
 
 #import "MacUIPanel.h"
 
-@protocol MacPINPanelDelegate;
-
 @interface MacPINPanel : NSObject <MacUIPanel>
 {
 	@private
-	id <MacPINPanelDelegate> m_delegate;
 	id m_userInfo;
 	IBOutlet NSWindow *m_window;
 	IBOutlet NSButton *m_cancelButton;
@@ -45,8 +42,6 @@
 	IBOutlet NSTextField *m_urlTextField;
 }
 
-- (id <MacPINPanelDelegate>)delegate;
-- (void)setDelegate:(id <MacPINPanelDelegate>)delegate;
 - (id)userInfo;
 - (void)setUserInfo:(id)userInfo;
 

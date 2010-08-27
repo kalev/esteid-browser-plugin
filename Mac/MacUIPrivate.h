@@ -18,12 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#import "MacPINPanelDelegate.h"
 #import "MacUI.h"
 
 @protocol MacUIPanel;
 
-@interface MacUIPrivate : NSObject <MacPINPanelDelegate>
+@interface MacUIPrivate : NSObject
 {
 	@private
 	BOOL m_abort;

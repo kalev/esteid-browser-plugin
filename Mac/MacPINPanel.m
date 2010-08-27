@@ -19,21 +19,10 @@
  */
 
 #import "MacPINPanel.h"
-#import "MacPINPanelDelegate.h"
 
 static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 
 @implementation MacPINPanel
-
-- (id <MacPINPanelDelegate>)delegate
-{
-	return self->m_delegate;
-}
-
-- (void)setDelegate:(id <MacPINPanelDelegate>)delegate
-{
-	self->m_delegate = delegate;
-}
 
 - (BOOL)allowsSecureEntry
 {
@@ -184,11 +173,9 @@ static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 	NSDictionary *dict = [NSDictionary dictionaryWithObject:pin forKey:@"PIN"];
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"PinPanelOK" object:self userInfo:dict];
 
-	if(![self->m_delegate respondsToSelector:@selector(pinPanelShouldEnd:)] || [self->m_delegate pinPanelShouldEnd:self]) {
-		[[self retain] autorelease];
-		[[self window] orderOut:sender];
-		[[NSApplication sharedApplication] endSheet:[self window] returnCode:NSRunStoppedResponse];
-	}
+	[[self retain] autorelease];
+	[[self window] orderOut:sender];
+	[[NSApplication sharedApplication] endSheet:[self window] returnCode:NSRunStoppedResponse];
 }
 
 - (IBAction)showHelp:(id)sender

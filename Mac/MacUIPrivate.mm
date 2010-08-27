@@ -21,7 +21,6 @@
 #import "MacUIPanel.h"
 #import "MacUIPrivate.h"
 #import "MacPINPanel.h"
-#import "EstEIDService.h"
 #import "MacUI.h"
 
 static inline NSString *CPlusStringToNSString(std::string str)
@@ -144,48 +143,6 @@ static inline NSString *CPlusStringToNSString(std::string str)
 - (void)pinPanelCancelPressed:(NSNotification *)notification
 {
 	self->m_callbacks->onPinCancelled();
-}
-
-#pragma mark MacPINPanelDelegate
-
-- (BOOL)pinPanelShouldEnd:(MacPINPanel *)pinPanel
-{
-	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-	NSString *error = nil;
-	BOOL fatal = NO;
-	
-	try {
-		EstEIDService *service = EstEIDService::getInstance();
-		
-		[pinPanel setUserInfo:CPlusStringToNSString(service->signSHA1([[pinPanel hash] UTF8String], EstEidCard::SIGN, [[pinPanel PIN] UTF8String]))];
-	}
-	catch(AuthError err) {
-		NSLog(@"%@: Couldn't sign hash %@ because of '%s'.", NSStringFromClass([self class]), [pinPanel hash], err.what());
-		
-		if(err.m_blocked) {
-			error = [bundle localizedStringForKey:@"PINPanel.Error.PIN2.Locked" value:nil table:nil];
-			fatal = YES;
-		} else {
-			error = [bundle localizedStringForKey:@"PINPanel.Error.PIN2.Invalid" value:nil table:nil];
-			fatal = NO;
-		}
-	}
-	catch(std::runtime_error err) {
-		NSLog(@"%@: Couldn't sign hash %@ because of '%s'", NSStringFromClass([self class]), [pinPanel hash], err.what());
-		fatal = YES;
-	}
-	
-	if(error || fatal) {
-		NSBeep();
-		
-		if(error) {
-			[pinPanel setError:error fatal:fatal];
-		}
-		
-		return NO;
-	}
-	
-	return YES;
 }
 
 #pragma mark NSObject

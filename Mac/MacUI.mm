@@ -107,7 +107,6 @@ std::string MacUI::PromptForPin(const std::string& subject,
         NSString *result;
         
         [panel setAllowsSecureEntry:(pinPadTimeout > 0) ? YES : NO];
-        [panel setDelegate:(id)m_internal];
         [panel setHash:CPlusStringToNSString(docHash)];
         [panel setURL:CPlusStringToNSString(docUrl)];
         [panel setName:CPlusStringToNSString(subject)];
