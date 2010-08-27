@@ -49,7 +49,11 @@ void PluginSettings::FindConfig() {
     fileName = appdata + "\\" FBSTRING_PluginName "plugin.conf";
 #else // UNIX
     std::string home(getenv("HOME"));
+# ifdef __APPLE__
+    fileName = home + "/Library/Application Support/" FBSTRING_PluginName "plugin.conf";
+# else
     fileName = home + "/.config/" FBSTRING_PluginName "plugin.conf";
+# endif
 #endif
 }
 
