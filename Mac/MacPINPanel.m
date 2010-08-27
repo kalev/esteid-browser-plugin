@@ -155,6 +155,10 @@ static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 {
 	[[self retain] autorelease];
 	[[self window] orderOut:sender];
+
+	// Post notification
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"PinPanelCancel" object:self];
+
 	[[NSApplication sharedApplication] endSheet:[self window] returnCode:NSRunAbortedResponse];
 }
 
@@ -176,6 +180,10 @@ static NSString *MacPINPanelShowsDetailsKey = @"MacPINPanelShowsDetails";
 		return;
 	}
 	
+	// Post notification with entered PIN
+	NSDictionary *dict = [NSDictionary dictionaryWithObject:pin forKey:@"PIN"];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"PinPanelOK" object:self userInfo:dict];
+
 	if(![self->m_delegate respondsToSelector:@selector(pinPanelShouldEnd:)] || [self->m_delegate pinPanelShouldEnd:self]) {
 		[[self retain] autorelease];
 		[[self window] orderOut:sender];

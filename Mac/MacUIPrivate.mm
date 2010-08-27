@@ -22,6 +22,7 @@
 #import "MacUIPrivate.h"
 #import "MacPINPanel.h"
 #import "EstEIDService.h"
+#import "MacUI.h"
 
 static inline NSString *CPlusStringToNSString(std::string str)
 {
@@ -47,10 +48,44 @@ static inline NSString *CPlusStringToNSString(std::string str)
 	self->m_locked = locked;
 }
 
+- (void)registerCallbacks:(boost::shared_ptr<MacUI::UICallbacks>)cb
+{
+	self->m_callbacks = cb;
+}
+
 - (void)abortModal
 {
 	if(self->m_locked) {
 		self->m_abort = YES;
+	}
+}
+
+- (void)runAsync:(id <MacUIPanel>)panel
+{
+	if (!self->m_locked) {
+		self->m_locked = YES;
+
+		@try {
+			NSApplication *application = [NSApplication sharedApplication];
+			NSWindow *window = [panel window];
+
+			if (self->m_window) {
+				[panel beginSheetForWindow:self->m_window modalDelegate:nil didEndSelector:NULL contextInfo:NULL];
+			} else {
+				// EPIC: Out-of-process solution (64b 10.6+)
+				if ([panel respondsToSelector:@selector(runModal)]) {
+					[(NSAlert *)panel runModal];
+				} else {
+					[window setLevel:NSPopUpMenuWindowLevel];
+					[window orderFront:nil];
+				}
+			}
+		} @catch(NSException *e) {
+			NSLog(@"%@: %@", NSStringFromClass([self class]), e);
+		}
+
+		self->m_locked = NO;
+		self->m_abort = NO;
 	}
 }
 
@@ -99,6 +134,16 @@ static inline NSString *CPlusStringToNSString(std::string str)
 		self->m_locked = NO;
 		self->m_abort = NO;
 	}
+}
+
+- (void)pinPanelOKPressed:(NSNotification *)notification
+{
+	self->m_callbacks->onPinEntered([[[notification userInfo] valueForKey:@"PIN"] UTF8String]);
+}
+
+- (void)pinPanelCancelPressed:(NSNotification *)notification
+{
+	self->m_callbacks->onPinCancelled();
 }
 
 #pragma mark MacPINPanelDelegate
@@ -153,6 +198,18 @@ static inline NSString *CPlusStringToNSString(std::string str)
 		self->m_locked = NO;
 		self->m_window = nil;
 	}
+
+  // Register observer to be called when OK is pressed
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                         selector:@selector(pinPanelOKPressed:)
+                         name:@"PinPanelOK"
+                         object:nil];
+
+  // Register observer to be called when Cancel is pressed
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                         selector:@selector(pinPanelCancelPressed:)
+                         name:@"PinPanelCancel"
+                         object:nil];
 	
 	return self;
 }

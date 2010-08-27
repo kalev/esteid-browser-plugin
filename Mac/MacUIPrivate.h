@@ -19,6 +19,7 @@
  */
 
 #import "MacPINPanelDelegate.h"
+#import "MacUI.h"
 
 @protocol MacUIPanel;
 
@@ -28,6 +29,7 @@
 	BOOL m_abort;
 	BOOL m_locked;
 	NSWindow *m_window;
+	boost::shared_ptr<MacUI::UICallbacks> m_callbacks;
 }
 
 - (NSWindow *)window;
@@ -35,7 +37,13 @@
 - (BOOL)isLocked;
 - (void)setLocked:(BOOL)locked;
 
+- (void)registerCallbacks:(boost::shared_ptr<MacUI::UICallbacks>)cb;
+
 - (void)abortModal;
+- (void)runAsync:(id <MacUIPanel>)panel;
 - (void)runModal:(id <MacUIPanel>)panel;
+
+- (void)pinPanelOKPressed:(NSNotification *)notification;
+- (void)pinPanelCancelPressed:(NSNotification *)notification;
 
 @end

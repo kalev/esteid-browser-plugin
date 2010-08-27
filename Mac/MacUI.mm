@@ -45,6 +45,8 @@ MacUI::MacUI(boost::shared_ptr<UICallbacks> cb) : PluginUI(cb)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     m_internal = [[MacUIPrivate alloc] init];
+
+    [(MacUIPrivate *)m_internal registerCallbacks:m_callbacks];
     
     [pool release];
     
@@ -59,6 +61,37 @@ MacUI::~MacUI()
     [pool release];
     
     ESTEID_DEBUG("~MacUI()");
+}
+
+void MacUI::PromptForPinAsync(const std::string& subject,
+                              const std::string& docUrl, const std::string& docHash,
+                              int pinPadTimeout, bool retry, int tries)
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    if (![(MacUIPrivate *)m_internal isLocked]) {
+        MacPINPanel *panel = [[MacPINPanel alloc] init];
+        NSString *result;
+
+        [panel setAllowsSecureEntry:(pinPadTimeout > 0) ? YES : NO];
+        [panel setHash:CPlusStringToNSString(docHash)];
+        [panel setURL:CPlusStringToNSString(docUrl)];
+        [panel setName:CPlusStringToNSString(subject)];
+
+        if (retry) {
+            NSBundle *bundle = [NSBundle bundleForClass:[(MacUIPrivate *)m_internal class]];
+            NSString *error = nil;
+
+            error = [bundle localizedStringForKey:@"PINPanel.Error.PIN2.Invalid" value:nil table:nil];
+            NSBeep();
+            [panel setError:error fatal:NO];
+        }
+
+        /* MacUIPrivate will handle releasing panel */
+        [(MacUIPrivate *)m_internal runAsync:panel];
+    }
+
+    [pool release];
 }
 
 #ifdef SUPPORT_OLD_APIS
