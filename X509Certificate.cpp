@@ -37,7 +37,11 @@ X509Certificate::X509Certificate(ByteVec bv) : m_cert(NULL) {
     if(bv.empty())
         throw std::runtime_error("Invalid certificate: no data");
 
+#if OPENSSL_VERSION_NUMBER >= 0x0090800fL
     const unsigned char* buf = reinterpret_cast<const unsigned char*>(&bv[0]);
+#else
+    unsigned char* buf = &bv[0];
+#endif
 
     d2i_X509(&m_cert, &buf, bv.size());
     if(m_cert == NULL) THROW_API_ERROR("Invalid certificate");
