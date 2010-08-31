@@ -7,19 +7,19 @@
 	<key>CFBundleExecutable</key>
 	<string>${PLUGIN_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-    <string>${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION}, ${FBSTRING_LegalCopyright}</string>
+	<string>${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION}, ${FBSTRING_LegalCopyright}</string>
 	<key>CFBundleIdentifier</key>
-    <string>com.${ACTIVEX_PROGID}</string>
+	<string>com.${ACTIVEX_PROGID}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>BRPL</string>
 	<key>CFBundleShortVersionString</key>
-    <string>${FBSTRING_PLUGIN_VERSION}</string>
+	<string>${FBSTRING_PLUGIN_VERSION}</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-    <string>${FBSTRING_PLUGIN_VERSION}</string>
+	<string>${FBSTRING_PLUGIN_VERSION}</string>
 	<key>CFPlugInDynamicRegisterFunction</key>
 	<string></string>
 	<key>CFPlugInDynamicRegistration</key>
