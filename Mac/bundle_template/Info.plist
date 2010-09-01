@@ -49,6 +49,11 @@
 			<key>WebPluginTypeDescription</key>
 			<string>${FBSTRING_FileDescription}</string>
 		</dict>
+		<key>application/x-idcard-plugin</key>
+		<dict>
+			<key>WebPluginTypeDescription</key>
+			<string>${FBSTRING_FileDescription}</string>
+		</dict>
 	</dict>
 </dict>
 </plist>
