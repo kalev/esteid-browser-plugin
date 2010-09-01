@@ -27,6 +27,7 @@
 	@private
 	BOOL m_abort;
 	BOOL m_locked;
+	BOOL m_async;
 	NSWindow *m_window;
 	boost::shared_ptr<MacUI::UICallbacks> m_callbacks;
 	PluginSettings *m_conf;

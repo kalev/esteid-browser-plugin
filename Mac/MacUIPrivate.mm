@@ -69,6 +69,7 @@ static inline NSString *CPlusStringToNSString(std::string str)
 {
 	if (!self->m_locked) {
 		self->m_locked = YES;
+		self->m_async = YES;
 
 		@try {
 			NSApplication *application = [NSApplication sharedApplication];
@@ -98,6 +99,7 @@ static inline NSString *CPlusStringToNSString(std::string str)
 {
 	if(!self->m_locked) {
 		self->m_locked = YES;
+		self->m_async = NO;
 		
 		@try {
 			NSApplication *application = [NSApplication sharedApplication];
@@ -143,12 +145,16 @@ static inline NSString *CPlusStringToNSString(std::string str)
 
 - (void)pinPanelOKPressed:(NSNotification *)notification
 {
-	self->m_callbacks->onPinEntered([[[notification userInfo] valueForKey:@"PIN"] UTF8String]);
+	if (self->m_async) {
+		self->m_callbacks->onPinEntered([[[notification userInfo] valueForKey:@"PIN"] UTF8String]);
+	}
 }
 
 - (void)pinPanelCancelPressed:(NSNotification *)notification
 {
-	self->m_callbacks->onPinCancelled();
+	if (self->m_async) {
+		self->m_callbacks->onPinCancelled();
+	}
 }
 
 - (void)whitelistOKPressed:(NSNotification *)notification
