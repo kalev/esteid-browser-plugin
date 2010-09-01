@@ -55,6 +55,7 @@ add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
+    ${Boost_LIBRARIES}
     ${ICONV_LIBRARIES}
     ${OPENSSLCRYPTO_LIBRARIES}
     ${SMARTCARDPP_LIBRARIES}

@@ -25,14 +25,20 @@
 #include <algorithm>
 #include <fstream>
 #include <boost/bind.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #include "PluginSettings.h"
 #include "config.h"
 
+using namespace boost::filesystem;
+
 PluginSettings::PluginSettings() :
     allowLocal(true), allowDefaults(true)
 {
-    FindConfig();
+    static const std::string fileName = "esteidplugin.conf";
+
+    m_configFile = configDirectory() / fileName;
     Load();
 
     /* Builtin whitelist */
@@ -43,16 +49,16 @@ PluginSettings::PluginSettings() :
 }
 
 
-void PluginSettings::FindConfig() {
+path PluginSettings::configDirectory()
+{
 #ifdef _WIN32
-    std::string appdata(getenv("APPDATA"));
-    fileName = appdata + "\\" FBSTRING_PluginName "plugin.conf";
+    return path(getenv("APPDATA"), native);
 #else // UNIX
-    std::string home(getenv("HOME"));
+    path home(getenv("HOME"), native);
 # ifdef __APPLE__
-    fileName = home + "/Library/Application Support/" FBSTRING_PluginName "plugin.conf";
+    return home / "Library/Application Support";
 # else
-    fileName = home + "/.config/" FBSTRING_PluginName "plugin.conf";
+    return home / ".config";
 # endif
 #endif
 }
@@ -61,10 +67,12 @@ PluginSettings::~PluginSettings() {
 }
 
 void PluginSettings::Load() {
+    std::string line;
+    ifstream input;
+
     whitelist.clear();
 
-    std::string line;
-    std::ifstream input(fileName.c_str());
+    input.open(m_configFile);
     while(input.good()) {
         std::getline(input, line);
         if(line.empty()) continue;
@@ -82,10 +90,14 @@ void PluginSettings::Save() {
     removeDuplicateEntries(whitelist);
     removeDefaultEntries(whitelist);
 
-    std::ofstream output;
+    ofstream output;
     output.exceptions( std::ofstream::failbit | std::ofstream::badbit );
 
-    output.open(fileName.c_str());
+    path configDir = configDirectory();
+    if (!exists(configDir))
+        create_directory(configDir);
+
+    output.open(m_configFile);
     if(!allowDefaults) output << "@NODEFAULTS" << std::endl;
     if(!allowLocal)    output << "@NOLOCAL"    << std::endl;
     for(i = whitelist.begin(); i != whitelist.end(); ++i)

@@ -23,6 +23,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/filesystem/path.hpp>
 
 class PluginSettings {
 public:
@@ -30,12 +31,10 @@ public:
     std::vector<std::string> default_whitelist;
     bool allowLocal;
     bool allowDefaults;
-    std::string fileName;
     PluginSettings();
     ~PluginSettings();
 
     bool InWhitelist(std::string s);
-    void FindConfig();
 
     /** Loads config. Will fail silently if config is not found */
     void Load();
@@ -45,5 +44,8 @@ private:
     void removeDuplicateEntries(std::vector<std::string>& v);
     void removeDefaultEntries(std::vector<std::string>& v);
     bool inDefaultWhitelist(const std::string& s);
+    boost::filesystem::path configDirectory();
+
+    boost::filesystem::path m_configFile;
 };
 #endif

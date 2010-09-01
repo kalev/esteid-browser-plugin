@@ -38,9 +38,10 @@ find_package(SmartCardpp REQUIRED)
 if(WIN32)
     # FindBoost.cmake isn't up to date wrt new boost versions
     set(Boost_ADDITIONAL_VERSIONS "1.44" "1.44.0" "1.43" "1.43.0" "1.42" "1.42.0")
-    # need to link against boost_signals; the rest is header-only
-    find_package(Boost COMPONENTS signals REQUIRED)
+    # boost::signals is only needed on Windows
+    set(EXTRA_BOOST_COMPONENTS "signals")
 endif(WIN32)
+find_package(Boost COMPONENTS filesystem system ${EXTRA_BOOST_COMPONENTS} REQUIRED)
 
 if(UNIX AND NOT APPLE)
     if(NOT GTKMM_INCLUDE_DIRS)
