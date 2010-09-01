@@ -164,7 +164,7 @@ static inline NSString *CPlusStringToNSString(std::string str)
 
 	try {
 		m_conf->Save();
-	} catch(std::runtime_error err) {
+	} catch(const std::exception& err) {
 		NSLog(@"%@: Couldn't save configuration!", NSStringFromClass([panel class]));
 	}
 }

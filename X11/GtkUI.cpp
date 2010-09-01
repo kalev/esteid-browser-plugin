@@ -218,7 +218,13 @@ void GtkUI::on_whitelistdialog_response(int response_id)
 {
     if (response_id == Gtk::RESPONSE_OK) {
         m_conf->whitelist = m_whitelistDialog->getWhitelist();
-        m_conf->Save();
+        try {
+            m_conf->Save();
+        } catch(const std::exception& e) {
+            Gtk::MessageDialog dialog("Error saving configuration", false, Gtk::MESSAGE_ERROR);
+            dialog.set_secondary_text(e.what());
+            dialog.run();
+        }
     }
 
     m_whitelistDialog->hide();

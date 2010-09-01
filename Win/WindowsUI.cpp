@@ -29,6 +29,7 @@
 #include "Win/pininputdialog.h"
 #include "Win/whitelistdialog.h"
 
+#include "converter.h"
 #include "debug.h"
 
 WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
@@ -152,6 +153,13 @@ void WindowsUI::on_whitelistdialog_response(int response)
 {
     if (response == WhitelistDialog::RESPONSE_OK) {
         m_conf->whitelist = m_whitelistDialog->getWhitelist();
-        m_conf->Save();
+        try {
+            m_conf->Save();
+        } catch(const std::exception& e) {
+            std::wstring errorMessage = L"Error saving configuration.\n" +
+                                        Converter::string_to_wstring(e.what());
+            MessageBox(parentHWND(), const_cast<wchar_t *>(errorMessage.c_str()),
+                       L"Error", MB_OK | MB_ICONERROR);
+        }
     }
 }
