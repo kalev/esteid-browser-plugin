@@ -9,7 +9,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION}, ${FBSTRING_LegalCopyright}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.${ACTIVEX_PROGID}</string>
+	<string>org.esteid.webplugin</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
