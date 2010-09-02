@@ -112,7 +112,7 @@ std::string MacUI::PromptForPin(const std::string& subject,
         [panel setName:CPlusStringToNSString(subject)];
         
         [(MacUIPrivate *)m_internal runModal:panel];
-        result = [panel userInfo];
+        result = [panel PIN];
         
         if([result length] > 0) {
             pin = std::string([result UTF8String]);
