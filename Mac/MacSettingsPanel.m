@@ -68,6 +68,9 @@ static NSString *MacSettingsPanelWebsiteColumn = @"website";
 {
 	self->m_shouldSaveOnClose = NO;
 	
+	// Post notification
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"WhitelistCancelPressed" object:self];
+
 	[[self retain] autorelease];
 	[[self window] orderOut:sender];
 	[[NSApplication sharedApplication] endSheet:[self window] returnCode:NSRunAbortedResponse];

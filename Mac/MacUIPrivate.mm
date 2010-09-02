@@ -89,10 +89,47 @@ static inline NSString *CPlusStringToNSString(std::string str)
 		} @catch(NSException *e) {
 			NSLog(@"%@: %@", NSStringFromClass([self class]), e);
 		}
-
-		self->m_locked = NO;
-		self->m_abort = NO;
 	}
+}
+
+- (void)runAsyncPinPanel:(id <MacUIPanel>)panel
+{
+	if (self->m_locked)
+		return;
+
+	// Register observer to be called when OK is pressed
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	                       selector:@selector(pinPanelOKPressed:)
+	                       name:@"PinPanelOK"
+	                       object:nil];
+
+	// Register observer to be called when Cancel is pressed
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	                       selector:@selector(pinPanelCancelPressed:)
+	                       name:@"PinPanelCancel"
+	                       object:nil];
+
+        [self runAsync:panel];
+}
+
+- (void)runAsyncWhitelist:(id <MacUIPanel>)panel
+{
+	if (self->m_locked)
+		return;
+
+	// Register observer to be called when whitelist is closed
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	                       selector:@selector(whitelistOKPressed:)
+	                       name:@"WhitelistOKPressed"
+	                       object:nil];
+
+	// Register observer to be called when whitelist is closed
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	                       selector:@selector(whitelistCancelPressed:)
+	                       name:@"WhitelistCancelPressed"
+	                       object:nil];
+
+        [self runAsync:panel];
 }
 
 - (void)runModal:(id <MacUIPanel>)panel
@@ -146,6 +183,9 @@ static inline NSString *CPlusStringToNSString(std::string str)
 - (void)pinPanelOKPressed:(NSNotification *)notification
 {
 	if (self->m_async) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self];
+		self->m_locked = NO;
+		self->m_abort = NO;
 		self->m_callbacks->onPinEntered([[[notification userInfo] valueForKey:@"PIN"] UTF8String]);
 	}
 }
@@ -153,6 +193,9 @@ static inline NSString *CPlusStringToNSString(std::string str)
 - (void)pinPanelCancelPressed:(NSNotification *)notification
 {
 	if (self->m_async) {
+		[[NSNotificationCenter defaultCenter] removeObserver:self];
+		self->m_locked = NO;
+		self->m_abort = NO;
 		self->m_callbacks->onPinCancelled();
 	}
 }
@@ -173,6 +216,17 @@ static inline NSString *CPlusStringToNSString(std::string str)
 	} catch(const std::exception& err) {
 		NSLog(@"%@: Couldn't save configuration!", NSStringFromClass([panel class]));
 	}
+
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	self->m_locked = NO;
+	self->m_abort = NO;
+}
+
+- (void)whitelistCancelPressed:(NSNotification *)notification
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	self->m_locked = NO;
+	self->m_abort = NO;
 }
 
 #pragma mark NSObject
@@ -186,24 +240,6 @@ static inline NSString *CPlusStringToNSString(std::string str)
 		self->m_window = nil;
 	}
 
-  // Register observer to be called when OK is pressed
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                         selector:@selector(pinPanelOKPressed:)
-                         name:@"PinPanelOK"
-                         object:nil];
-
-  // Register observer to be called when Cancel is pressed
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                         selector:@selector(pinPanelCancelPressed:)
-                         name:@"PinPanelCancel"
-                         object:nil];
-
-  // Register observer to be called when whitelist is closed
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                         selector:@selector(whitelistOKPressed:)
-                         name:@"WhitelistOKPressed"
-                         object:nil];
-	
 	return self;
 }
 

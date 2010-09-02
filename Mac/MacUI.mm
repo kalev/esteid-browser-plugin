@@ -88,7 +88,7 @@ void MacUI::PromptForPinAsync(const std::string& subject,
         }
 
         /* MacUIPrivate will handle releasing panel */
-        [(MacUIPrivate *)m_internal runAsync:panel];
+        [(MacUIPrivate *)m_internal runAsyncPinPanel:panel];
     }
 
     [pool release];
@@ -169,7 +169,7 @@ void MacUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
         
         [panel setWebsite:CPlusStringToNSString(pageUrl)];
         [panel setWebsites:websites];
-        [(MacUIPrivate *)m_internal runAsync:panel];
+        [(MacUIPrivate *)m_internal runAsyncWhitelist:panel];
     }
     
     [pool release];

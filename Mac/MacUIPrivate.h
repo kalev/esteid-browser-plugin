@@ -43,10 +43,13 @@
 
 - (void)abortModal;
 - (void)runAsync:(id <MacUIPanel>)panel;
+- (void)runAsyncPinPanel:(id <MacUIPanel>)panel;
+- (void)runAsyncWhitelist:(id <MacUIPanel>)panel;
 - (void)runModal:(id <MacUIPanel>)panel;
 
 - (void)pinPanelOKPressed:(NSNotification *)notification;
 - (void)pinPanelCancelPressed:(NSNotification *)notification;
 - (void)whitelistOKPressed:(NSNotification *)notification;
+- (void)whitelistCancelPressed:(NSNotification *)notification;
 
 @end
