@@ -2,6 +2,7 @@
  * esteid-browser-plugin - a browser plugin for Estonian EID card
  *
  * Copyright (C) 2010  Estonian Informatics Centre
+ * Copyright (C) 2010  Smartlink OÜ
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
