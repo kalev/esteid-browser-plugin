@@ -36,7 +36,7 @@
 class esteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
 {
 public:
-    esteidAPI(FB::BrowserHostWrapper *host);
+    esteidAPI(FB::BrowserHost host);
     virtual ~esteidAPI();
 
     void setWindow(FB::PluginWindow*);
@@ -100,7 +100,7 @@ public:
 
 
 private:
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::BrowserHost m_host;
     boost::shared_ptr<PluginUI> m_UI;
     FB::JSOutObject m_authCert;
     FB::JSOutObject m_signCert;
@@ -119,7 +119,7 @@ private:
 
     class SettingsCallback : public CallbackAPI {
     public:
-        SettingsCallback(FB::BrowserHostWrapper *host, esteidAPI &eidp) : 
+        SettingsCallback(FB::BrowserHost host, esteidAPI &eidp) :
             CallbackAPI(host), m_eidp(eidp) { }
         virtual bool eventHandler()
             { m_eidp.ShowSettings(); return true; };
@@ -129,7 +129,7 @@ private:
 
     class CloseCallback : public CallbackAPI {
     public:
-        CloseCallback(FB::BrowserHostWrapper *host, esteidAPI &eidp) : 
+        CloseCallback(FB::BrowserHost host, esteidAPI &eidp) :
             CallbackAPI(host), m_eidp(eidp) { }
         virtual bool eventHandler()
             { m_eidp.CloseNotificationBar(); return true; };

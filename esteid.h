@@ -43,7 +43,7 @@ public:
     virtual ~esteid();
 
 public:
-    virtual FB::JSAPI* createJSAPI();
+    virtual FB::JSAPIPtr createJSAPI();
     virtual bool IsWindowless() { return false; }
 
     BEGIN_PLUGIN_EVENT_MAP()
@@ -64,7 +64,7 @@ public:
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
 
 private:
-    FB::AutoPtr<esteidAPI> m_esteidAPI;
+    boost::shared_ptr<esteidAPI> m_esteidAPI;
     FB::PluginWindow* m_window;
 };
 

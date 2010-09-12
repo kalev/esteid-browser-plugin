@@ -27,8 +27,8 @@
 class CertificateAPI : public FB::JSAPIAuto
 {
 public:
-    //CertificateAPI(FB::BrowserHostWrapper *host, X509Certificate cert);
-    CertificateAPI(FB::BrowserHostWrapper *host, ByteVec bv);
+    //CertificateAPI(FB::BrowserHost host, X509Certificate cert);
+    CertificateAPI(FB::BrowserHost host, ByteVec bv);
     virtual ~CertificateAPI();
 
     /** Subject CN */
@@ -49,7 +49,7 @@ public:
     bool get_isValid();
 
 private:
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::BrowserHost m_host;
 
     X509Certificate m_cert;
 };

@@ -33,7 +33,7 @@
 class CallbackAPI : public FB::JSAPIAuto
 {
 public:
-    CallbackAPI(FB::BrowserHostWrapper *host);
+    CallbackAPI(FB::BrowserHost host);
     virtual ~CallbackAPI();
     virtual bool handleEvent(const FB::JSObject& evt);
 
@@ -43,5 +43,5 @@ public:
     virtual FB::variant Invoke(std::string methodName, std::vector<FB::variant>& args);
     virtual bool HasMethod(std::string methodName);
 private:
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::BrowserHost m_host;
 };

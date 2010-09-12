@@ -61,12 +61,12 @@ esteid::~esteid()
 {
 }
 
-FB::JSAPI* esteid::createJSAPI()
+FB::JSAPIPtr esteid::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
-    m_esteidAPI = new esteidAPI(m_host);
+    m_esteidAPI = boost::shared_ptr<esteidAPI>(new esteidAPI(m_host));
     m_esteidAPI->setWindow(m_window);
-    return m_esteidAPI.ptr();
+    return m_esteidAPI;
 }
 
 bool esteid::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)

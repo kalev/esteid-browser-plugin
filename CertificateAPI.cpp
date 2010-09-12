@@ -29,10 +29,10 @@
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(CertificateAPI, a)
 
 /*
-CertificateAPI::CertificateAPI(FB::BrowserHostWrapper *host, X509Certificate cert) :
+CertificateAPI::CertificateAPI(FB::BrowserHost host, X509Certificate cert) :
      m_host(host), m_cert(cert)
 */
-CertificateAPI::CertificateAPI(FB::BrowserHostWrapper *host, ByteVec bv) :
+CertificateAPI::CertificateAPI(FB::BrowserHost host, ByteVec bv) :
      m_host(host), m_cert(bv)
 {
     REGISTER_RO_PROPERTY(CN);

@@ -60,8 +60,8 @@
         throw FB::script_error("No cards found"); \
     }
 
-esteidAPI::esteidAPI(FB::BrowserHostWrapper *host) :
-    m_host(host), m_authCert(NULL), m_signCert(NULL),
+esteidAPI::esteidAPI(FB::BrowserHost host) :
+    m_host(host),
     m_service(EstEIDService::getInstance()),
     m_settingsCallback(new SettingsCallback(host, *this)),
     m_closeCallback(new CloseCallback(host, *this)),
@@ -286,7 +286,7 @@ FB::JSOutObject esteidAPI::get_authCert()
     WHITELIST_REQUIRED;
 
     RTERROR_TO_SCRIPT(
-        return new CertificateAPI(m_host, m_service->getAuthCert()));
+        return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getAuthCert())));
 }
 
 FB::JSOutObject esteidAPI::get_signCert()
@@ -294,7 +294,7 @@ FB::JSOutObject esteidAPI::get_signCert()
     WHITELIST_REQUIRED;
 
     RTERROR_TO_SCRIPT(
-        return new CertificateAPI(m_host, m_service->getSignCert()));
+        return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getSignCert())));
 }
 
 std::string esteidAPI::getVersion()
@@ -332,7 +332,7 @@ void esteidAPI::prepareSign(const std::string& hash, const std::string& url)
         throw std::runtime_error("Partial document URL must be specified");
 
     /* Extract subject line from Certificate */
-    std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().ptr())->get_CN();
+    std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().get())->get_CN();
     if (subjectRaw.empty())
         throw std::runtime_error("Empty subject");
 

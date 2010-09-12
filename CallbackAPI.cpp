@@ -23,7 +23,7 @@
 #include "CallbackAPI.h"
 #include "debug.h"
 
-CallbackAPI::CallbackAPI(FB::BrowserHostWrapper *host) :
+CallbackAPI::CallbackAPI(FB::BrowserHost host) :
      m_host(host)
 {
     registerMethod("handleEvent", make_method(this, &CallbackAPI::handleEvent));
