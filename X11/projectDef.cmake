@@ -69,10 +69,6 @@ target_link_libraries(${PROJNAME}
     ${SMARTCARDPP_LIBRARIES}
     )
 
-add_dependencies(${PROJNAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
-
 install(TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
 install(FILES ${PLATFORM_NAME}/whitelistdialog.ui DESTINATION ${GLADE_INSTALL_DIR})
 install(FILES ${PLATFORM_NAME}/pininputdialog.ui DESTINATION ${GLADE_INSTALL_DIR})

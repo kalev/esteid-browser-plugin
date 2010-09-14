@@ -43,7 +43,3 @@ target_link_libraries(${PROJNAME}
     ${SMARTCARDPP_LIBRARIES}
     ws2_32
     )
-
-add_dependencies(${PROJNAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
