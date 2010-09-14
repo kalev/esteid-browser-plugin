@@ -41,7 +41,7 @@ if(WIN32)
     # boost::signals is only needed on Windows
     set(EXTRA_BOOST_COMPONENTS "signals")
 endif(WIN32)
-find_package(Boost COMPONENTS filesystem system ${EXTRA_BOOST_COMPONENTS} REQUIRED)
+find_package(Boost COMPONENTS filesystem system thread ${EXTRA_BOOST_COMPONENTS} REQUIRED)
 
 if(UNIX AND NOT APPLE)
     if(NOT GTKMM_INCLUDE_DIRS)
