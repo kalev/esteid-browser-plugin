@@ -35,6 +35,10 @@ find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
 
+if(NOT WITH_SYSTEM_BOOST)
+    message(FATAL_ERROR "Firebreath needs to be built with WITH_SYSTEM_BOOST enabled")
+endif()
+
 if(WIN32)
     # FindBoost.cmake isn't up to date wrt new boost versions
     set(Boost_ADDITIONAL_VERSIONS "1.44" "1.44.0" "1.43" "1.43.0" "1.42" "1.42.0")
