@@ -25,7 +25,7 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function esteidBlocker() {
-    // dump("esteidBlocker created\n");
+  //dump("esteidBlocker created\n");
 }
 
 esteidBlocker.prototype = {
@@ -48,8 +48,15 @@ esteidBlocker.prototype = {
      * and all sane applets have code attributes like this:
      * code="org.opensc.webapplet.WebApplet"
      */
+    var jre = new RegExp("^application/x-java-", "i");
     if ((Ci.nsIContentPolicy.TYPE_OBJECT == aContentType) &&
-         aContext.getAttribute("code") == "SignatureApplet.class") {
+        jre.exec(aMimeTypeGuess)) {
+
+      var code = esteidFindJavaCodeAttr(aContext);
+
+      //dump("Java object found, code = " + code + "\n");
+      if(code == "SignatureApplet.class" || code == "SignApplet.class" ||
+         code == "XMLSignApplet.class")
         return Ci.nsIContentPolicy.REJECT_REQUEST;
     }
   
@@ -59,4 +66,31 @@ esteidBlocker.prototype = {
 
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([ esteidBlocker ]);
+}
+
+/* Try to find Java code attribute
+ * NB! Please keep this code in sync with chrome/content/convertLegacy.js
+ */
+function esteidFindJavaCodeAttr(elem) {
+  var code = elem.getAttribute("code");
+
+  if(!code)
+    code = elem.getAttribute("java_code");
+  if(!code) {
+    var clsid = elem.getAttribute("classid");
+    if(clsid) {
+      var cre = new RegExp("^java:(.*)$", "i");
+      code = cre.exec(clsid)[1];
+    }
+  }
+
+  if(!code) {
+    var params = elem.getElementsByTagName('param');
+    for(var i in params) {
+      if(params[i].getAttribute("name") == "java_code")
+        code = params[i].getAttribute("value");
+    }
+  }
+
+  return code;
 }

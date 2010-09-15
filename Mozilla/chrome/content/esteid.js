@@ -95,8 +95,7 @@ function LoadEstEID() {
             esteid_error("Can't find signing plugin: " + anError);
         }
         try {
-            var appcontent = document.getElementById("appcontent");
-            esteidRegisterLegacyConverter(appcontent);
+            esteidRegisterLegacyConverter();
         } catch (anError) {
             esteid_error("Can't register legacy converter: " + anError);
         }
