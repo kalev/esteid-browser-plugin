@@ -309,11 +309,11 @@ std::string esteidAPI::getVersion()
  */
 void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject& callback)
 {
-    WHITELIST_REQUIRED;
-
     m_signCallback = callback;
 
     try {
+        WHITELIST_REQUIRED;
+
         prepareSign(hash, url);
         promptForPinAsync();
     } catch(const std::exception& e) {
