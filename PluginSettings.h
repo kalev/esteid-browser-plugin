@@ -28,20 +28,20 @@
 
 class PluginSettings {
 public:
+    PluginSettings();
+    virtual ~PluginSettings();
+
     std::vector<std::string> whitelist;
     std::vector<std::string> default_whitelist;
     bool allowLocal;
     bool allowDefaults;
-    PluginSettings();
-    ~PluginSettings();
 
-    bool InWhitelist(std::string s);
-
-    /** Loads config. Will fail silently if config is not found */
-    void Load();
+    /* Returns true if site s is in whitelist */
+    bool InWhitelist(const std::string& s);
     /** Saves config. Will throw ios_base::failure on failure */
     void Save();
 private:
+    void loadConfig(const boost::filesystem::path& configFile);
     void removeDuplicateEntries(std::vector<std::string>& v);
     void removeDefaultEntries(std::vector<std::string>& v);
     bool inDefaultWhitelist(const std::string& s);

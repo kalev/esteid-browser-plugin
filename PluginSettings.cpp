@@ -34,13 +34,14 @@
 
 using namespace boost::filesystem;
 
-PluginSettings::PluginSettings() :
-    allowLocal(true), allowDefaults(true)
+PluginSettings::PluginSettings()
+    : allowLocal(true),
+      allowDefaults(true)
 {
     static const std::string fileName = "esteidplugin.conf";
 
     m_configFile = configDirectory() / fileName;
-    Load();
+    loadConfig(m_configFile);
 
     /* Builtin whitelist */
     default_whitelist.clear();
@@ -67,52 +68,61 @@ path PluginSettings::configDirectory()
 #endif
 }
 
-PluginSettings::~PluginSettings() {
+PluginSettings::~PluginSettings()
+{
 }
 
-void PluginSettings::Load() {
+void PluginSettings::loadConfig(const boost::filesystem::path& configFile)
+{
     std::string line;
-    ifstream input;
+    ifstream input(configFile);
 
     whitelist.clear();
-
-    input.open(m_configFile);
-    while(input.good()) {
-        std::getline(input, line);
-        if(line.empty()) continue;
-
-             if(line == "@NODEFAULTS") allowDefaults = false;
-        else if(line == "@NOLOCAL")    allowLocal    = false;
-        else whitelist.push_back(line);
+    while (std::getline(input, line) && !line.empty()) {
+        if (line == "@NODEFAULTS")
+            allowDefaults = false;
+        else if (line == "@NOLOCAL")
+            allowLocal = false;
+        else
+            whitelist.push_back(line);
     }
-    input.close();
 }
 
-void PluginSettings::Save() {
+void PluginSettings::Save()
+{
     std::vector<std::string>::const_iterator i;
 
     removeDuplicateEntries(whitelist);
     removeDefaultEntries(whitelist);
 
-    ofstream output;
-    output.exceptions( std::ofstream::failbit | std::ofstream::badbit );
-
     path configDir = configDirectory();
     if (!exists(configDir))
         create_directory(configDir);
 
+    ofstream output;
+    output.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
     output.open(m_configFile);
-    if(!allowDefaults) output << "@NODEFAULTS" << std::endl;
-    if(!allowLocal)    output << "@NOLOCAL"    << std::endl;
-    for(i = whitelist.begin(); i != whitelist.end(); ++i)
+    if (!allowDefaults)
+        output << "@NODEFAULTS" << std::endl;
+    if (!allowLocal)
+        output << "@NOLOCAL" << std::endl;
+
+    for (i = whitelist.begin(); i != whitelist.end(); ++i)
         output << *i << std::endl;
+
     output.close();
 }
 
-bool PluginSettings::InWhitelist(std::string s) {
-    return (allowDefaults && \
-            default_whitelist.end() != find(default_whitelist.begin(), default_whitelist.end(), s)) || \
-            whitelist.end() != find(whitelist.begin(), whitelist.end(), s);
+bool PluginSettings::InWhitelist(const std::string& s)
+{
+    if (allowDefaults && find(default_whitelist.begin(), default_whitelist.end(), s) != default_whitelist.end()) {
+        return true;
+    } else if (find(whitelist.begin(), whitelist.end(), s) != whitelist.end()) {
+        return true;
+    }
+
+    return false;
 }
 
 void PluginSettings::removeDuplicateEntries(std::vector<std::string>& v)
