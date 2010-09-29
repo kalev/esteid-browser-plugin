@@ -85,6 +85,7 @@ public:
     virtual void onMessage(EstEIDService::msgType, readerID);
 
 #ifdef SUPPORT_OLD_APIS
+    void deprecatedCall();
     std::string sign(std::string, std::string);
     std::string promptForPin(bool retrying = false);
     std::string askPinAndSign(const std::string& hash, const std::string& url);
@@ -165,6 +166,7 @@ private:
     bool IsSecure(void);
     bool IsLocal(void);
     bool IsWhiteListed(void);
+    void whitelistRequired();
     void returnSignedData(const std::string& data);
     void returnSignFailure(const std::string& msg);
 

@@ -51,15 +51,6 @@
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(esteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(esteidAPI, a)
 
-#define WHITELIST_REQUIRED \
-    if(!IsSecure()) { \
-        DisplayNotification(MSG_INSECURE); \
-        throw FB::script_error("No cards found"); \
-    } else if(!IsWhiteListed()) { \
-        DisplayNotification(MSG_SITEACCESS); \
-        throw FB::script_error("No cards found"); \
-    }
-
 esteidAPI::esteidAPI(FB::BrowserHost host) :
     m_host(host),
     m_service(EstEIDService::getInstance()),
@@ -183,6 +174,16 @@ bool esteidAPI::IsWhiteListed() {
     return false;
 }
 
+void esteidAPI::whitelistRequired() {
+    if (!IsSecure()) {
+        DisplayNotification(MSG_INSECURE);
+        throw FB::script_error("No cards found");
+    } else if (!IsWhiteListed()) {
+        DisplayNotification(MSG_SITEACCESS);
+        throw FB::script_error("No cards found");
+    }
+}
+
 std::string esteidAPI::GetHostName() {
     size_t pos1 = m_pageURL.find("://") + 3, pos2 = m_pageURL.find("/", pos1);
     if (pos1 >= pos2)
@@ -283,7 +284,7 @@ void esteidAPI::UpdatePersonalData()
 // TODO: Optimize memory usage. Don't create new object if cert hasn't changed.
 FB::JSOutObject esteidAPI::get_authCert()
 {
-    WHITELIST_REQUIRED;
+    whitelistRequired();
 
     RTERROR_TO_SCRIPT(
         return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getAuthCert())));
@@ -291,7 +292,7 @@ FB::JSOutObject esteidAPI::get_authCert()
 
 FB::JSOutObject esteidAPI::get_signCert()
 {
-    WHITELIST_REQUIRED;
+    whitelistRequired();
 
     RTERROR_TO_SCRIPT(
         return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getSignCert())));
@@ -312,7 +313,7 @@ void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject&
     m_signCallback = callback;
 
     try {
-        WHITELIST_REQUIRED;
+        whitelistRequired();
 
         prepareSign(hash, url);
         promptForPinAsync();
@@ -426,8 +427,11 @@ void esteidAPI::returnSignFailure(const std::string& msg)
 
 #define MAGIC_ID "37337F4CF4CE"
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
-#define DEPRECATED_CALL DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
 
+void esteidAPI::deprecatedCall()
+{
+    DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
+}
 
 std::string esteidAPI::promptForPin(bool retrying)
 {
@@ -468,8 +472,8 @@ std::string esteidAPI::askPinAndSign(const std::string& hash, const std::string&
 }
 
 std::string esteidAPI::getCertificates() {
-    WHITELIST_REQUIRED;
-    DEPRECATED_CALL;
+    whitelistRequired();
+    deprecatedCall();
 
     try { RTERROR_TO_SCRIPT(
         ByteVec bv = m_service->getSignCert();
@@ -498,8 +502,8 @@ std::string esteidAPI::getCertificates() {
 }
 
 std::string esteidAPI::sign(std::string a, std::string b) {
-    WHITELIST_REQUIRED;
-    DEPRECATED_CALL;
+    whitelistRequired();
+    deprecatedCall();
 
     std::string signedHash;
 
@@ -523,14 +527,14 @@ std::string esteidAPI::sign(std::string a, std::string b) {
 }
 
 std::string esteidAPI::getInfo() {
-    DEPRECATED_CALL;
+    deprecatedCall();
 
     return getVersion();
 }
 
 std::string esteidAPI::getSigningCertificate() {
-    WHITELIST_REQUIRED;
-    DEPRECATED_CALL;
+    whitelistRequired();
+    deprecatedCall();
 
     try {
         ByteVec bv = m_service->getSignCert();
@@ -544,8 +548,8 @@ std::string esteidAPI::getSigningCertificate() {
 }
 
 std::string esteidAPI::getSignedHash(std::string hash, std::string slot) {
-    WHITELIST_REQUIRED;
-    DEPRECATED_CALL;
+    whitelistRequired();
+    deprecatedCall();
 
     try {
         std::string signedHash = askPinAndSign(hash, std::string(COMPAT_URL));
@@ -557,16 +561,16 @@ std::string esteidAPI::getSignedHash(std::string hash, std::string slot) {
 }
 
 std::string esteidAPI::get_selectedCertNumber() {
-    WHITELIST_REQUIRED;
-    DEPRECATED_CALL;
+    whitelistRequired();
+    deprecatedCall();
 
     return "10"; // Dummy number
 }
 
 void esteidAPI::prepare(std::string onSuccess, std::string onCancel,
     std::string onError) {
-    WHITELIST_REQUIRED;
-    DEPRECATED_CALL;
+    whitelistRequired();
+    deprecatedCall();
 
     try {
         ByteVec bv = m_service->getSignCert();
@@ -583,8 +587,8 @@ void esteidAPI::prepare(std::string onSuccess, std::string onCancel,
 
 void esteidAPI::finalize(std::string slot, std::string hash,
     std::string onSuccess, std::string onCancel, std::string onError) {
-    WHITELIST_REQUIRED;
-    DEPRECATED_CALL;
+    whitelistRequired();
+    deprecatedCall();
 
     /* FIXME: The original API is non-blocking, but the callbacks
        are so braindead (callback function name is passed as a string)
@@ -653,7 +657,7 @@ std::vector<std::string> esteidAPI::stringSplit(std::string str, std::string sep
 
 #define ESTEID_PD_GETTER_IMP(index, attr) \
     std::string esteidAPI::get_##attr() { \
-        WHITELIST_REQUIRED; \
+        whitelistRequired(); \
         UpdatePersonalData(); \
         if(m_pdata.size() <= index) \
             throw FB::script_error("PD index out of range"); \
