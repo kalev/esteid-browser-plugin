@@ -20,6 +20,7 @@
  */
 
 #include <iomanip>
+#include <boost/date_time.hpp>
 
 #include "BrowserObjectAPI.h"
 #include "variant_list.h"
@@ -428,9 +429,15 @@ void esteidAPI::returnSignFailure(const std::string& msg)
 #define MAGIC_ID "37337F4CF4CE"
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
 
+using namespace boost::date_time;
+
 void esteidAPI::deprecatedCall()
 {
-    DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
+    boost::posix_time::ptime date_for_activating_deprecate_messages(boost::gregorian::date(2011, May, 1));
+    boost::system_time current_time = boost::get_system_time();
+
+    if (current_time > date_for_activating_deprecate_messages)
+        DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
 }
 
 std::string esteidAPI::promptForPin(bool retrying)
