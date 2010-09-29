@@ -16,6 +16,18 @@ List of officially supported browsers:
  * Safari
  * Internet Explorer
 
+
+Dependencies
+============
+
+boost >= 1.36
+firebreath >= 1.2.1
+gtkmm24 >= 2.16
+iconv
+openssl
+smartcardpp >= 0.2.0
+
+
 BUILD INSTRUCTIONS
 ==================
 
