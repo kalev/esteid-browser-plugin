@@ -1,17 +1,6 @@
-<!ENTITY esteid.SignPromptTitle "Signature requested">
-<!ENTITY esteid.SignDetailsTitle "Signature request details">
-<!ENTITY esteid.SignDetailsHeader "This web page is asking for your digital signature.">
-<!ENTITY esteid.SignDetailsText "The content on the page should have made it absolutely clear what you are signing. If you have any doubts, please click on the link below to verify the document.">
-<!ENTITY esteid.SignDetailsWarning "NB! Digital signatures are legally binding.">
-<!ENTITY esteid.SignDetailsDocLabel "Document: ">
-<!ENTITY esteid.SignDetailsHashLabel "Hash: ">
 <!ENTITY esteid.PrefsTitle "ID-Card signer preferences">
-<!ENTITY esteid.WrongPin "Wrong PIN!">
-<!ENTITY esteid.TriesLeft "Tries left: ">
-<!ENTITY esteid.AddHost "Add">
-<!ENTITY esteid.RemoveHost "Delete">
 <!ENTITY esteid.Whitelist "Whitelist">
 <!ENTITY esteid.Log "Log">
-<!ENTITY esteid.WhiteListCaption "Sites that can use your ID-card">
-<!ENTITY esteid.UsePinPad "Please enter PIN from PinPad in">
-<!ENTITY esteid.seconds "seconds">
+<!ENTITY esteid.Preferences "Preferences">
+<!ENTITY esteid.PreferencesCaption "General preferences">
+<!ENTITY esteid.OpenWhiteList "Sites that can use your ID-card">

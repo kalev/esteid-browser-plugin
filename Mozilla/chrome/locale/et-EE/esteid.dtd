@@ -1,17 +1,6 @@
-<!ENTITY esteid.SignPromptTitle "Allkiri on kohustuslik">
-<!ENTITY esteid.SignDetailsTitle "Allkirja päringu detailid">
-<!ENTITY esteid.SignDetailsHeader "See veebileht küsib Teie digitaalallkirja.">
-<!ENTITY esteid.SignDetailsText "Lehekülje sisu peaks sulle selgeks tegema mida sa allkirjastad. Kui sul on kahtlusi, vajuta allolevale lingile, et kontrollida dokumenti.">
-<!ENTITY esteid.SignDetailsWarning "NB! Digitaalne allkiri on õiguslikult siduv">
-<!ENTITY esteid.SignDetailsDocLabel "Dokument: ">
-<!ENTITY esteid.SignDetailsHashLabel "Räsi: ">
 <!ENTITY esteid.PrefsTitle "ID-kaardi allkirjastaja sätted">
-<!ENTITY esteid.WrongPin "Vale PIN!">
-<!ENTITY esteid.TriesLeft "Katseid jäänud: ">
-<!ENTITY esteid.AddHost "Lisa">
-<!ENTITY esteid.RemoveHost "Kustuta">
-<!ENTITY esteid.Whitelist "Lubatud lehtede nimekiri">
+<!ENTITY esteid.Whitelist "Lubatud saidid">
 <!ENTITY esteid.Log "Logi">
-<!ENTITY esteid.WhiteListCaption "Veebilehed, mida võib ID-kaart kasutada">
-<!ENTITY esteid.UsePinPad "Please enter PIN from PinPad in">
-<!ENTITY esteid.seconds "seconds">
+<!ENTITY esteid.Preferences "Seaded">
+<!ENTITY esteid.PreferencesCaption "Üldised seaded">
+<!ENTITY esteid.OpenWhiteList "Veebilehed, mis võivad ID-kaarti kasutada">
