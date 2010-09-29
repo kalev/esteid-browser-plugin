@@ -47,8 +47,7 @@ BUILD INSTRUCTIONS
 5. Test your build in a separate Firefox profile
    (only works when building on Linux)
      make runff
-6. Install the plugin to systemwide directory
+6. Install the plugin to a system wide directory
      make install
-7. In addition to the plugin, the build also produces an optional
-   Mozilla extension:
-     build/esteid-1.0.0.xpi
+7. Install the optional Mozilla extension
+     Open build/esteid-x.x.x.xpi with firefox or thunderbird and click "Install"
