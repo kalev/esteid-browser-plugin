@@ -66,6 +66,7 @@ esteidAPI::esteidAPI(FB::BrowserHost host) :
 
     REGISTER_METHOD(getVersion);
     REGISTER_METHOD(signAsync);
+    REGISTER_METHOD(showSettings);
 
     registerEvent("onCardInserted");
     registerEvent("onCardRemoved");
@@ -241,6 +242,22 @@ void esteidAPI::CloseNotificationBar(void) {
     if(!m_barJSO) return;
 
     m_barJSO->Invoke("close", FB::variant_list_of(0));
+}
+
+// JS method exposed to browser to show preferences window 
+// Direct access to this method will be exposed to a very few selected URL-s
+void esteidAPI::showSettings(void) {
+    // FIXME: This code is butt-ugly!
+    if(!m_pageURL.compare(0,  7, "file://") ||
+       !m_pageURL.compare(0,  9, "chrome://")) {
+        try {
+            m_UI->ShowSettings(m_conf);
+        } catch(const std::exception& e) {
+            ESTEID_DEBUG("Unable to display whitelist editor: %s", e.what());
+        }
+    } else {
+        throw FB::script_error("No such method");
+    }
 }
 
 void esteidAPI::ShowSettings(void) {

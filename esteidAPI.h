@@ -53,6 +53,11 @@ public:
      */
     void signAsync(std::string hash, std::string url, const FB::JSObject& callback);
 
+    /** Open settings window.
+      * Only available for file:// and chrome:// URL-s
+      */
+    void showSettings(void);
+
     /** Certificates (read-only properties) */
     FB::JSOutObject get_authCert();
     FB::JSOutObject get_signCert();

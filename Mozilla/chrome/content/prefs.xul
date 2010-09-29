@@ -8,7 +8,7 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:html="http://www.w3.org/1999/xhtml"
         onload="onLoad();"
-        buttons="accept,cancel"
+        buttons="accept"
         ondialogaccept="doOK();"
         style="max-width: 50em;">
 
@@ -16,9 +16,17 @@
 
   <tabbox flex="1">
     <tabs>
+      <tab label="&esteid.Preferences;"  />
       <tab label="&esteid.Log;"       />
     </tabs>
     <tabpanels flex="1" >
+      <vbox>
+        <caption label="&esteid.PreferencesCaption;" />
+        <hbox>
+          <button id="wlbtn" label="&esteid.OpenWhiteList;"
+                  oncommand="openPluginSettings();" disabled="true" />
+        </hbox>
+      </vbox>
       <textbox id="log" multiline="true" rows="20" cols="40"
                readonly="true" />
     </tabpanels>

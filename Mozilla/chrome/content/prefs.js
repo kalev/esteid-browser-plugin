@@ -21,6 +21,7 @@
 
 var params = window.arguments[0];
 var sb = null;
+var plugin = null;
 
 function onLoad() {
   var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
@@ -38,7 +39,24 @@ function onLoad() {
 
   var elt = document.getElementById('log');
   elt.value = logmsg;
+
+  plugin = getPlugin();
+  if(plugin != null) document.getElementById('wlbtn').disabled = false;
 }
 
 function doOK() {
+}
+
+function getPlugin() {
+    // https://developer.mozilla.org/en/Working_with_windows_in_chrome_code
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                 .getService(Components.interfaces.nsIWindowMediator);
+    var browserWindow = wm.getMostRecentWindow("navigator:browser");
+
+    var doc = browserWindow.document;
+    return doc.getElementById('eidplugin');
+}
+
+function openPluginSettings() {
+    plugin.showSettings();
 }
