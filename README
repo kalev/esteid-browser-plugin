@@ -42,8 +42,13 @@ BUILD INSTRUCTIONS
 4. Run build with cmake
      mkdir build
      cd build
-     cmake -DWITH_SYSTEM_BOOST=1 ..
+     cmake -DWITH_SYSTEM_BOOST=1 -DCMAKE_INSTALL_PREFIX=/usr ..
      make -j4
 5. Test your build in a separate Firefox profile
    (only works when building on Linux)
      make runff
+6. Install the plugin to systemwide directory
+     make install
+7. In addition to the plugin, the build also produces an optional
+   Mozilla extension:
+     build/esteid-1.0.0.xpi
