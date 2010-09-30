@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Esteid plugin Config</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <script type="text/javascript">
+    function init() {
+      var b = document.getElementById("sbtn");
+      var v = document.getElementById("version");
+      var e = document.getElementById("esteid");
+      v.innerHTML = '&nbsp;' + e.getVersion() + '&nbsp;';
+      b.disabled=null;
+      v.style.background = "#66ff66";
+    }
+    function openSettings() {
+      var e = document.getElementById("esteid");
+      e.showSettings();
+    }
+  </script>
+  <style type="text/css">
+  #version {
+      background: red;
+  }
+  #container {
+      text-align: center;
+      width: 30em;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 150%;
+  }
+  div {
+      margin-top: 2em;
+  }
+  #sbtn {
+      font-size: 150%;
+  }
+  </style>
+</head>
+<body onload="init();">
+<div id="container">
+<div>
+  <object id="esteid" type="application/x-esteid"
+          style="width: 1px; height: 1px;" />
+</div>
+<div id="welcome">
+  Hea kasutaja! <br /> Sellelt leheküljelt saad redigeerida
+  ID-kaardiga allkirjastamise plugina seadeid.
+</div>
+<div id="ver">
+  Plugina versioon: <span id="version">Pole paigaldatud</span>
+</div>
+<div id="settings">
+  <input type="button" id="sbtn" disabled="disabled"
+         value="Ava seaded" onclick="openSettings();" />
+</div>
+</div> <!-- container -->
+</body>
+</html>
