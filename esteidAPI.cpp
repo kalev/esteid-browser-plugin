@@ -43,6 +43,7 @@
 #include "JSUtil.h"
 #include "converter.h"
 #include "debug.h"
+#include "urlparser.h"
 
 /* UI Messages */
 #define MSG_SETTINGS "Settings"
@@ -55,6 +56,7 @@
 esteidAPI::esteidAPI(FB::BrowserHost host) :
     m_host(host),
     m_service(EstEIDService::getInstance()),
+    m_pageURL(pageURL()),
     m_settingsCallback(new SettingsCallback(host, *this)),
     m_closeCallback(new CloseCallback(host, *this)),
     m_uiCallback(new UICallback(*this))
@@ -109,9 +111,6 @@ esteidAPI::esteidAPI(FB::BrowserHost host) :
     REGISTER_METHOD(isActive);
 #endif
 
-    m_pageURL = GetPageURL();
-    ESTEID_DEBUG("esteidAPI: Page URL is %s", m_pageURL.c_str());
-
     /* Use platform specific UI */
 #ifdef _WIN32
     ESTEID_DEBUG("Trying to load WindowsUI");
@@ -148,29 +147,26 @@ void esteidAPI::setWindow(FB::PluginWindow* win)
 }
 
 bool esteidAPI::IsLocal() {
-    // FIXME: This code is butt-ugly!
-    if(!m_pageURL.compare(0,  7, "file://"))            return true;
-    if(!m_pageURL.compare(0, 17, "http://localhost/"))  return true;
-    if(!m_pageURL.compare(0, 18, "https://localhost/")) return true;
-    if(!m_pageURL.compare(0, 17, "http://localhost:"))  return true;
-    if(!m_pageURL.compare(0, 18, "https://localhost:")) return true;
+    if (!m_conf.allowLocal)
+        return false;
+
+    if (m_pageURL.protocol() == "file" ||
+        m_pageURL.hostname() == "localhost") {
+        return true;
+    }
+
     return false;
 }
 
 bool esteidAPI::IsSecure() {
-    if(!m_pageURL.compare(0, 8, "https://")) return true;
-    if(m_conf.allowLocal && IsLocal())          return true;
+    if (IsLocal() || m_pageURL.protocol() == "https")
+        return true;
+
     return false;
 }
 
 bool esteidAPI::IsWhiteListed() {
-    if (m_conf.allowLocal && IsLocal())
-        return true;
-
-    std::string host = GetHostName();
-    if (host.empty())
-        return false;
-    if (m_conf.InWhitelist(host))
+    if (IsLocal() || m_conf.InWhitelist(m_pageURL.hostname()))
         return true;
 
     return false;
@@ -186,24 +182,16 @@ void esteidAPI::whitelistRequired() {
     }
 }
 
-std::string esteidAPI::GetHostName() {
-    size_t pos1 = m_pageURL.find("://") + 3, pos2 = m_pageURL.find("/", pos1);
-    if (pos1 >= pos2)
-        return "";
-    std::string host = m_pageURL.substr(pos1, pos2 - pos1);
-
-    return host;
-}
-
-std::string esteidAPI::GetPageURL(void) {
+std::string esteidAPI::pageURL() {
     /* Using method no. 1 from
      * https://developer.mozilla.org/en/Getting_the_page_URL_in_NPAPI_plugin
      */
     FB::JSAPI_DOMWindow dw = m_host->getDOMWindow();
     FB::JSAPI_DOMNode loc = dw.getProperty<FB::JSObject>("location");
-    m_pageURL = loc.getProperty<std::string>("href");
 
-    return m_pageURL;
+    std::string url = loc.getProperty<std::string>("href");
+    ESTEID_DEBUG("Page URL is %s", url.c_str());
+    return url;
 }
 
 void esteidAPI::CreateNotificationBar(void) {
@@ -247,9 +235,8 @@ void esteidAPI::CloseNotificationBar(void) {
 // JS method exposed to browser to show preferences window 
 // Direct access to this method will be exposed to a very few selected URL-s
 void esteidAPI::showSettings(void) {
-    // FIXME: This code is butt-ugly!
-    if(!m_pageURL.compare(0,  7, "file://") ||
-       !m_pageURL.compare(0,  9, "chrome://")) {
+    if (m_pageURL.protocol() == "file" ||
+        m_pageURL.protocol() == "chrome") {
         try {
             m_UI->ShowSettings(m_conf);
         } catch(const std::exception& e) {
@@ -261,11 +248,9 @@ void esteidAPI::showSettings(void) {
 }
 
 void esteidAPI::ShowSettings(void) {
-    ESTEID_DEBUG("esteidAPI::ShowSettings()");
-
     try {
         if (IsSecure())
-            m_UI->ShowSettings(m_conf, GetHostName());
+            m_UI->ShowSettings(m_conf, m_pageURL.hostname());
         else
             m_UI->ShowSettings(m_conf);
     } catch(const std::exception& e) {

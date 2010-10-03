@@ -29,6 +29,7 @@
 #include "PluginUI.h"
 #include "EstEIDService.h"
 #include "CallbackAPI.h"
+#include "urlparser.h"
 
 // FIXME: Find a sane way to deal with error messages
 #define CANCEL_MSG "User cancelled operation"
@@ -108,6 +109,7 @@ public:
 private:
     FB::BrowserHost m_host;
     boost::shared_ptr<PluginUI> m_UI;
+    UrlParser m_pageURL;
     FB::JSOutObject m_authCert;
     FB::JSOutObject m_signCert;
     FB::JSOutObject m_settingsCallback;
@@ -116,7 +118,6 @@ private:
     FB::JSObject m_signCallback;
     EstEIDService *m_service;
     vector <std::string> m_pdata;
-    std::string m_pageURL;
     std::string m_subject;
     std::string m_hash;
     std::string m_url;
@@ -154,8 +155,7 @@ private:
     };
     boost::shared_ptr<PluginUI::UICallbacks> m_uiCallback;
 
-    std::string GetHostName(void);
-    std::string GetPageURL(void);
+    std::string pageURL();
     PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
     void prepareSign(const std::string& hash, const std::string& url);

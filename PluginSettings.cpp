@@ -117,6 +117,9 @@ void PluginSettings::Save()
 
 bool PluginSettings::InWhitelist(const std::string& s)
 {
+    if (s.empty())
+        return false;
+
     if (allowDefaults && find(default_whitelist.begin(), default_whitelist.end(), s) != default_whitelist.end()) {
         return true;
     } else if (find(whitelist.begin(), whitelist.end(), s) != whitelist.end()) {
