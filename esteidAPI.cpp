@@ -20,8 +20,8 @@
  */
 
 #include <iomanip>
-#include <boost/date_time.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 #include "JSObject.h"
 #include "variant_list.h"
