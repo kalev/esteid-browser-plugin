@@ -156,7 +156,6 @@ private:
     boost::shared_ptr<PluginUI::UICallbacks> m_uiCallback;
 
     std::string pageURL();
-    PluginUI* GetMozillaUI(void);
     void UpdatePersonalData(void);
     void prepareSign(const std::string& hash, const std::string& url);
     void promptForPinAsync(bool retrying = false);
