@@ -56,10 +56,10 @@
 
 esteidAPI::esteidAPI(FB::BrowserHostPtr host) :
     m_host(host),
-    m_service(EstEIDService::getInstance()),
     m_pageURL(pageURL()),
     m_settingsCallback(new SettingsCallback(host, *this)),
     m_closeCallback(new CloseCallback(host, *this)),
+    m_service(EstEIDService::getInstance()),
     m_uiCallback(new UICallback(*this))
 {
     ESTEID_DEBUG("esteidAPI::esteidAPI()");
