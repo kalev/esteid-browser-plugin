@@ -19,11 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "CallbackAPI.h"
 #include "debug.h"
 
-CallbackAPI::CallbackAPI(FB::BrowserHost host) :
+CallbackAPI::CallbackAPI(FB::BrowserHostPtr host) :
      m_host(host)
 {
     registerMethod("handleEvent", make_method(this, &CallbackAPI::handleEvent));
@@ -34,7 +34,7 @@ CallbackAPI::~CallbackAPI()
 {
 }
 
-bool CallbackAPI::handleEvent(const FB::JSObject& evt) {
+bool CallbackAPI::handleEvent(const FB::JSObjectPtr& evt) {
     return eventHandler();
 }
 

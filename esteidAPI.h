@@ -22,8 +22,8 @@
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
-#include "DOM/JSAPI_DOMElement.h"
-#include "BrowserHostWrapper.h"
+#include "DOM/Element.h"
+#include "BrowserHost.h"
 #include "NpapiBrowserHost.h"
 #include "CertificateAPI.h"
 #include "PluginUI.h"
@@ -37,7 +37,7 @@
 class esteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
 {
 public:
-    esteidAPI(FB::BrowserHost host);
+    esteidAPI(FB::BrowserHostPtr host);
     virtual ~esteidAPI();
 
     void setWindow(FB::PluginWindow*);
@@ -52,7 +52,7 @@ public:
      * @param hash HEX encoded document hash to sign
      * @param url an URL to the document itself
      */
-    void signAsync(std::string hash, std::string url, const FB::JSObject& callback);
+    void signAsync(std::string hash, std::string url, const FB::JSObjectPtr& callback);
 
     /** Open settings window.
       * Only available for file:// and chrome:// URL-s
@@ -60,8 +60,8 @@ public:
     void showSettings(void);
 
     /** Certificates (read-only properties) */
-    FB::JSOutObject get_authCert();
-    FB::JSOutObject get_signCert();
+    FB::JSAPIPtr get_authCert();
+    FB::JSAPIPtr get_signCert();
 
     /** Personal data file attributes (read-only properties) */
     std::string get_lastName();
@@ -107,15 +107,15 @@ public:
 
 
 private:
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
     boost::shared_ptr<PluginUI> m_UI;
     UrlParser m_pageURL;
-    FB::JSOutObject m_authCert;
-    FB::JSOutObject m_signCert;
-    FB::JSOutObject m_settingsCallback;
-    FB::JSOutObject m_closeCallback;
-    FB::JSObject m_barJSO;
-    FB::JSObject m_signCallback;
+    FB::JSAPIPtr m_authCert;
+    FB::JSAPIPtr m_signCert;
+    FB::JSAPIPtr m_settingsCallback;
+    FB::JSAPIPtr m_closeCallback;
+    FB::JSObjectPtr m_barJSO;
+    FB::JSObjectPtr m_signCallback;
     EstEIDService *m_service;
     vector <std::string> m_pdata;
     std::string m_subject;
@@ -126,7 +126,7 @@ private:
 
     class SettingsCallback : public CallbackAPI {
     public:
-        SettingsCallback(FB::BrowserHost host, esteidAPI &eidp) :
+        SettingsCallback(FB::BrowserHostPtr host, esteidAPI &eidp) :
             CallbackAPI(host), m_eidp(eidp) { }
         virtual bool eventHandler()
             { m_eidp.ShowSettings(); return true; };
@@ -136,7 +136,7 @@ private:
 
     class CloseCallback : public CallbackAPI {
     public:
-        CloseCallback(FB::BrowserHost host, esteidAPI &eidp) :
+        CloseCallback(FB::BrowserHostPtr host, esteidAPI &eidp) :
             CallbackAPI(host), m_eidp(eidp) { }
         virtual bool eventHandler()
             { m_eidp.CloseNotificationBar(); return true; };

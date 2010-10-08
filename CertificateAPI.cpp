@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "variant_list.h"
-#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/Document.h"
 
 #include "CertificateAPI.h"
 #include "JSUtil.h"
@@ -29,10 +29,10 @@
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(CertificateAPI, a)
 
 /*
-CertificateAPI::CertificateAPI(FB::BrowserHost host, X509Certificate cert) :
+CertificateAPI::CertificateAPI(FB::BrowserHostPtr host, X509Certificate cert) :
      m_host(host), m_cert(cert)
 */
-CertificateAPI::CertificateAPI(FB::BrowserHost host, ByteVec bv) :
+CertificateAPI::CertificateAPI(FB::BrowserHostPtr host, ByteVec bv) :
      m_host(host), m_cert(bv)
 {
     REGISTER_RO_PROPERTY(CN);

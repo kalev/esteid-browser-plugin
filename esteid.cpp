@@ -63,7 +63,7 @@ esteid::~esteid()
 
 FB::JSAPIPtr esteid::createJSAPI()
 {
-    // m_host is the BrowserHostWrapper
+    // m_host is the BrowserHostPtr
     m_esteidAPI = boost::shared_ptr<esteidAPI>(new esteidAPI(m_host));
     m_esteidAPI->setWindow(m_window);
     return m_esteidAPI;

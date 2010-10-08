@@ -21,14 +21,14 @@
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 #include "X509Certificate.h"
 
 class CertificateAPI : public FB::JSAPIAuto
 {
 public:
-    //CertificateAPI(FB::BrowserHost host, X509Certificate cert);
-    CertificateAPI(FB::BrowserHost host, ByteVec bv);
+    //CertificateAPI(FB::BrowserHostPtr host, X509Certificate cert);
+    CertificateAPI(FB::BrowserHostPtr host, ByteVec bv);
     virtual ~CertificateAPI();
 
     /** Subject CN */
@@ -49,7 +49,7 @@ public:
     bool get_isValid();
 
 private:
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
 
     X509Certificate m_cert;
 };

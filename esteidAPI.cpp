@@ -23,10 +23,10 @@
 #include <boost/date_time.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "variant_list.h"
-#include "DOM/JSAPI_DOMDocument.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Document.h"
+#include "DOM/Window.h"
 #include "Util/JSArray.h"
 #include "config.h"
 
@@ -54,7 +54,7 @@
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(esteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(esteidAPI, a)
 
-esteidAPI::esteidAPI(FB::BrowserHost host) :
+esteidAPI::esteidAPI(FB::BrowserHostPtr host) :
     m_host(host),
     m_service(EstEIDService::getInstance()),
     m_pageURL(pageURL()),
@@ -184,21 +184,13 @@ void esteidAPI::whitelistRequired() {
 }
 
 std::string esteidAPI::pageURL() {
-    /* Using method no. 1 from
-     * https://developer.mozilla.org/en/Getting_the_page_URL_in_NPAPI_plugin
-     */
-    FB::JSAPI_DOMWindow dw = m_host->getDOMWindow();
-    FB::JSAPI_DOMNode loc = dw.getProperty<FB::JSObject>("location");
-
-    std::string url = loc.getProperty<std::string>("href");
-    ESTEID_DEBUG("Page URL is %s", url.c_str());
-    return url;
+    return m_host->getDOMWindow()->getLocation();
 }
 
 void esteidAPI::CreateNotificationBar(void) {
     m_host->evaluateJavaScript(EstEIDNotificationBarScript);
     m_barJSO = m_host->getDOMDocument()
-               .getProperty<FB::JSObject>("EstEIDNotificationBar");
+               ->getProperty<FB::JSObjectPtr>("EstEIDNotificationBar");
     m_barJSO->Invoke("create",
                      FB::variant_list_of(MSG_SETTINGS)(m_settingsCallback));
 }
@@ -286,7 +278,7 @@ void esteidAPI::UpdatePersonalData()
 }
 
 // TODO: Optimize memory usage. Don't create new object if cert hasn't changed.
-FB::JSOutObject esteidAPI::get_authCert()
+FB::JSAPIPtr esteidAPI::get_authCert()
 {
     whitelistRequired();
 
@@ -294,7 +286,7 @@ FB::JSOutObject esteidAPI::get_authCert()
         return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getAuthCert())));
 }
 
-FB::JSOutObject esteidAPI::get_signCert()
+FB::JSAPIPtr esteidAPI::get_signCert()
 {
     whitelistRequired();
 
@@ -312,7 +304,7 @@ std::string esteidAPI::getVersion()
  * Ask for PIN and return; the signed hash is later asynchronously returned
  * through callback.
  */
-void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObject& callback)
+void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObjectPtr& callback)
 {
     m_signCallback = callback;
 

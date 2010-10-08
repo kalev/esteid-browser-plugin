@@ -22,7 +22,7 @@
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 
 /** A base class for implementing event listeners.
  * Objects of this type can be attached to DOM events like this:
@@ -33,9 +33,9 @@
 class CallbackAPI : public FB::JSAPIAuto
 {
 public:
-    CallbackAPI(FB::BrowserHost host);
+    CallbackAPI(FB::BrowserHostPtr host);
     virtual ~CallbackAPI();
-    virtual bool handleEvent(const FB::JSObject& evt);
+    virtual bool handleEvent(const FB::JSObjectPtr& evt);
 
     /** Override this */
     virtual bool eventHandler() = 0;
@@ -43,5 +43,5 @@ public:
     virtual FB::variant Invoke(std::string methodName, std::vector<FB::variant>& args);
     virtual bool HasMethod(std::string methodName);
 private:
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
 };
