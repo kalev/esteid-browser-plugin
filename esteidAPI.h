@@ -176,6 +176,5 @@ private:
     void returnSignFailure(const std::string& msg);
 
     std::string EstEIDNotificationBarScript;
-    static std::string subjectToHumanReadable(std::string& subject);
-    static std::vector<std::string> stringSplit(std::string str, std::string separator);
+    static std::string subjectToHumanReadable(const std::string& subject);
 };

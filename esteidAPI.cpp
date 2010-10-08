@@ -21,6 +21,7 @@
 
 #include <iomanip>
 #include <boost/date_time.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "BrowserObjectAPI.h"
 #include "variant_list.h"
@@ -624,7 +625,7 @@ int esteidAPI::getPin2RetryCount() {
 }
 
 
-std::string esteidAPI::subjectToHumanReadable(std::string& subject)
+std::string esteidAPI::subjectToHumanReadable(const std::string& subject)
 {
     /* Certificates on Estonian ID card have their subjectCN fields in format:
      *    lastName,firstName,personalID
@@ -633,7 +634,8 @@ std::string esteidAPI::subjectToHumanReadable(std::string& subject)
      * If we can not split the CN properly, we show it as is */
 
     std::string ret;
-    std::vector<std::string> sf = stringSplit(subject, ",");
+    std::vector<std::string> sf;
+    boost::algorithm::split(sf, subject, boost::algorithm::is_any_of(","));
 
     if (sf.size() == 3) {
         ret = sf[1] + " " + sf[0];
@@ -642,25 +644,6 @@ std::string esteidAPI::subjectToHumanReadable(std::string& subject)
     }
 
     return ret;
-}
-
-
-std::vector<std::string> esteidAPI::stringSplit(std::string str, std::string separator)
-{
-    std::vector<std::string> results;
-
-    for (size_t found = 0; found != std::string::npos; found = str.find_first_of(separator)) {
-        if (found > 0) {
-            results.push_back(str.substr(0, found));
-            str = str.substr(found+1);
-        }
-    }
-
-    if (!str.empty()) {
-        results.push_back(str);
-    }
-
-    return results;
 }
 
 
