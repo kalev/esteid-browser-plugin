@@ -52,7 +52,7 @@ public:
      * @param hash HEX encoded document hash to sign
      * @param url an URL to the document itself
      */
-    void signAsync(std::string hash, std::string url, const FB::JSObjectPtr& callback);
+    void signAsync(const std::string& hash, const std::string& url, const FB::JSObjectPtr& callback);
 
     /** Open settings window.
       * Only available for file:// and chrome:// URL-s
@@ -81,7 +81,7 @@ public:
     std::string get_comment3();
     std::string get_comment4();
 
-    void onPinEntered(std::string hash);
+    void onPinEntered(const std::string& hash);
 
     /**  Will fire event handlers
     *        - CardInserted
@@ -92,16 +92,16 @@ public:
 
 #ifdef SUPPORT_OLD_APIS
     void deprecatedCall();
-    std::string sign(std::string, std::string);
+    std::string sign(const std::string&, const std::string&);
     std::string promptForPin(bool retrying = false);
     std::string askPinAndSign(const std::string& hash, const std::string& url);
     std::string getCertificates();
     std::string getInfo();
     std::string getSigningCertificate();
-    std::string getSignedHash(std::string, std::string);
+    std::string getSignedHash(const std::string&, const std::string&);
     std::string get_selectedCertNumber();
-    void prepare(std::string, std::string, std::string);
-    void finalize(std::string, std::string, std::string, std::string, std::string);
+    void prepare(const std::string&, const std::string&, const std::string&);
+    void finalize(const std::string&, const std::string&, const std::string&, const std::string&, const std::string&);
     bool isActive();
 #endif
 
@@ -162,8 +162,8 @@ private:
     std::string signSHA1(const std::string& hash, const std::string& pin);
     int getPin2RetryCount();
     void ShowSettings(void);
-    void DisplayNotification(std::string msg);
-    void DisplayError(std::string msg);
+    void DisplayNotification(const std::string& msg);
+    void DisplayError(const std::string& msg);
     void CreateNotificationBar(void);
     void OpenNotificationBar(void);
     void CloseNotificationBar(void);

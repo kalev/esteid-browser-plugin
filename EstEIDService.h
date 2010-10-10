@@ -102,13 +102,16 @@ public:
     /**
      * Sign a SHA1 hash with the first card
      */
-    std::string signSHA1(std::string hash, EstEidCard::KeyType keyId,
-                         std::string pin);
+    std::string signSHA1(const std::string& hash,
+                         EstEidCard::KeyType keyId,
+                         const std::string& pin);
     /**
      * Sign a SHA1 hash with the specified card
      */
-    std::string signSHA1(std::string hash, EstEidCard::KeyType keyId,
-                         std::string pin, readerID);
+    std::string signSHA1(const std::string& hash,
+                         EstEidCard::KeyType keyId,
+                         const std::string& pin,
+                         readerID);
 
     /* Message observer interface */
     enum msgType {

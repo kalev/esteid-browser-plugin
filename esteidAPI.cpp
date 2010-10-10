@@ -195,7 +195,8 @@ void esteidAPI::CreateNotificationBar(void) {
                      FB::variant_list_of(MSG_SETTINGS)(m_settingsCallback));
 }
 
-void esteidAPI::DisplayError(std::string msg) {
+void esteidAPI::DisplayError(const std::string& msg)
+{
     try {
         OpenNotificationBar();
         m_barJSO->Invoke("showError", FB::variant_list_of(msg));
@@ -204,7 +205,8 @@ void esteidAPI::DisplayError(std::string msg) {
     }
 }
 
-void esteidAPI::DisplayNotification(std::string msg) {
+void esteidAPI::DisplayNotification(const std::string& msg)
+{
     try {
         OpenNotificationBar();
         m_barJSO->Invoke("show", FB::variant_list_of(msg));
@@ -304,7 +306,7 @@ std::string esteidAPI::getVersion()
  * Ask for PIN and return; the signed hash is later asynchronously returned
  * through callback.
  */
-void esteidAPI::signAsync(std::string hash, std::string url, const FB::JSObjectPtr& callback)
+void esteidAPI::signAsync(const std::string& hash, const std::string& url, const FB::JSObjectPtr& callback)
 {
     m_signCallback = callback;
 
@@ -377,7 +379,7 @@ std::string esteidAPI::signSHA1(const std::string& hash, const std::string& pin)
  * Make sure the function doesn't throw to avoid
  * unwinding through foreign frames.
  */
-void esteidAPI::onPinEntered(std::string pin)
+void esteidAPI::onPinEntered(const std::string& pin)
 {
     try {
         std::string signedHash = signSHA1(m_hash, pin);
@@ -503,7 +505,8 @@ std::string esteidAPI::getCertificates() {
     )} catch(...) { return "({returnCode: 12})"; }
 }
 
-std::string esteidAPI::sign(std::string a, std::string b) {
+std::string esteidAPI::sign(const std::string& a, const std::string& b)
+{
     whitelistRequired();
     deprecatedCall();
 
@@ -549,7 +552,8 @@ std::string esteidAPI::getSigningCertificate() {
     } catch(...) { return ""; } // This API returns nothing on Error
 }
 
-std::string esteidAPI::getSignedHash(std::string hash, std::string slot) {
+std::string esteidAPI::getSignedHash(const std::string& hash, const std::string& slot)
+{
     whitelistRequired();
     deprecatedCall();
 
@@ -569,8 +573,10 @@ std::string esteidAPI::get_selectedCertNumber() {
     return "10"; // Dummy number
 }
 
-void esteidAPI::prepare(std::string onSuccess, std::string onCancel,
-    std::string onError) {
+void esteidAPI::prepare(const std::string& onSuccess,
+                        const std::string& onCancel,
+                        const std::string& onError)
+{
     whitelistRequired();
     deprecatedCall();
 
@@ -587,8 +593,12 @@ void esteidAPI::prepare(std::string onSuccess, std::string onCancel,
     }
 }
 
-void esteidAPI::finalize(std::string slot, std::string hash,
-    std::string onSuccess, std::string onCancel, std::string onError) {
+void esteidAPI::finalize(const std::string& slot,
+                         const std::string& hash,
+                         const std::string& onSuccess,
+                         const std::string& onCancel,
+                         const std::string& onError)
+{
     whitelistRequired();
     deprecatedCall();
 

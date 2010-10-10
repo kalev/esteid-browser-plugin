@@ -40,8 +40,8 @@ public:
     /** Override this */
     virtual bool eventHandler() = 0;
 
-    virtual FB::variant Invoke(std::string methodName, std::vector<FB::variant>& args);
-    virtual bool HasMethod(std::string methodName);
+    virtual FB::variant Invoke(const std::string& methodName, const std::vector<FB::variant>& args);
+    virtual bool HasMethod(const std::string& methodName);
 private:
     FB::BrowserHostPtr m_host;
 };

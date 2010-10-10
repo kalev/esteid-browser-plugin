@@ -210,14 +210,18 @@ void EstEIDService::readPersonalData(vector <std::string> & data,
 ESTEIDSERVICE_GETCERTIMPL(Auth)
 ESTEIDSERVICE_GETCERTIMPL(Sign)
 
-std::string EstEIDService::signSHA1(std::string hash,
-                EstEidCard::KeyType keyId, std::string pin) {
+std::string EstEIDService::signSHA1(const std::string& hash,
+                                    EstEidCard::KeyType keyId,
+                                    const std::string& pin)
+{
     return signSHA1(hash, keyId, pin, findFirstEstEID());
 }
 
-std::string EstEIDService::signSHA1(std::string hash,
-                EstEidCard::KeyType keyId, std::string pin, readerID reader) {
-
+std::string EstEIDService::signSHA1(const std::string& hash,
+                                    EstEidCard::KeyType keyId,
+                                    const std::string& pin,
+                                    readerID reader)
+{
     ByteVec bhash = fromHex(hash);
     if (bhash.size() != 20) {
         throw std::runtime_error("Invalid SHA1 hash");
