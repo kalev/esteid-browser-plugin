@@ -59,7 +59,7 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
     m_pageURL(pageURL()),
     m_settingsCallback(new SettingsCallback(host, *this)),
     m_closeCallback(new CloseCallback(host, *this)),
-    m_service(EstEIDService::getInstance()),
+    m_service(CardService::getInstance()),
     m_uiCallback(new UICallback(*this))
 {
     ESTEID_DEBUG("EsteidAPI::EsteidAPI()");
@@ -265,15 +265,15 @@ void EsteidAPI::ShowSettings()
     CloseNotificationBar();
 }
 
-void EsteidAPI::onMessage(EstEIDService::msgType e, readerID i)
+void EsteidAPI::onMessage(CardService::msgType e, readerID i)
 {
     //const char *evtname;
     std::string evtname;
 
     switch(e) {
-        case EstEIDService::CARD_INSERTED:   evtname = "CardInserted";  break;
-        case EstEIDService::CARD_REMOVED:    evtname = "CardRemoved";   break;
-        case EstEIDService::READERS_CHANGED: evtname = "ReadersChanged";break;
+        case CardService::CARD_INSERTED:   evtname = "CardInserted";  break;
+        case CardService::CARD_REMOVED:    evtname = "CardRemoved";   break;
+        case CardService::READERS_CHANGED: evtname = "ReadersChanged";break;
         default: throw std::runtime_error("Invalid message type"); break;
     }
     ESTEID_DEBUG("onMessage: %s %d", evtname.c_str(), i);

@@ -26,7 +26,7 @@
  *
  * Typical usage:
  *
- * EstEIDService *service = EstEIDService::getInstance();
+ * CardService *service = CardService::getInstance();
  * service->AddObserver(this);
  *
  */
@@ -44,13 +44,13 @@
 typedef unsigned int readerID;
 
 
-class EstEIDService
+class CardService
 {
 public:
     /**
      * Get service instance
      */
-    static EstEIDService* getInstance();
+    static CardService* getInstance();
     /**
      * Find readers with valid card
      */
@@ -121,7 +121,7 @@ public:
         CARD_ERROR
     };
     class messageObserver {
-        friend class EstEIDService;
+        friend class CardService;
 
         virtual void onMessage(msgType e, readerID i) = 0;
     };
@@ -129,14 +129,14 @@ public:
     virtual void RemoveObserver(messageObserver *obs);
 
 protected:
-    EstEIDService();
-    virtual ~EstEIDService();
+    CardService();
+    virtual ~CardService();
 
     /* Get access to smartcard manager instance */
     virtual ManagerInterface & getManager();
 
     /* Singleton instance variable */
-    static EstEIDService* sEstEIDService;
+    static CardService* sCardService;
 
     class idCardCacheEntry {
     public:
@@ -155,7 +155,7 @@ protected:
 
 private:
     //! Copy constructor.
-    EstEIDService(const EstEIDService& source);
+    CardService(const CardService& source);
 
     void findEstEID();
     void monitor();

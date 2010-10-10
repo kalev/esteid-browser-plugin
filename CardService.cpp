@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "EstEIDService.h"
+#include "CardService.h"
 #include "converters.h"
 #include <boost/bind.hpp>
 
 /* Zero out our singleton instance variable */
-EstEIDService* EstEIDService::sEstEIDService = NULL;
+CardService* CardService::sCardService = NULL;
 
 /**
  * Class constructor.
@@ -32,19 +32,20 @@ EstEIDService* EstEIDService::sEstEIDService = NULL;
  * to SmartCard manager service.
  * We might reconsider when times change :P
  */
-EstEIDService::EstEIDService()
+CardService::CardService()
     : m_manager(NULL),
-      m_thread(boost::bind(&EstEIDService::monitor, this))
+      m_thread(boost::bind(&CardService::monitor, this))
 {
-    if(sEstEIDService)
-        throw std::runtime_error(">1 EstEIDService object created");
+    if(sCardService)
+        throw std::runtime_error(">1 CardService object created");
 
-    sEstEIDService = this;
+    sCardService = this;
 }
 
-EstEIDService::~EstEIDService() {
+CardService::~CardService()
+{
     if(m_manager) delete m_manager;
-    sEstEIDService = NULL;
+    sCardService = NULL;
 }
 
 /**
@@ -52,25 +53,28 @@ EstEIDService::~EstEIDService() {
  * or create a new one if none exists.
  */
 
-EstEIDService* EstEIDService::getInstance() {
-    if(!sEstEIDService) {
-        EstEIDService* ni = new EstEIDService();
+CardService* CardService::getInstance()
+{
+    if(!sCardService) {
+        CardService* ni = new CardService();
         if (!ni)
             return NULL;
-        if(!sEstEIDService)
+        if(!sCardService)
             throw std::runtime_error("Memory corrupt?");
     }
-    return sEstEIDService;
+    return sCardService;
 }
 
-void EstEIDService::FindEstEID(vector <readerID> & readers) {
+void CardService::FindEstEID(vector <readerID>& readers)
+{
     readers.clear();
 
     for (readerID i = 0; i < m_cache.size(); i++ )
         if(m_cache[i].cardPresent) readers.push_back(i);
 }
 
-readerID EstEIDService::findFirstEstEID() {
+readerID CardService::findFirstEstEID()
+{
     vector <readerID> readers;
     FindEstEID(readers);
 
@@ -82,7 +86,8 @@ readerID EstEIDService::findFirstEstEID() {
 }
 
 /* Card monitor thread */
-void EstEIDService::monitor() {
+void CardService::monitor()
+{
     for(;;) {
         try {
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -91,20 +96,23 @@ void EstEIDService::monitor() {
     }
 }
 
-ManagerInterface &EstEIDService::getManager() {
+ManagerInterface &CardService::getManager()
+{
     if(!m_manager)
         m_manager = new SmartCardManager();
 
     return *m_manager;
 }
 
-void EstEIDService::AddObserver(messageObserver *obs) {
+void CardService::AddObserver(messageObserver *obs)
+{
     boost::mutex::scoped_lock l(m_mutex); // TODO: Maybe use a different lock?
 
     m_observers.push_back(obs);
 }
 
-void EstEIDService::RemoveObserver(messageObserver *obs) {
+void CardService::RemoveObserver(messageObserver *obs)
+{
     boost::mutex::scoped_lock l(m_mutex);
 
     vector <messageObserver *>::iterator i;
@@ -112,13 +120,15 @@ void EstEIDService::RemoveObserver(messageObserver *obs) {
         if(*i == obs) { m_observers.erase(i); break; }
 }
 
-void EstEIDService::PostMessage(msgType m, readerID r) {
+void CardService::PostMessage(msgType m, readerID r)
+{
     vector <messageObserver *>::iterator i;
     for (i = m_observers.begin(); i != m_observers.end(); i++ )
         (*i)->onMessage(m, r);
 }
 
-void EstEIDService::Poll() {
+void CardService::Poll()
+{
     size_t nReaders;
 
     ManagerInterface &mgr = getManager();
@@ -159,7 +169,8 @@ void EstEIDService::Poll() {
     }
 }
 
-bool EstEIDService::readerHasCard(EstEidCard &card,readerID i) {
+bool CardService::readerHasCard(EstEidCard& card, readerID i)
+{
     boost::mutex::scoped_lock l(m_mutex);
     ManagerInterface &mgr = getManager();
 
@@ -180,12 +191,14 @@ bool EstEIDService::readerHasCard(EstEidCard &card,readerID i) {
     ManagerInterface &mgr = getManager(); \
     EstEidCard card(mgr, reader);
     
-void EstEIDService::readPersonalData(vector <std::string> & data) {
+void CardService::readPersonalData(vector <std::string>& data)
+{
     readPersonalData(data, findFirstEstEID());
 }
 
-void EstEIDService::readPersonalData(vector <std::string> & data,
-                                           readerID reader) {
+void CardService::readPersonalData(vector <std::string>& data,
+                                   readerID reader)
+{
     /* Populate cache if needed */
     if(m_cache[reader].mPData.size() <= 0) {
         CREATE_LOCKED_ESTEID_INSTANCE
@@ -195,11 +208,11 @@ void EstEIDService::readPersonalData(vector <std::string> & data,
 }
 
 #define ESTEIDSERVICE_GETCERTIMPL(id) \
-    ByteVec EstEIDService::get##id##Cert() { \
+    ByteVec CardService::get##id##Cert() { \
         return get##id##Cert(findFirstEstEID()); \
     }\
     \
-    ByteVec EstEIDService::get##id##Cert(readerID reader) { \
+    ByteVec CardService::get##id##Cert(readerID reader) { \
         if(m_cache[reader].m##id##Cert.size() <= 0) { \
             CREATE_LOCKED_ESTEID_INSTANCE \
             m_cache[reader].m##id##Cert = card.get##id##Cert(); \
@@ -210,17 +223,17 @@ void EstEIDService::readPersonalData(vector <std::string> & data,
 ESTEIDSERVICE_GETCERTIMPL(Auth)
 ESTEIDSERVICE_GETCERTIMPL(Sign)
 
-std::string EstEIDService::signSHA1(const std::string& hash,
-                                    EstEidCard::KeyType keyId,
-                                    const std::string& pin)
+std::string CardService::signSHA1(const std::string& hash,
+                                  EstEidCard::KeyType keyId,
+                                  const std::string& pin)
 {
     return signSHA1(hash, keyId, pin, findFirstEstEID());
 }
 
-std::string EstEIDService::signSHA1(const std::string& hash,
-                                    EstEidCard::KeyType keyId,
-                                    const std::string& pin,
-                                    readerID reader)
+std::string CardService::signSHA1(const std::string& hash,
+                                  EstEidCard::KeyType keyId,
+                                  const std::string& pin,
+                                  readerID reader)
 {
     ByteVec bhash = fromHex(hash);
     if (bhash.size() != 20) {
@@ -234,23 +247,27 @@ std::string EstEIDService::signSHA1(const std::string& hash,
     return toHex(card.calcSignSHA1(bhash, keyId, PinString(pin.c_str())));
 }
 
-bool EstEIDService::getRetryCounts(byte &puk,
-    byte &pinAuth,byte &pinSign) {
+bool CardService::getRetryCounts(byte& puk,
+    byte &pinAuth,byte &pinSign)
+{
     return getRetryCounts(puk, pinAuth, pinSign, findFirstEstEID());
 }
 
-bool EstEIDService::getRetryCounts(byte &puk,
-    byte &pinAuth,byte &pinSign, readerID reader) {
+bool CardService::getRetryCounts(byte& puk,
+    byte &pinAuth,byte &pinSign, readerID reader)
+{
 
     CREATE_LOCKED_ESTEID_INSTANCE
     return card.getRetryCounts(puk, pinAuth, pinSign);
 }
 
-bool EstEIDService::hasSecurePinEntry() {
+bool CardService::hasSecurePinEntry()
+{
     return hasSecurePinEntry(findFirstEstEID());
 }
 
-bool EstEIDService::hasSecurePinEntry(readerID reader) {
+bool CardService::hasSecurePinEntry(readerID reader)
+{
     CREATE_LOCKED_ESTEID_INSTANCE
     return card.hasSecurePinEntry();
 }

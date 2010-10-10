@@ -27,14 +27,14 @@
 #include "NpapiBrowserHost.h"
 #include "CertificateAPI.h"
 #include "PluginUI.h"
-#include "EstEIDService.h"
+#include "CardService.h"
 #include "CallbackAPI.h"
 #include "urlparser.h"
 
 // FIXME: Find a sane way to deal with error messages
 #define CANCEL_MSG "User cancelled operation"
 
-class EsteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
+class EsteidAPI : public FB::JSAPIAuto, CardService::messageObserver
 {
 public:
     EsteidAPI(FB::BrowserHostPtr host);
@@ -88,7 +88,7 @@ public:
     *        - CardRemoved
     *        - ReadersChanged
     */
-    virtual void onMessage(EstEIDService::msgType, readerID);
+    virtual void onMessage(CardService::msgType, readerID);
 
 #ifdef SUPPORT_OLD_APIS
     void deprecatedCall();
@@ -116,7 +116,7 @@ private:
     FB::JSAPIPtr m_closeCallback;
     FB::JSObjectPtr m_barJSO;
     FB::JSObjectPtr m_signCallback;
-    EstEIDService *m_service;
+    CardService *m_service;
     vector <std::string> m_pdata;
     std::string m_subject;
     std::string m_hash;
