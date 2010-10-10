@@ -33,17 +33,25 @@ find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
 
-if(NOT WITH_SYSTEM_BOOST)
-    message(FATAL_ERROR "Firebreath needs to be built with WITH_SYSTEM_BOOST enabled")
-endif()
-
-if(WIN32)
+if (WITH_SYSTEM_BOOST)
     # FindBoost.cmake isn't up to date wrt new boost versions
     set(Boost_ADDITIONAL_VERSIONS "1.44" "1.44.0" "1.43" "1.43.0" "1.42" "1.42.0")
-    # boost::signals is only needed on Windows
-    set(EXTRA_BOOST_COMPONENTS "signals")
-endif(WIN32)
-find_package(Boost COMPONENTS filesystem system thread ${EXTRA_BOOST_COMPONENTS} REQUIRED)
+
+    if (WIN32)
+        # boost::signals is only needed for Windows UI code
+        set(EXTRA_BOOST_COMPONENTS "signals")
+    endif()
+    find_package(Boost COMPONENTS filesystem system thread ${EXTRA_BOOST_COMPONENTS} REQUIRED)
+else()
+    message(STATUS "Using bundled boost")
+    if (WIN32)
+        # boost::signals is only needed for Windows UI code
+        add_boost_library(signals)
+    endif()
+    add_boost_library(filesystem)
+    add_boost_library(system)
+    add_boost_library(thread)
+endif()
 
 if(UNIX AND NOT APPLE)
     if(NOT GTKMM_INCLUDE_DIRS)
