@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef ESTEIDAPI_H
+#define ESTEIDAPI_H
+
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
@@ -177,3 +180,5 @@ private:
     std::string EstEIDNotificationBarScript;
     static std::string subjectToHumanReadable(const std::string& subject);
 };
+
+#endif //ESTEIDAPI_H

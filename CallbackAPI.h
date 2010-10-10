@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef CALLBACKAPI_H
+#define CALLBACKAPI_H
+
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
@@ -45,3 +48,5 @@ public:
 private:
     FB::BrowserHostPtr m_host;
 };
+
+#endif //CALLBACKAPI_H

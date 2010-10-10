@@ -19,6 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef ESTEID_GTKUI_H
+#define ESTEID_GTKUI_H
+
 #include "PluginUI.h"
 #include <stdexcept>
 
@@ -59,3 +62,5 @@ private:
     bool m_dialog_up;
     sigc::connection m_pinInputConnection;
 };
+
+#endif //ESTEID_GTKUI_H

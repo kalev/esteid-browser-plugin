@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef CERTIFICATEAPI_H
+#define CERTIFICATEAPI_H
+
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
@@ -53,3 +56,5 @@ private:
 
     X509Certificate m_cert;
 };
+
+#endif //CERTIFICATEAPI_H
