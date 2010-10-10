@@ -329,7 +329,7 @@ void esteidAPI::prepareSign(const std::string& hash, const std::string& url)
         throw std::runtime_error("Partial document URL must be specified");
 
     /* Extract subject line from Certificate */
-    std::string subjectRaw = static_cast<CertificateAPI*>(get_signCert().get())->get_CN();
+    std::string subjectRaw = FB::ptr_cast<CertificateAPI>(get_signCert())->get_CN();
     if (subjectRaw.empty())
         throw std::runtime_error("Empty subject");
 
