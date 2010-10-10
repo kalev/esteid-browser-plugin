@@ -57,7 +57,7 @@ public:
     /** Open settings window.
       * Only available for file:// and chrome:// URL-s
       */
-    void showSettings(void);
+    void showSettings();
 
     /** Certificates (read-only properties) */
     FB::JSAPIPtr get_authCert();
@@ -156,20 +156,20 @@ private:
     boost::shared_ptr<PluginUI::UICallbacks> m_uiCallback;
 
     std::string pageURL();
-    void UpdatePersonalData(void);
+    void UpdatePersonalData();
     void prepareSign(const std::string& hash, const std::string& url);
     void promptForPinAsync(bool retrying = false);
     std::string signSHA1(const std::string& hash, const std::string& pin);
     int getPin2RetryCount();
-    void ShowSettings(void);
+    void ShowSettings();
     void DisplayNotification(const std::string& msg);
     void DisplayError(const std::string& msg);
-    void CreateNotificationBar(void);
-    void OpenNotificationBar(void);
-    void CloseNotificationBar(void);
-    bool IsSecure(void);
-    bool IsLocal(void);
-    bool IsWhiteListed(void);
+    void CreateNotificationBar();
+    void OpenNotificationBar();
+    void CloseNotificationBar();
+    bool IsSecure();
+    bool IsLocal();
+    bool IsWhiteListed();
     void whitelistRequired();
     void returnSignedData(const std::string& data);
     void returnSignFailure(const std::string& msg);

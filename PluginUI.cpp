@@ -27,7 +27,7 @@ PluginUI::PluginUI(boost::shared_ptr<UICallbacks> cb)
 {
 }
 
-PluginUI::~PluginUI(void)
+PluginUI::~PluginUI()
 {
 }
 

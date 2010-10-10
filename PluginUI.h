@@ -63,7 +63,7 @@ public:
                               const std::string& pageUrl = "") = 0;
 
     PluginUI(boost::shared_ptr<UICallbacks>);
-    virtual ~PluginUI(void);
+    virtual ~PluginUI();
 
     virtual void setWindow(FB::PluginWindow*);
 

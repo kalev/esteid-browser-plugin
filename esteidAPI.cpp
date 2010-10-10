@@ -187,7 +187,8 @@ std::string esteidAPI::pageURL() {
     return m_host->getDOMWindow()->getLocation();
 }
 
-void esteidAPI::CreateNotificationBar(void) {
+void esteidAPI::CreateNotificationBar()
+{
     m_host->evaluateJavaScript(EstEIDNotificationBarScript);
     m_barJSO = m_host->getDOMDocument()
                ->getProperty<FB::JSObjectPtr>("EstEIDNotificationBar");
@@ -215,13 +216,15 @@ void esteidAPI::DisplayNotification(const std::string& msg)
     }
 }
 
-void esteidAPI::OpenNotificationBar(void) {
+void esteidAPI::OpenNotificationBar()
+{
     if(!m_barJSO) {
         CreateNotificationBar();
     }
 }
 
-void esteidAPI::CloseNotificationBar(void) {
+void esteidAPI::CloseNotificationBar()
+{
     if(!m_barJSO) return;
 
     m_barJSO->Invoke("close", FB::variant_list_of(0));
@@ -229,7 +232,8 @@ void esteidAPI::CloseNotificationBar(void) {
 
 // JS method exposed to browser to show preferences window 
 // Direct access to this method will be exposed to a very few selected URL-s
-void esteidAPI::showSettings(void) {
+void esteidAPI::showSettings()
+{
     if (m_pageURL.protocol() == "file" ||
         m_pageURL.protocol() == "chrome") {
         try {
@@ -242,7 +246,8 @@ void esteidAPI::showSettings(void) {
     }
 }
 
-void esteidAPI::ShowSettings(void) {
+void esteidAPI::ShowSettings()
+{
     try {
         if (IsSecure())
             m_UI->ShowSettings(m_conf, m_pageURL.hostname());
