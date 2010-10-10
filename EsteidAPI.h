@@ -34,11 +34,11 @@
 // FIXME: Find a sane way to deal with error messages
 #define CANCEL_MSG "User cancelled operation"
 
-class esteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
+class EsteidAPI : public FB::JSAPIAuto, EstEIDService::messageObserver
 {
 public:
-    esteidAPI(FB::BrowserHostPtr host);
-    virtual ~esteidAPI();
+    EsteidAPI(FB::BrowserHostPtr host);
+    virtual ~EsteidAPI();
 
     void setWindow(FB::PluginWindow*);
 
@@ -126,32 +126,32 @@ private:
 
     class SettingsCallback : public CallbackAPI {
     public:
-        SettingsCallback(FB::BrowserHostPtr host, esteidAPI &eidp) :
+        SettingsCallback(FB::BrowserHostPtr host, EsteidAPI &eidp) :
             CallbackAPI(host), m_eidp(eidp) { }
         virtual bool eventHandler()
             { m_eidp.ShowSettings(); return true; };
     private:
-        esteidAPI &m_eidp;
+        EsteidAPI &m_eidp;
     };
 
     class CloseCallback : public CallbackAPI {
     public:
-        CloseCallback(FB::BrowserHostPtr host, esteidAPI &eidp) :
+        CloseCallback(FB::BrowserHostPtr host, EsteidAPI &eidp) :
             CallbackAPI(host), m_eidp(eidp) { }
         virtual bool eventHandler()
             { m_eidp.CloseNotificationBar(); return true; };
     private:
-        esteidAPI &m_eidp;
+        EsteidAPI &m_eidp;
     };
 
     class UICallback : public PluginUI::UICallbacks {
     public:
-        UICallback(esteidAPI &eidp) : m_eidp(eidp) { }
+        UICallback(EsteidAPI &eidp) : m_eidp(eidp) { }
         virtual void onPinEntered(const std::string& p) { m_eidp.onPinEntered(p); }
         virtual void onPinCancelled() { m_eidp.returnSignFailure(CANCEL_MSG); }
 
     private:
-        esteidAPI &m_eidp;
+        EsteidAPI &m_eidp;
     };
     boost::shared_ptr<PluginUI::UICallbacks> m_uiCallback;
 

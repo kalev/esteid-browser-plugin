@@ -30,17 +30,17 @@
 
 #include "PluginCore.h"
 
-class esteidAPI;
+class EsteidAPI;
 
-class esteid : public FB::PluginCore
+class EsteidPlugin : public FB::PluginCore
 {
 public:
     static void StaticInitialize();
     static void StaticDeinitialize();
 
 public:
-    esteid();
-    virtual ~esteid();
+    EsteidPlugin();
+    virtual ~EsteidPlugin();
 
 public:
     virtual FB::JSAPIPtr createJSAPI();
@@ -64,7 +64,7 @@ public:
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
 
 private:
-    boost::shared_ptr<esteidAPI> m_esteidAPI;
+    boost::shared_ptr<EsteidAPI> m_pluginAPI;
     FB::PluginWindow* m_window;
 };
 

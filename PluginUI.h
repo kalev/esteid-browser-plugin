@@ -28,7 +28,7 @@
 #include "PluginSettings.h"
 
 // Forward declaration
-class esteidAPI;
+class EsteidAPI;
 
 /** A base class for different UI implementations */
 class PluginUI

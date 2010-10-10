@@ -40,7 +40,7 @@
 #endif
 #endif
 
-#include "esteidAPI.h"
+#include "EsteidAPI.h"
 #include "JSUtil.h"
 #include "converter.h"
 #include "debug.h"
@@ -51,10 +51,10 @@
 #define MSG_SITEACCESS "This site is trying to obtain access to your ID-card."
 #define MSG_INSECURE "Access to ID-card was denied because the connection to the site is not secure."
 
-#define REGISTER_METHOD(a)      JS_REGISTER_METHOD(esteidAPI, a)
-#define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(esteidAPI, a)
+#define REGISTER_METHOD(a)      JS_REGISTER_METHOD(EsteidAPI, a)
+#define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(EsteidAPI, a)
 
-esteidAPI::esteidAPI(FB::BrowserHostPtr host) :
+EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
     m_host(host),
     m_pageURL(pageURL()),
     m_settingsCallback(new SettingsCallback(host, *this)),
@@ -62,7 +62,7 @@ esteidAPI::esteidAPI(FB::BrowserHostPtr host) :
     m_service(EstEIDService::getInstance()),
     m_uiCallback(new UICallback(*this))
 {
-    ESTEID_DEBUG("esteidAPI::esteidAPI()");
+    ESTEID_DEBUG("EsteidAPI::EsteidAPI()");
 
     /* Load JavaScript code to be evaluated in browser */
     #include "EstEIDNotificationBar.js"
@@ -135,19 +135,20 @@ esteidAPI::esteidAPI(FB::BrowserHostPtr host) :
     m_service->AddObserver(this);
 }
 
-esteidAPI::~esteidAPI()
+EsteidAPI::~EsteidAPI()
 {
-    ESTEID_DEBUG("esteidAPI::~esteidAPI()");
+    ESTEID_DEBUG("EsteidAPI::~EsteidAPI()");
 
     m_service->RemoveObserver(this);
 }
 
-void esteidAPI::setWindow(FB::PluginWindow* win)
+void EsteidAPI::setWindow(FB::PluginWindow* win)
 {
     m_UI->setWindow(win);
 }
 
-bool esteidAPI::IsLocal() {
+bool EsteidAPI::IsLocal()
+{
     if (!m_conf.allowLocal)
         return false;
 
@@ -159,21 +160,24 @@ bool esteidAPI::IsLocal() {
     return false;
 }
 
-bool esteidAPI::IsSecure() {
+bool EsteidAPI::IsSecure()
+{
     if (IsLocal() || m_pageURL.protocol() == "https")
         return true;
 
     return false;
 }
 
-bool esteidAPI::IsWhiteListed() {
+bool EsteidAPI::IsWhiteListed()
+{
     if (IsLocal() || m_conf.InWhitelist(m_pageURL.hostname()))
         return true;
 
     return false;
 }
 
-void esteidAPI::whitelistRequired() {
+void EsteidAPI::whitelistRequired()
+{
     if (!IsSecure()) {
         DisplayNotification(MSG_INSECURE);
         throw FB::script_error("No cards found");
@@ -183,11 +187,12 @@ void esteidAPI::whitelistRequired() {
     }
 }
 
-std::string esteidAPI::pageURL() {
+std::string EsteidAPI::pageURL()
+{
     return m_host->getDOMWindow()->getLocation();
 }
 
-void esteidAPI::CreateNotificationBar()
+void EsteidAPI::CreateNotificationBar()
 {
     m_host->evaluateJavaScript(EstEIDNotificationBarScript);
     m_barJSO = m_host->getDOMDocument()
@@ -196,7 +201,7 @@ void esteidAPI::CreateNotificationBar()
                      FB::variant_list_of(MSG_SETTINGS)(m_settingsCallback));
 }
 
-void esteidAPI::DisplayError(const std::string& msg)
+void EsteidAPI::DisplayError(const std::string& msg)
 {
     try {
         OpenNotificationBar();
@@ -206,7 +211,7 @@ void esteidAPI::DisplayError(const std::string& msg)
     }
 }
 
-void esteidAPI::DisplayNotification(const std::string& msg)
+void EsteidAPI::DisplayNotification(const std::string& msg)
 {
     try {
         OpenNotificationBar();
@@ -216,14 +221,14 @@ void esteidAPI::DisplayNotification(const std::string& msg)
     }
 }
 
-void esteidAPI::OpenNotificationBar()
+void EsteidAPI::OpenNotificationBar()
 {
     if(!m_barJSO) {
         CreateNotificationBar();
     }
 }
 
-void esteidAPI::CloseNotificationBar()
+void EsteidAPI::CloseNotificationBar()
 {
     if(!m_barJSO) return;
 
@@ -232,7 +237,7 @@ void esteidAPI::CloseNotificationBar()
 
 // JS method exposed to browser to show preferences window 
 // Direct access to this method will be exposed to a very few selected URL-s
-void esteidAPI::showSettings()
+void EsteidAPI::showSettings()
 {
     if (m_pageURL.protocol() == "file" ||
         m_pageURL.protocol() == "chrome") {
@@ -246,7 +251,7 @@ void esteidAPI::showSettings()
     }
 }
 
-void esteidAPI::ShowSettings()
+void EsteidAPI::ShowSettings()
 {
     try {
         if (IsSecure())
@@ -260,7 +265,8 @@ void esteidAPI::ShowSettings()
     CloseNotificationBar();
 }
 
-void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
+void EsteidAPI::onMessage(EstEIDService::msgType e, readerID i)
+{
     //const char *evtname;
     std::string evtname;
 
@@ -279,13 +285,13 @@ void esteidAPI::onMessage(EstEIDService::msgType e, readerID i) {
     FireEvent("on" + evtname, FB::variant_list_of(i));
 }
 
-void esteidAPI::UpdatePersonalData()
+void EsteidAPI::UpdatePersonalData()
 {
     RTERROR_TO_SCRIPT(m_service->readPersonalData(m_pdata));
 }
 
 // TODO: Optimize memory usage. Don't create new object if cert hasn't changed.
-FB::JSAPIPtr esteidAPI::get_authCert()
+FB::JSAPIPtr EsteidAPI::get_authCert()
 {
     whitelistRequired();
 
@@ -293,7 +299,7 @@ FB::JSAPIPtr esteidAPI::get_authCert()
         return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getAuthCert())));
 }
 
-FB::JSAPIPtr esteidAPI::get_signCert()
+FB::JSAPIPtr EsteidAPI::get_signCert()
 {
     whitelistRequired();
 
@@ -301,7 +307,7 @@ FB::JSAPIPtr esteidAPI::get_signCert()
         return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getSignCert())));
 }
 
-std::string esteidAPI::getVersion()
+std::string EsteidAPI::getVersion()
 {
     return FBSTRING_PLUGIN_VERSION;
 }
@@ -311,7 +317,7 @@ std::string esteidAPI::getVersion()
  * Ask for PIN and return; the signed hash is later asynchronously returned
  * through callback.
  */
-void esteidAPI::signAsync(const std::string& hash, const std::string& url, const FB::JSObjectPtr& callback)
+void EsteidAPI::signAsync(const std::string& hash, const std::string& url, const FB::JSObjectPtr& callback)
 {
     m_signCallback = callback;
 
@@ -327,7 +333,7 @@ void esteidAPI::signAsync(const std::string& hash, const std::string& url, const
 }
 
 
-void esteidAPI::prepareSign(const std::string& hash, const std::string& url)
+void EsteidAPI::prepareSign(const std::string& hash, const std::string& url)
 {
     if (hash.length() != 40)
         throw std::runtime_error("Invalid hash");
@@ -352,7 +358,7 @@ void esteidAPI::prepareSign(const std::string& hash, const std::string& url)
 }
 
 
-void esteidAPI::promptForPinAsync(bool retrying)
+void EsteidAPI::promptForPinAsync(bool retrying)
 {
     int triesLeft = getPin2RetryCount();
     if (triesLeft <= 0) {
@@ -365,7 +371,7 @@ void esteidAPI::promptForPinAsync(bool retrying)
 }
 
 
-std::string esteidAPI::signSHA1(const std::string& hash, const std::string& pin)
+std::string EsteidAPI::signSHA1(const std::string& hash, const std::string& pin)
 {
     if (pin.empty()) // shouldn't happen
         throw std::runtime_error("empty PIN");
@@ -384,7 +390,7 @@ std::string esteidAPI::signSHA1(const std::string& hash, const std::string& pin)
  * Make sure the function doesn't throw to avoid
  * unwinding through foreign frames.
  */
-void esteidAPI::onPinEntered(const std::string& pin)
+void EsteidAPI::onPinEntered(const std::string& pin)
 {
     try {
         std::string signedHash = signSHA1(m_hash, pin);
@@ -407,7 +413,7 @@ void esteidAPI::onPinEntered(const std::string& pin)
 }
 
 
-void esteidAPI::returnSignedData(const std::string& data)
+void EsteidAPI::returnSignedData(const std::string& data)
 {
     try {
         m_signCallback->Invoke("onSuccess", FB::variant_list_of(data));
@@ -417,7 +423,7 @@ void esteidAPI::returnSignedData(const std::string& data)
 }
 
 
-void esteidAPI::returnSignFailure(const std::string& msg)
+void EsteidAPI::returnSignFailure(const std::string& msg)
 {
     try {
         m_signCallback->Invoke("onError", FB::variant_list_of(msg));
@@ -433,7 +439,7 @@ void esteidAPI::returnSignFailure(const std::string& msg)
 
 using namespace boost::date_time;
 
-void esteidAPI::deprecatedCall()
+void EsteidAPI::deprecatedCall()
 {
     boost::posix_time::ptime date_for_activating_deprecate_messages(boost::gregorian::date(2011, May, 1));
     boost::system_time current_time = boost::get_system_time();
@@ -442,7 +448,7 @@ void esteidAPI::deprecatedCall()
         DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
 }
 
-std::string esteidAPI::promptForPin(bool retrying)
+std::string EsteidAPI::promptForPin(bool retrying)
 {
     int triesLeft = getPin2RetryCount();
     if (triesLeft <= 0) {
@@ -459,7 +465,7 @@ std::string esteidAPI::promptForPin(bool retrying)
     return pin;
 }
 
-std::string esteidAPI::askPinAndSign(const std::string& hash, const std::string& url)
+std::string EsteidAPI::askPinAndSign(const std::string& hash, const std::string& url)
 {
     prepareSign(hash, url);
 
@@ -480,7 +486,8 @@ std::string esteidAPI::askPinAndSign(const std::string& hash, const std::string&
     }
 }
 
-std::string esteidAPI::getCertificates() {
+std::string EsteidAPI::getCertificates()
+{
     whitelistRequired();
     deprecatedCall();
 
@@ -510,7 +517,7 @@ std::string esteidAPI::getCertificates() {
     )} catch(...) { return "({returnCode: 12})"; }
 }
 
-std::string esteidAPI::sign(const std::string& a, const std::string& b)
+std::string EsteidAPI::sign(const std::string& a, const std::string& b)
 {
     whitelistRequired();
     deprecatedCall();
@@ -536,13 +543,15 @@ std::string esteidAPI::sign(const std::string& a, const std::string& b)
     }
 }
 
-std::string esteidAPI::getInfo() {
+std::string EsteidAPI::getInfo()
+{
     deprecatedCall();
 
     return getVersion();
 }
 
-std::string esteidAPI::getSigningCertificate() {
+std::string EsteidAPI::getSigningCertificate()
+{
     whitelistRequired();
     deprecatedCall();
 
@@ -557,7 +566,7 @@ std::string esteidAPI::getSigningCertificate() {
     } catch(...) { return ""; } // This API returns nothing on Error
 }
 
-std::string esteidAPI::getSignedHash(const std::string& hash, const std::string& slot)
+std::string EsteidAPI::getSignedHash(const std::string& hash, const std::string& slot)
 {
     whitelistRequired();
     deprecatedCall();
@@ -571,14 +580,15 @@ std::string esteidAPI::getSignedHash(const std::string& hash, const std::string&
     }
 }
 
-std::string esteidAPI::get_selectedCertNumber() {
+std::string EsteidAPI::get_selectedCertNumber()
+{
     whitelistRequired();
     deprecatedCall();
 
     return "10"; // Dummy number
 }
 
-void esteidAPI::prepare(const std::string& onSuccess,
+void EsteidAPI::prepare(const std::string& onSuccess,
                         const std::string& onCancel,
                         const std::string& onError)
 {
@@ -598,7 +608,7 @@ void esteidAPI::prepare(const std::string& onSuccess,
     }
 }
 
-void esteidAPI::finalize(const std::string& slot,
+void EsteidAPI::finalize(const std::string& slot,
                          const std::string& hash,
                          const std::string& onSuccess,
                          const std::string& onCancel,
@@ -619,20 +629,21 @@ void esteidAPI::finalize(const std::string& slot,
     }
 }
 
-bool esteidAPI::isActive()
+bool EsteidAPI::isActive()
 {
     return true;
 }
 #endif
 
-int esteidAPI::getPin2RetryCount() {
+int EsteidAPI::getPin2RetryCount()
+{
     byte puk, pin1, pin2;
     m_service->getRetryCounts(puk, pin1, pin2);
     return pin2;
 }
 
 
-std::string esteidAPI::subjectToHumanReadable(const std::string& subject)
+std::string EsteidAPI::subjectToHumanReadable(const std::string& subject)
 {
     /* Certificates on Estonian ID card have their subjectCN fields in format:
      *    lastName,firstName,personalID
@@ -655,7 +666,8 @@ std::string esteidAPI::subjectToHumanReadable(const std::string& subject)
 
 
 #define ESTEID_PD_GETTER_IMP(index, attr) \
-    std::string esteidAPI::get_##attr() { \
+    std::string EsteidAPI::get_##attr() \
+    { \
         whitelistRequired(); \
         UpdatePersonalData(); \
         if(m_pdata.size() <= index) \

@@ -26,7 +26,7 @@
 #ifdef DEBUG
 #include <cstdio>
 #include <cstring>
-#include "esteid.h"
+#include "EsteidPlugin.h"
 
 #if WIN32 
 #define snprintf sprintf_s 

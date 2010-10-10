@@ -28,19 +28,19 @@
 \**********************************************************/
 
 #include "FactoryDefinitions.h"
-#include "esteid.h"
+#include "EsteidPlugin.h"
 
 FB::PluginCore *_getMainPlugin()
 {
-    return new esteid();
+    return new EsteidPlugin();
 }
 
 void GlobalPluginInitialize()
 {
-    esteid::StaticInitialize();
+    EsteidPlugin::StaticInitialize();
 }
 
 void GlobalPluginDeinitialize()
 {
-    esteid::StaticDeinitialize();
+    EsteidPlugin::StaticDeinitialize();
 }
