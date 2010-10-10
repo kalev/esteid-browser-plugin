@@ -42,6 +42,11 @@ void initPluginModule()
     }
 }
 
+extern "C" char * NP_GetPluginVersion()
+{
+    return (char *)FBSTRING_PLUGIN_VERSION;
+}
+
 extern "C" char * NP_GetMIMEDescription()
 {
 // FIXME: Fix FireBreath!!!!
