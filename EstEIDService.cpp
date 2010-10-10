@@ -20,6 +20,7 @@
 
 #include "EstEIDService.h"
 #include "converters.h"
+#include <boost/bind.hpp>
 
 /* Zero out our singleton instance variable */
 EstEIDService* EstEIDService::sEstEIDService = NULL;
@@ -31,14 +32,14 @@ EstEIDService* EstEIDService::sEstEIDService = NULL;
  * to SmartCard manager service.
  * We might reconsider when times change :P
  */
-EstEIDService::EstEIDService() : m_lock("EstEIDService"), m_manager(NULL),
-                                 idThread("EstEIDService card monitor")
+EstEIDService::EstEIDService()
+    : m_manager(NULL),
+      m_thread(boost::bind(&EstEIDService::monitor, this))
 {
     if(sEstEIDService)
         throw std::runtime_error(">1 EstEIDService object created");
 
     sEstEIDService = this;
-    this->start();
 }
 
 EstEIDService::~EstEIDService() {
@@ -80,11 +81,11 @@ readerID EstEIDService::findFirstEstEID() {
         return readers[0];
 }
 
-/* Card monitor thread implementation */
-void EstEIDService::execute() {
+/* Card monitor thread */
+void EstEIDService::monitor() {
     for(;;) {
         try {
-            threadObj::wait(500);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             Poll();
         } catch(std::runtime_error) { }
     }
@@ -98,13 +99,13 @@ ManagerInterface &EstEIDService::getManager() {
 }
 
 void EstEIDService::AddObserver(messageObserver *obs) {
-    idAutoLock lock(m_lock); // TODO: Maybe use a different lock?
+    boost::mutex::scoped_lock l(m_mutex); // TODO: Maybe use a different lock?
 
     m_observers.push_back(obs);
 }
 
 void EstEIDService::RemoveObserver(messageObserver *obs) {
-    idAutoLock lock(m_lock);
+    boost::mutex::scoped_lock l(m_mutex);
 
     vector <messageObserver *>::iterator i;
     for (i = m_observers.begin(); i != m_observers.end(); i++)
@@ -122,7 +123,8 @@ void EstEIDService::Poll() {
 
     ManagerInterface &mgr = getManager();
 
-    {   idAutoLock lock(m_lock);
+    {
+        boost::mutex::scoped_lock l(m_mutex);
         nReaders = mgr.getReaderCount();
     }
 
@@ -158,7 +160,7 @@ void EstEIDService::Poll() {
 }
 
 bool EstEIDService::readerHasCard(EstEidCard &card,readerID i) {
-    idAutoLock lock(m_lock);
+    boost::mutex::scoped_lock l(m_mutex);
     ManagerInterface &mgr = getManager();
 
     /* Ask manager if a token is inserted into that slot */
@@ -174,7 +176,7 @@ bool EstEIDService::readerHasCard(EstEidCard &card,readerID i) {
 }
 
 #define CREATE_LOCKED_ESTEID_INSTANCE \
-    idAutoLock lock(m_lock); \
+    boost::mutex::scoped_lock l(m_mutex); \
     ManagerInterface &mgr = getManager(); \
     EstEidCard card(mgr, reader);
     

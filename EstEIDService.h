@@ -35,20 +35,17 @@
 #define ESTEIDSERVICE_H_
 
 #include <smartcardpp/smartcardpp.h>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/mutex.hpp>
 
 #define PDATA_MIN EstEidCard::SURNAME
 #define PDATA_MAX EstEidCard::COMMENT4
 
-/* Use mutex and thread abstraction in threadObj */
-#include "threadObj.h"
-typedef mutexObj idLockObj;
-typedef mutexObjLocker idAutoLock;
-typedef threadObj idThread;
-
 typedef unsigned int readerID;
 
 
-class EstEIDService : public idThread {
+class EstEIDService
+{
 public:
     /**
      * Get service instance
@@ -155,18 +152,17 @@ protected:
 
 private:
     //! Copy constructor.
-    EstEIDService(const EstEIDService& source) : 
-        m_lock(source.m_lock), idThread(source) {};
+    EstEIDService(const EstEIDService& source);
 
     void findEstEID();
+    void monitor();
     void Poll();
     bool readerHasCard(EstEidCard &card,readerID i);
 
-    idLockObj m_lock;
     ManagerInterface *m_manager;
 
-    /* Card monitor thread implementation */
-    virtual void execute();
+    boost::mutex m_mutex;
+    boost::thread m_thread;
 };
 
 #endif /* ESTEIDSERVICE_H_ */
