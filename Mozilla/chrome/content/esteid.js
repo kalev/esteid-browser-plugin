@@ -83,16 +83,25 @@ function showPrefs() {
 
 function LoadEstEID() {
     if(isBrowser()) {
-        try {
-            var com = document.getElementById('eidplugin');
+        var mimeTypeObject = navigator.mimeTypes
+                             .namedItem("application/x-esteid");
 
-            if(!esteidglobal.isConfigured)
-                esteid_log("Plugin Version: " + com.getVersion() + "\n");
+        if(mimeTypeObject) {
+            try {
+                var eidver = mimeTypeObject.enabledPlugin.version;
 
-            var elt = document.getElementById('esteidbrowserpanel');
-	    elt.setAttribute("tooltiptext", "EstEID plugin " + com.getVersion());
-        } catch (anError) {
-            esteid_error("Can't find signing plugin: " + anError);
+                if(!esteidglobal.isConfigured)
+                    esteid_log("Plugin Version: " + eidver);
+
+                var elt = document.getElementById('esteidbrowserpanel');
+                if(eidver) 
+                    elt.setAttribute("tooltiptext", "EstEID plugin " + eidver);
+            } catch(anError) { 
+                /* Obtaining plugin version is not supported on
+                 * FF3.5 and older browsers. It's OK. We don't care. */
+            }
+        } else {
+            esteid_error("Open EstEID browser plugin is not installed");
         }
         try {
             esteidRegisterLegacyConverter();

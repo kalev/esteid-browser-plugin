@@ -26,6 +26,11 @@
           <button id="wlbtn" label="&esteid.OpenWhiteList;"
                   oncommand="openPluginSettings();" disabled="true" />
         </hbox>
+        <hbox>
+          <html:object id="eidplugin" type="application/x-esteid"
+                       style="width: 1px; height: 1px;
+                              margin: 0px; padding: 0px;" />
+        </hbox>
       </vbox>
       <textbox id="log" multiline="true" rows="20" cols="40"
                readonly="true" />

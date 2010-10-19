@@ -10,9 +10,6 @@
         <statusbarpanel id="esteidbrowserpanel"
                         onclick="showPrefs();">
           <image id="eidicon" src="chrome://global/skin/icons/loading_16.png" />
-          <html:object id="eidplugin" type="application/x-esteid"
-                       style="width: 1px; height: 1px;
-                              margin: 0px; padding: 0px;" />
         </statusbarpanel>
     </statusbar>
     <!-- <window></window> -->

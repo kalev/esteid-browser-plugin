@@ -28,6 +28,7 @@ function onLoad() {
                       .getService(Components.interfaces.nsIStringBundleService);
   sb = sbs.createBundle("chrome://esteid/locale/esteid.properties");
 
+  var logmsg;
   try {
     Components.utils.import("resource://esteid/global.jsm");
     logmsg = esteidglobal.log;
@@ -48,15 +49,9 @@ function doOK() {
 }
 
 function getPlugin() {
-    // https://developer.mozilla.org/en/Working_with_windows_in_chrome_code
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                 .getService(Components.interfaces.nsIWindowMediator);
-    var browserWindow = wm.getMostRecentWindow("navigator:browser");
-
-    var doc = browserWindow.document;
-    return doc.getElementById('eidplugin');
+  return document.getElementById('eidplugin');
 }
 
 function openPluginSettings() {
-    plugin.showSettings();
+  plugin.showSettings();
 }
