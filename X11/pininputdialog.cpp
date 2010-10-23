@@ -40,6 +40,7 @@ PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::
       m_hash(NULL),
       m_minPinLength(5)
 {
+
     // Get the Glade-instantiated widgets
     m_refGlade->get_widget("okButton", m_okButton);
     m_refGlade->get_widget("pin_entry", m_entry);
@@ -91,7 +92,7 @@ void PinInputDialog::setTries(int tries)
 {
     assert(tries > 0);
 
-    static const std::string text = "<span color=\"red\">Wrong PIN!</span> Tries left: ";
+    static const std::string text = _("<span color=\"red\">Wrong PIN!</span> Tries left: ");
     std::stringstream out;
     out << text << tries;
 

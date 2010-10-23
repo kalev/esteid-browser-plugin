@@ -1,0 +1,28 @@
+LOCALIZATION FOR LINUX SYSTEMS
+==============================
+
+1. Generate po files from source code
+
+	find .. -name "*.cpp" -o -name "*.h" | xargs xgettext --keyword=_ --language=C++ -o esteid-browser-plugin.pot
+	find .. -name "*.ui" | xargs xgettext --language=Glade -j -o esteid-browser-plugin.pot
+
+	If you are generating the file for the language *for the first time*:
+		msginit -l et_EE --no-translator -o esteid-browser-plugin-et.po -i esteid-browser-plugin.pot
+
+	If there *already is* a po file for your language:
+		msgmerge --update esteid-browser-plugin-et.po esteid-browser-plugin.pot
+
+2. Translate and fill/update the po file headers
+
+	nano esteid-browser-plugin-et.po
+
+3. Generate translation files for the system
+
+	mkdir -p et_EE/LC_MESSAGES
+	msgfmt -c -v -o et_EE/LC_MESSAGES/esteid-browser-plugin.mo esteid-browser-plugin-et.po
+
+4. Test translations
+
+	mkdir -p /usr/share/locale/et_EE/LC_MESSAGES/
+	cp et_EE/LC_MESSAGES/esteid-browser-plugin.mo /usr/share/locale/et_EE/LC_MESSAGES/
+

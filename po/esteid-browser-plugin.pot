@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-22 13:17+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../EsteidAPI.h:40
+msgid "User cancelled operation"
+msgstr ""
+
+#: ../X11/whitelistdialog.cpp:184
+msgid ""
+"In order to use your ID-card on newly added site, it may be needed to start "
+"the desired operation from the beginning or reload the page."
+msgstr ""
+
+#: ../X11/pininputdialog.cpp:95
+msgid "<span color=\"red\">Wrong PIN!</span> Tries left: "
+msgstr ""
+
+#: ../X11/GtkUI.cpp:166
+msgid "PIN2 blocked"
+msgstr ""
+
+#: ../X11/GtkUI.cpp:167
+msgid "Please run ID-card Utility to unlock the PIN."
+msgstr ""
+
+#: ../X11/GtkUI.cpp:225
+msgid "Error saving configuration"
+msgstr ""
+
+#: ../EsteidAPI.cpp:50
+msgid "Settings"
+msgstr ""
+
+#: ../EsteidAPI.cpp:51
+msgid "This site is trying to obtain access to your ID-card."
+msgstr ""
+
+#: ../EsteidAPI.cpp:52
+msgid ""
+"Access to ID-card was denied because the connection to the site is not "
+"secure."
+msgstr ""
+
+#: ../EsteidAPI.cpp:452
+msgid ""
+"Website is using old signature APIs. Please contact site owner. Click <a "
+"href=\""
+msgstr ""
+
+#: ../EsteidAPI.cpp:453
+msgid "\" target=\"_blank\" style=\"color: blue;\">here</a> for details."
+msgstr ""
+
+#: ../X11/whitelistdialog.ui:7
+msgid "Allowed Sites"
+msgstr ""
+
+#: ../X11/whitelistdialog.ui:23
+msgid ""
+"You can specify which web sites are allowed to have access to your ID card. "
+"Only add the sites you trust to keep your private information safe."
+msgstr ""
+
+#: ../X11/whitelistdialog.ui:39
+msgid "Enter a site to add to whitelist:"
+msgstr ""
+
+#: ../X11/pininputdialog.ui:7
+msgid "Enter PIN"
+msgstr ""
+
+#: ../X11/pininputdialog.ui:113
+msgid "_Document:"
+msgstr ""
+
+#: ../X11/pininputdialog.ui:145
+msgid "_Hash:"
+msgstr ""
+
+#: ../X11/pininputdialog.ui:175
+msgid "_Details:"
+msgstr ""

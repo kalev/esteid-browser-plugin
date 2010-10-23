@@ -7,6 +7,15 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
         <em:id>{aa84ce40-4253-11da-8cd6-0800200c9a66}</em:id>
+
+	<em:localized>
+		<Description>
+			<em:locale>et-EE</em:locale>
+			<em:name>Eesti ID-kaart</em:name>
+			<em:description>Eesti ID-kaardi tugi</em:description>
+		</Description>
+	</em:localized>
+
         <em:name>Estonian ID Card</em:name>
         <em:version>@FBSTRING_PLUGIN_VERSION@</em:version>
         <em:description>Estonian ID Card support</em:description>

@@ -23,6 +23,7 @@
 #define ESTEID_PININPUTDIALOG_H
 
 #include <gtkmm.h>
+#include "localize.h"
 
 class PinInputDialog : public Gtk::Dialog
 {

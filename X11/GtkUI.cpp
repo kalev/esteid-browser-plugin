@@ -163,8 +163,8 @@ void GtkUI::ShowPinBlockedMessage(int pin)
     if (m_dialog_up)
         return;
 
-    Gtk::MessageDialog dialog("PIN2 blocked", false, Gtk::MESSAGE_WARNING);
-    dialog.set_secondary_text("Please run ID-card Utility to unlock the PIN.");
+    Gtk::MessageDialog dialog(_("PIN2 blocked"), false, Gtk::MESSAGE_WARNING);
+    dialog.set_secondary_text(_("Please run ID-card Utility to unlock the PIN."));
     m_dialog_up = true;
     dialog.run();
     m_dialog_up = false;
@@ -222,7 +222,7 @@ void GtkUI::on_whitelistdialog_response(int response_id)
         try {
             m_conf->Save();
         } catch(const std::exception& e) {
-            Gtk::MessageDialog dialog("Error saving configuration", false, Gtk::MESSAGE_ERROR);
+            Gtk::MessageDialog dialog(_("Error saving configuration"), false, Gtk::MESSAGE_ERROR);
             dialog.set_secondary_text(e.what());
             dialog.run();
         }

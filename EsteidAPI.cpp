@@ -47,9 +47,9 @@
 #include "urlparser.h"
 
 /* UI Messages */
-#define MSG_SETTINGS "Settings"
-#define MSG_SITEACCESS "This site is trying to obtain access to your ID-card."
-#define MSG_INSECURE "Access to ID-card was denied because the connection to the site is not secure."
+#define MSG_SETTINGS _("Settings")
+#define MSG_SITEACCESS _("This site is trying to obtain access to your ID-card.")
+#define MSG_INSECURE _("Access to ID-card was denied because the connection to the site is not secure.")
 
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(EsteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(EsteidAPI, a)
@@ -63,6 +63,9 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
     m_uiCallback(new UICallback(*this))
 {
     ESTEID_DEBUG("EsteidAPI::EsteidAPI()");
+
+    bindtextdomain("esteid-browser-plugin", "/usr/share/locale");
+    textdomain("esteid-browser-plugin");
 
     /* Load JavaScript code to be evaluated in browser */
     #include "EstEIDNotificationBar.js"
@@ -194,11 +197,12 @@ std::string EsteidAPI::pageURL()
 
 void EsteidAPI::CreateNotificationBar()
 {
+    const std::string label = MSG_SETTINGS;
     m_host->evaluateJavaScript(EstEIDNotificationBarScript);
     m_barJSO = m_host->getDOMDocument()
                ->getProperty<FB::JSObjectPtr>("EstEIDNotificationBar");
     m_barJSO->Invoke("create",
-                     FB::variant_list_of(MSG_SETTINGS)(m_settingsCallback));
+                     FB::variant_list_of(label)(m_settingsCallback));
 }
 
 void EsteidAPI::DisplayError(const std::string& msg)
@@ -444,8 +448,11 @@ void EsteidAPI::deprecatedCall()
     boost::posix_time::ptime date_for_activating_deprecate_messages(boost::gregorian::date(2011, May, 1));
     boost::system_time current_time = boost::get_system_time();
 
-    if (current_time > date_for_activating_deprecate_messages)
-        DisplayError("Website is using old signature APIs. Please contact site owner. Click <a href=\"" COMPAT_URL "\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
+    if (current_time > date_for_activating_deprecate_messages) {
+	std::string msg1 = _("Website is using old signature APIs. Please contact site owner. Click <a href=\"");
+	std::string msg2 = _("\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
+        DisplayError(msg1 + COMPAT_URL + msg2);
+    }
 }
 
 std::string EsteidAPI::promptForPin(bool retrying)

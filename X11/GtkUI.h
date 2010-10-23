@@ -22,10 +22,12 @@
 #ifndef ESTEID_GTKUI_H
 #define ESTEID_GTKUI_H
 
-#include "PluginUI.h"
+#include <gtkmm.h>
 #include <stdexcept>
 
-#include <gtkmm.h>
+#include "localize.h"
+#include "PluginUI.h"
+
 
 class PinInputDialog;
 class WhitelistDialog;
