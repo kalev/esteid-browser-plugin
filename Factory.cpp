@@ -1,7 +1,7 @@
 /*
  * esteid-browser-plugin - a browser plugin for Estonian EID card
  *
- * Copyright (C) 2010  Estonian Informatics Centre
+ * Copyright (C) 2010  Smartlink OÜ
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,29 +18,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**********************************************************\
-
-  Auto-generated FactoryMain.cpp
-
-  This file contains the auto-generated factory methods
-  for the esteid project
-
-\**********************************************************/
-
-#include "FactoryDefinitions.h"
+#include "FactoryBase.h"
 #include "EsteidPlugin.h"
+#include <boost/make_shared.hpp>
 
-FB::PluginCore *_getMainPlugin()
+class PluginFactory : public FB::FactoryBase
 {
-    return new EsteidPlugin();
+public:
+    FB::PluginCorePtr createPlugin(const std::string& mimetype)
+    {
+        return boost::make_shared<EsteidPlugin>();
+    }
+
+    void globalPluginInitialize()
+    {
+        EsteidPlugin::StaticInitialize();
+    }
+
+    void globalPluginDeinitialize()
+    {
+        EsteidPlugin::StaticDeinitialize();
+    }
+};
+
+FB::FactoryBasePtr getFactoryInstance()
+{
+    static boost::shared_ptr<PluginFactory> factory = boost::make_shared<PluginFactory>();
+    return factory;
 }
 
-void GlobalPluginInitialize()
-{
-    EsteidPlugin::StaticInitialize();
-}
-
-void GlobalPluginDeinitialize()
-{
-    EsteidPlugin::StaticDeinitialize();
-}
