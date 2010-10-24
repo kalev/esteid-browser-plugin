@@ -29,6 +29,7 @@ browserplugin_project(${PROJNAME})
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 include(InstallSettings)
 
+find_package(Gettext)
 find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
@@ -117,6 +118,12 @@ SET( SOURCES
     ${GENERATED}
     ${UTILITY_SOURCES}
     )
+
+# Generate translations
+set(ESTEID_LOCALEDIR ${SHARE_INSTALL_PREFIX}/locale)
+add_definitions(-DESTEID_LOCALEDIR="${ESTEID_LOCALEDIR}")
+file(GLOB PO_FILES po/*.po)
+gettext_create_translations(po/esteid-browser-plugin.pot ALL ${PO_FILES})
 
 # This will include Win/projectDef.cmake, Linux/projectDef.cmake, etc
 include_platform()

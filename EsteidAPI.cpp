@@ -64,7 +64,7 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
 {
     ESTEID_DEBUG("EsteidAPI::EsteidAPI()");
 
-    bindtextdomain("esteid-browser-plugin", "/usr/share/locale");
+    bindtextdomain("esteid-browser-plugin", ESTEID_LOCALEDIR);
     textdomain("esteid-browser-plugin");
 
     /* Load JavaScript code to be evaluated in browser */
