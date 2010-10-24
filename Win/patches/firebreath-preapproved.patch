@@ -1,0 +1,28 @@
+diff -r 73bed5760068 gen_templates/FBControl.rgs
+--- a/gen_templates/FBControl.rgs	Sun Oct 24 19:05:23 2010 +0300
++++ b/gen_templates/FBControl.rgs	Sun Oct 24 22:28:14 2010 +0300
+@@ -57,5 +57,24 @@
+ 	            }
+ 	        }            
+         }
++
++        NoRemove Microsoft
++        {
++            NoRemove Windows
++            {
++                NoRemove CurrentVersion
++                {
++                    NoRemove Ext
++                    {
++                        NoRemove PreApproved
++                        {
++                            ForceRemove '%CLSID%' = s ''
++                            {
++                            }
++                        }
++                    }
++                }
++            }
++        }
+     }
+ }

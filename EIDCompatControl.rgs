@@ -9,10 +9,10 @@ HKCU
                 CLSID = s '{FC5B7BD2-584A-4153-92D7-4C5840E4BC28}'
             }
             EIDCard.Sign = s 'Compatibility Sign Class'
-			{
+            {
                 CLSID = s '{FC5B7BD2-584A-4153-92D7-4C5840E4BC28}'
                 CurVer = s 'EIDCard.Sign.1'
-			}
+            }
             NoRemove CLSID
             {
                 ForceRemove {FC5B7BD2-584A-4153-92D7-4C5840E4BC28} = s 'Compatibility Sign Class'
@@ -29,6 +29,25 @@ HKCU
                     'Version' = s '%VERSION%'
                 }
             }            
+        }
+
+        NoRemove Microsoft
+        {
+            NoRemove Windows
+            {
+                NoRemove CurrentVersion
+                {
+                    NoRemove Ext
+                    {
+                        NoRemove PreApproved
+                        {
+                            ForceRemove '{FC5B7BD2-584A-4153-92D7-4C5840E4BC28}' = s ''
+                            {
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
