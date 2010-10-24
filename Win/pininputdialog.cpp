@@ -45,7 +45,7 @@ PinInputDialog::~PinInputDialog()
 
 void PinInputDialog::showPinBlocked(HWND hParent)
 {
-    MessageBox(hParent, L"PIN2 blocked.\nPlease run ID-card Utility to unlock the PIN.",
+    MessageBox(hParent, L"PIN2 blocked.\nPlease run ID card Utility to unlock the PIN.",
                L"Error", MB_OK | MB_ICONHAND);
 }
 

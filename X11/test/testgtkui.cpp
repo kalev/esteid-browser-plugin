@@ -92,12 +92,12 @@ void TestGtkUI::on_button_pinBlocked_clicked()
 {
 #if 0
     Gtk::MessageDialog *dialog = new Gtk::MessageDialog(*this, "PIN2 blocked", false, Gtk::MESSAGE_WARNING);
-    dialog->set_secondary_text("Please run ID-card Utility to unlock the PIN.");
+    dialog->set_secondary_text("Please run ID card Utility to unlock the PIN.");
 
     dialog->run();
 #else
     Gtk::MessageDialog dialog(*this, "PIN2 blocked", false, Gtk::MESSAGE_WARNING);
-    dialog.set_secondary_text("Please run ID-card Utility to unlock the PIN.");
+    dialog.set_secondary_text("Please run ID card Utility to unlock the PIN.");
 
     dialog.run();
 #endif

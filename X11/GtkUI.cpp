@@ -164,7 +164,7 @@ void GtkUI::ShowPinBlockedMessage(int pin)
         return;
 
     Gtk::MessageDialog dialog(_("PIN2 blocked"), false, Gtk::MESSAGE_WARNING);
-    dialog.set_secondary_text(_("Please run ID-card Utility to unlock the PIN."));
+    dialog.set_secondary_text(_("Please run ID card Utility to unlock the PIN."));
     m_dialog_up = true;
     dialog.run();
     m_dialog_up = false;

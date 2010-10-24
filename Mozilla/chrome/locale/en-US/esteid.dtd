@@ -1,6 +1,6 @@
-<!ENTITY esteid.PrefsTitle "ID-Card signer preferences">
+<!ENTITY esteid.PrefsTitle "ID Card signer preferences">
 <!ENTITY esteid.Whitelist "Whitelist">
 <!ENTITY esteid.Log "Log">
 <!ENTITY esteid.Preferences "Preferences">
 <!ENTITY esteid.PreferencesCaption "General preferences">
-<!ENTITY esteid.OpenWhiteList "Sites that can use your ID-card">
+<!ENTITY esteid.OpenWhiteList "Sites that can use your ID card">

@@ -31,7 +31,7 @@ set(MOZILLA_PLUGINID "id.eesti.ee/esteid")
 
 # strings
 set(FBSTRING_CompanyName "Estonian Informatics Centre")
-set(FBSTRING_FileDescription "Estonian ID-Card Plugin")
+set(FBSTRING_FileDescription "Estonian ID Card Plugin")
 set(_VERSION "${ESTEID_BROWSER_PLUGIN_VERSION}")
 if(SVN_REV)
    set(FBSTRING_PLUGIN_VERSION "${_VERSION}.${SVN_REV}")

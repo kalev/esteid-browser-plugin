@@ -48,8 +48,8 @@
 
 /* UI Messages */
 #define MSG_SETTINGS _("Settings")
-#define MSG_SITEACCESS _("This site is trying to obtain access to your ID-card.")
-#define MSG_INSECURE _("Access to ID-card was denied because the connection to the site is not secure.")
+#define MSG_SITEACCESS _("This site is trying to obtain access to your ID card.")
+#define MSG_INSECURE _("Access to ID card was denied because the connection to the site is not secure.")
 
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(EsteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(EsteidAPI, a)

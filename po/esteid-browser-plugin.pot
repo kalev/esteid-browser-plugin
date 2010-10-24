@@ -23,7 +23,7 @@ msgstr ""
 
 #: ../X11/whitelistdialog.cpp:184
 msgid ""
-"In order to use your ID-card on newly added site, it may be needed to start "
+"In order to use your ID card on newly added site, it may be needed to start "
 "the desired operation from the beginning or reload the page."
 msgstr ""
 
@@ -36,7 +36,7 @@ msgid "PIN2 blocked"
 msgstr ""
 
 #: ../X11/GtkUI.cpp:167
-msgid "Please run ID-card Utility to unlock the PIN."
+msgid "Please run ID card Utility to unlock the PIN."
 msgstr ""
 
 #: ../X11/GtkUI.cpp:225
@@ -48,12 +48,12 @@ msgid "Settings"
 msgstr ""
 
 #: ../EsteidAPI.cpp:51
-msgid "This site is trying to obtain access to your ID-card."
+msgid "This site is trying to obtain access to your ID card."
 msgstr ""
 
 #: ../EsteidAPI.cpp:52
 msgid ""
-"Access to ID-card was denied because the connection to the site is not "
+"Access to ID card was denied because the connection to the site is not "
 "secure."
 msgstr ""
 
