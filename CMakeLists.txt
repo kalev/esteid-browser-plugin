@@ -119,11 +119,20 @@ SET( SOURCES
     ${UTILITY_SOURCES}
     )
 
-# Generate translations
+include(CheckIncludeFiles)
+check_include_files(libintl.h HAVE_LIBINTL_H)
+
+configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
 set(ESTEID_LOCALEDIR ${SHARE_INSTALL_PREFIX}/locale)
 add_definitions(-DESTEID_LOCALEDIR="${ESTEID_LOCALEDIR}")
-file(GLOB PO_FILES po/*.po)
-gettext_create_translations(po/esteid-browser-plugin.pot ALL ${PO_FILES})
+if(GETTEXT_FOUND AND HAVE_LIBINTL_H)
+    # Generate translations
+    file(GLOB PO_FILES po/*.po)
+    gettext_create_translations(po/esteid-browser-plugin.pot ALL ${PO_FILES})
+else()
+    message(STATUS "Gettext or libintl not found, skipping translations")
+endif()
 
 # This will include Win/projectDef.cmake, Linux/projectDef.cmake, etc
 include_platform()

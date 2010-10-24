@@ -42,6 +42,7 @@
 
 #include "EsteidAPI.h"
 #include "JSUtil.h"
+#include "config.h"
 #include "converter.h"
 #include "debug.h"
 #include "urlparser.h"
@@ -64,8 +65,10 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
 {
     ESTEID_DEBUG("EsteidAPI::EsteidAPI()");
 
+#ifdef HAVE_LIBINTL_H
     bindtextdomain("esteid-browser-plugin", ESTEID_LOCALEDIR);
     textdomain("esteid-browser-plugin");
+#endif
 
     /* Load JavaScript code to be evaluated in browser */
     #include "EstEIDNotificationBar.js"

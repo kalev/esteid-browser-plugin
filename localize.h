@@ -21,8 +21,14 @@
 #ifndef LOCALIZE_H
 #define LOCALIZE_H
 
+#include "config.h"
+
+#ifdef HAVE_LIBINTL
 #include <libintl.h>
 #include <locale.h>
 #define _(STRING)    gettext(STRING)
+#else
+#define _(STRING)    STRING
+#endif
 
 #endif //LOCALIZE_H
