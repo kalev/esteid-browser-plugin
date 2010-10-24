@@ -40,7 +40,6 @@ PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::
       m_hash(NULL),
       m_minPinLength(5)
 {
-
     // Get the Glade-instantiated widgets
     m_refGlade->get_widget("okButton", m_okButton);
     m_refGlade->get_widget("pin_entry", m_entry);

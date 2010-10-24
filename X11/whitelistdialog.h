@@ -75,7 +75,6 @@ protected:
     Glib::RefPtr<Gtk::Builder> m_refGlade;
 
     Gtk::Entry *m_entry;
-    Gtk::Label *m_label1;
     Gtk::Button *m_addButton;
     Gtk::Button *m_editButton;
     Gtk::Button *m_deleteButton;
