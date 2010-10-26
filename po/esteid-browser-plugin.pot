@@ -86,7 +86,7 @@ msgid "Enter PIN"
 msgstr ""
 
 #: ../X11/pininputdialog.ui:113
-msgid "_Document:"
+msgid "Do_cument:"
 msgstr ""
 
 #: ../X11/pininputdialog.ui:145
@@ -94,5 +94,5 @@ msgid "_Hash:"
 msgstr ""
 
 #: ../X11/pininputdialog.ui:175
-msgid "_Details:"
+msgid "_Details"
 msgstr ""

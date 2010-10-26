@@ -1,25 +1,58 @@
 # Estonian translations for PACKAGE package.
 # Copyright (C) 2010 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Automatically generated, 2010.
 #
+# Automatically generated, 2010.
+# Guido Tabbernuk <boamaod@gmail.com>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: et\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-22 13:17+0900\n"
-"PO-Revision-Date: 2010-10-21 14:12+0900\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2010-10-26 18:51+0900\n"
+"Last-Translator: Guido Tabbernuk <boamaod@gmail.com>\n"
+"Language-Team: Estonian <gnome-et@lists.linux.ee>\n"
 "Language: et\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.1\n"
 
-#: ../EsteidAPI.h:40
-msgid "User cancelled operation"
-msgstr "Kasutaja katkestas toimingu"
+#: ../EsteidAPI.cpp:453
+msgid "\" target=\"_blank\" style=\"color: blue;\">here</a> for details."
+msgstr "\" target=\"_blank\" style=\"color: blue;\">here</a>."
+
+#: ../X11/pininputdialog.cpp:95
+msgid "<span color=\"red\">Wrong PIN!</span> Tries left: "
+msgstr "<span color=\"red\">Vale PIN!</span> Kordi proovida: "
+
+#: ../EsteidAPI.cpp:52
+msgid ""
+"Access to ID card was denied because the connection to the site is not "
+"secure."
+msgstr ""
+"Ligipääs ID-kaardile keelati, sest ühendus selle saidiga ei ole turvaline."
+
+#: ../X11/whitelistdialog.ui:7
+msgid "Allowed Sites"
+msgstr "Lubatud saidid"
+
+#: ../X11/pininputdialog.ui:113
+msgid "Do_cument:"
+msgstr "Do_kument:"
+
+#: ../X11/pininputdialog.ui:7
+msgid "Enter PIN"
+msgstr "PIN-koodi sisestamine"
+
+#: ../X11/whitelistdialog.ui:39
+msgid "Enter a site to add to whitelist:"
+msgstr "Sisesta sait, mida soovid nimekirja lisada:"
+
+#: ../X11/GtkUI.cpp:225
+msgid "Error saving configuration"
+msgstr "Viga seadete salvestamisel"
 
 #: ../X11/whitelistdialog.cpp:184
 msgid ""
@@ -29,22 +62,13 @@ msgstr ""
 "Lisatud saidil ID-kaardi kasutamiseks võib olla vajalik alustada "
 "pooleliolevat toimingut otsast peale või värskendada lehekülge."
 
-#: ../X11/pininputdialog.cpp:95
-msgid "<span color=\"red\">Wrong PIN!</span> Tries left: "
-msgstr "<span color=\"red\">Vale PIN!</span> Kordi proovida: "
-
 #: ../X11/GtkUI.cpp:166
-#, fuzzy
 msgid "PIN2 blocked"
 msgstr "PIN2 tõkestatud"
 
 #: ../X11/GtkUI.cpp:167
 msgid "Please run ID card Utility to unlock the PIN."
 msgstr "PIN-i avamiseks käivita ID-kaardi haldusvahend."
-
-#: ../X11/GtkUI.cpp:225
-msgid "Error saving configuration"
-msgstr "Viga seadete salvestamisel"
 
 #: ../EsteidAPI.cpp:50
 msgid "Settings"
@@ -54,12 +78,9 @@ msgstr "Seaded"
 msgid "This site is trying to obtain access to your ID card."
 msgstr "See sait püüab pääseda ligi sinu ID-kaardile."
 
-#: ../EsteidAPI.cpp:52
-msgid ""
-"Access to ID card was denied because the connection to the site is not "
-"secure."
-msgstr ""
-"Ligipääs ID-kaardile keelati, sest ühendus selle saidiga ei ole turvaline."
+#: ../EsteidAPI.h:40
+msgid "User cancelled operation"
+msgstr "Kasutaja katkestas toimingu"
 
 #: ../EsteidAPI.cpp:452
 msgid ""
@@ -68,15 +89,6 @@ msgid ""
 msgstr ""
 "See sait kasutab vana allkirjastamise liidest. Palun, räägi sellest saidi "
 "omanikuga! Üksikasju vt <a href=\""
-
-#: ../EsteidAPI.cpp:453
-#, fuzzy
-msgid "\" target=\"_blank\" style=\"color: blue;\">here</a> for details."
-msgstr "\" target=\"_blank\" style=\"color: blue;\">here</a>."
-
-#: ../X11/whitelistdialog.ui:7
-msgid "Allowed Sites"
-msgstr "Lubatud saidid"
 
 #: ../X11/whitelistdialog.ui:23
 msgid ""
@@ -87,22 +99,10 @@ msgstr ""
 "eraldi teavitamata ligi pääseda. Lisa siia ainult selliseid saite, millest "
 "tead, et võid oma isiklikku infot neile usaldada."
 
-#: ../X11/whitelistdialog.ui:39
-msgid "Enter a site to add to whitelist:"
-msgstr "Sisesta sait, mida soovid nimekirja lisada:"
-
-#: ../X11/pininputdialog.ui:7
-msgid "Enter PIN"
-msgstr "PIN-koodi sisestamine"
-
-#: ../X11/pininputdialog.ui:113
-msgid "_Document:"
-msgstr "_Dokument:"
+#: ../X11/pininputdialog.ui:175
+msgid "_Details"
+msgstr "Üksikasja_d"
 
 #: ../X11/pininputdialog.ui:145
 msgid "_Hash:"
 msgstr "_Räsi:"
-
-#: ../X11/pininputdialog.ui:175
-msgid "_Details:"
-msgstr "Üksikasja_d"
