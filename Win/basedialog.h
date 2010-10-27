@@ -48,6 +48,7 @@ public:
 protected:
     HINSTANCE m_hInst;
     HWND m_hWnd;
+    HANDLE m_hModalDialogLock;
     bool m_modalDialog;
 
     static LRESULT CALLBACK dialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -55,6 +56,8 @@ protected:
     virtual LRESULT on_initdialog(WPARAM wParam) = 0;
     virtual LRESULT on_command(WPARAM wParam, LPARAM lParam) = 0;
     virtual LRESULT on_notify(WPARAM wParam, LPARAM lParam);
+    HWND getIEModalLock(HWND hWnd);
+    void releaseIEModalLock();
     ResponseSignal signalResponse;
 };
 

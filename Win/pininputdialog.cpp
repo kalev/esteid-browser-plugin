@@ -281,6 +281,7 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
             EndDialog(m_hWnd, wParam);
         } else {
             DestroyWindow(m_hWnd);
+            releaseIEModalLock();
             signalResponse(RESPONSE_OK);
         }
         return TRUE;
@@ -294,6 +295,7 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
             EndDialog(m_hWnd, wParam);
         } else {
             DestroyWindow(m_hWnd);
+            releaseIEModalLock();
             signalResponse(RESPONSE_CANCEL);
         }
         return TRUE;

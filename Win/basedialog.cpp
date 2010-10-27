@@ -21,6 +21,7 @@
 
 #include "basedialog.h"
 #include <windows.h>
+#include <IEProcess.h>
 
 typedef BaseDialog::Connection Connection;
 
@@ -107,6 +108,7 @@ LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
             EndDialog(m_hWnd, wParam);
         } else {
             DestroyWindow(m_hWnd);
+            releaseIEModalLock();
             signalResponse(RESPONSE_CANCEL);
         }
         return TRUE;
@@ -125,12 +127,34 @@ LRESULT BaseDialog::on_notify(WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
+HWND BaseDialog::getIEModalLock(HWND hWnd)
+{
+    HMODULE ieModule = IEProcess::GetProcessModule();
+    if (ieModule) {
+        // IE 8.0 or newer
+        HRESULT hr = IEProcess::GetTabWindowExports(ieModule)->AcquireModalDialogLockAndParent(hWnd, &hWnd, &m_hModalDialogLock);
+    }
+    return hWnd;
+}
+
+void BaseDialog::releaseIEModalLock()
+{
+    HMODULE ieModule = IEProcess::GetProcessModule();
+    if (ieModule) {
+        // IE 8.0 or newer
+        IEProcess::GetTabWindowExports(ieModule)->ReleaseModalDialogLockAndParent(m_hModalDialogLock);
+    }
+}
+
 bool BaseDialog::doDialog(int resourceID, HWND hParent)
 {
     m_modalDialog = false;
 
-    m_hWnd = CreateDialogParam(m_hInst, MAKEINTRESOURCE(resourceID), hParent, (DLGPROC)dialogProc,
-                         reinterpret_cast<LPARAM>(this));
+    m_hWnd = CreateDialogParam(m_hInst,
+                               MAKEINTRESOURCE(resourceID),
+                               getIEModalLock(hParent),
+                               (DLGPROC)dialogProc,
+                               reinterpret_cast<LPARAM>(this));
     if (!m_hWnd)
         return false;
 
@@ -140,8 +164,14 @@ bool BaseDialog::doDialog(int resourceID, HWND hParent)
 
 int BaseDialog::doModalDialog(int resourceID, HWND hParent)
 {
+    int ret;
     m_modalDialog = true;
 
-    return DialogBoxParam(m_hInst, MAKEINTRESOURCE(resourceID), hParent, (DLGPROC)dialogProc,
+    ret = DialogBoxParam(m_hInst,
+                         MAKEINTRESOURCE(resourceID),
+                         getIEModalLock(hParent),
+                         (DLGPROC)dialogProc,
                          reinterpret_cast<LPARAM>(this));
+    releaseIEModalLock();
+    return ret;
 }

@@ -170,6 +170,7 @@ LRESULT WhitelistDialog::on_command(WPARAM wParam, LPARAM lParam)
         signalResponse(RESPONSE_OK);
 
         DestroyWindow(m_hWnd);
+        releaseIEModalLock();
         break;
 
     default:
