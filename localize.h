@@ -21,7 +21,7 @@
 #ifndef LOCALIZE_H
 #define LOCALIZE_H
 
-#include "config.h"
+#include "esteid-config.h"
 
 #ifdef HAVE_LIBINTL
 #include <libintl.h>

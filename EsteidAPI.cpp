@@ -42,9 +42,9 @@
 
 #include "EsteidAPI.h"
 #include "JSUtil.h"
-#include "config.h"
 #include "converter.h"
 #include "debug.h"
+#include "esteid-config.h"
 #include "urlparser.h"
 
 /* UI Messages */

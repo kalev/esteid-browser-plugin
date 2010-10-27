@@ -131,7 +131,7 @@ else()
     message(STATUS "Gettext or libintl not found, skipping translations")
 endif()
 
-configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(esteid-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/esteid-config.h)
 
 # This will include Win/projectDef.cmake, Linux/projectDef.cmake, etc
 include_platform()
