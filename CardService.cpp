@@ -92,7 +92,7 @@ void CardService::monitor()
         try {
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             Poll();
-        } catch(std::runtime_error) { }
+        } catch(const std::runtime_error&) { }
     }
 }
 

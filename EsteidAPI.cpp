@@ -213,7 +213,7 @@ void EsteidAPI::DisplayError(const std::string& msg)
     try {
         OpenNotificationBar();
         m_barJSO->Invoke("showError", FB::variant_list_of(msg));
-    } catch(std::exception &e) {
+    } catch(const std::exception& e) {
         ESTEID_DEBUG("Unable to display error: %s", e.what());
     }
 }
@@ -223,7 +223,7 @@ void EsteidAPI::DisplayNotification(const std::string& msg)
     try {
         OpenNotificationBar();
         m_barJSO->Invoke("show", FB::variant_list_of(msg));
-    } catch(std::exception &e) {
+    } catch(const std::exception& e) {
         ESTEID_DEBUG("Unable to display notification: %s", e.what());
     }
 }
@@ -402,7 +402,7 @@ void EsteidAPI::onPinEntered(const std::string& pin)
     try {
         std::string signedHash = signSHA1(m_hash, pin);
         returnSignedData(signedHash);
-    } catch(AuthError &e) {
+    } catch(const AuthError& e) {
         if (e.m_aborted) { // pinpad
             returnSignFailure("pinpad operation cancelled");
             return;
@@ -486,7 +486,7 @@ std::string EsteidAPI::askPinAndSign(const std::string& hash, const std::string&
         try {
             std::string signedHash = signSHA1(hash, pin);
             return signedHash;
-        } catch(AuthError &e) {
+        } catch(const AuthError& e) {
             if (e.m_aborted) // pinpad
                 throw std::runtime_error("pinpad operation cancelled");
 
@@ -538,14 +538,14 @@ std::string EsteidAPI::sign(const std::string& a, const std::string& b)
         try {
             signedHash = askPinAndSign(b, std::string(COMPAT_URL));
             return "({signature:'" + signedHash + "', returnCode: 0})";
-        } catch(std::runtime_error &e) {
+        } catch(const std::runtime_error& e) {
             // TODO: Return proper error code from plugin (when it's implemented)
             return "({returnCode: 12})";
         }
     } else { // New plugin blocking API compatibility mode
         try {
             signedHash = askPinAndSign(a , (b.empty()) ? std::string(COMPAT_URL) : b);
-        } catch(std::runtime_error &e) {
+        } catch(const std::runtime_error& e) {
             throw FB::script_error(e.what());
         }
 
@@ -584,7 +584,7 @@ std::string EsteidAPI::getSignedHash(const std::string& hash, const std::string&
     try {
         std::string signedHash = askPinAndSign(hash, std::string(COMPAT_URL));
         return signedHash;
-    } catch(std::runtime_error &e) {
+    } catch(const std::runtime_error& e) {
         // This API returns nothing on error
         return "";
     }
@@ -613,7 +613,7 @@ void EsteidAPI::prepare(const std::string& onSuccess,
             buf << std::setfill('0') << std::setw(2) << std::hex << (short)*it;
 
         m_host->evaluateJavaScript(onSuccess + "(10, '" + buf.str() + "');");
-    } catch(std::runtime_error &e) {
+    } catch(const std::runtime_error& e) {
         m_host->evaluateJavaScript(onError + "(12, '" + e.what() + "');");
     }
 }
@@ -634,7 +634,7 @@ void EsteidAPI::finalize(const std::string& slot,
         std::string signedHash = askPinAndSign(hash, std::string(COMPAT_URL));
 
         m_host->evaluateJavaScript(onSuccess + "('" + signedHash + "');");
-    } catch(std::runtime_error &e) {
+    } catch(const std::runtime_error& e) {
         m_host->evaluateJavaScript(onCancel + "();");
     }
 }
