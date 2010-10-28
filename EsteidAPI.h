@@ -121,7 +121,7 @@ private:
     FB::JSAPIPtr m_closeCallback;
     FB::JSObjectPtr m_barJSO;
     FB::JSObjectPtr m_signCallback;
-    CardService *m_service;
+    boost::shared_ptr<CardService> m_service;
     vector <std::string> m_pdata;
     std::string m_subject;
     std::string m_hash;

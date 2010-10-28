@@ -21,9 +21,10 @@
 #include "CardService.h"
 #include "converters.h"
 #include <boost/bind.hpp>
+#include <boost/make_shared.hpp>
 
-/* Zero out our singleton instance variable */
-CardService* CardService::sCardService = NULL;
+/* Singleton instance variable */
+boost::weak_ptr<CardService> CardService::sCardService;
 
 /**
  * Class constructor.
@@ -36,16 +37,13 @@ CardService::CardService()
     : m_manager(NULL),
       m_thread(boost::bind(&CardService::monitor, this))
 {
-    if(sCardService)
-        throw std::runtime_error(">1 CardService object created");
-
-    sCardService = this;
 }
 
 CardService::~CardService()
 {
+    m_thread.interrupt();
+    m_thread.join();
     if(m_manager) delete m_manager;
-    sCardService = NULL;
 }
 
 /**
@@ -53,16 +51,14 @@ CardService::~CardService()
  * or create a new one if none exists.
  */
 
-CardService* CardService::getInstance()
+boost::shared_ptr<CardService> CardService::getInstance()
 {
-    if(!sCardService) {
-        CardService* ni = new CardService();
-        if (!ni)
-            return NULL;
-        if(!sCardService)
-            throw std::runtime_error("Memory corrupt?");
+    boost::shared_ptr<CardService> p = sCardService.lock();
+    if (!p) {
+        p.reset(new CardService());
+        sCardService = p;
     }
-    return sCardService;
+    return p;
 }
 
 void CardService::FindEstEID(vector <readerID>& readers)
@@ -88,10 +84,10 @@ readerID CardService::findFirstEstEID()
 /* Card monitor thread */
 void CardService::monitor()
 {
-    for(;;) {
+    while (!boost::this_thread::interruption_requested()) {
         try {
-            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             Poll();
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         } catch(const std::runtime_error&) { }
     }
 }

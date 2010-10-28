@@ -26,7 +26,7 @@
  *
  * Typical usage:
  *
- * CardService *service = CardService::getInstance();
+ * boost::shared_ptr<CardService> service = CardService::getInstance();
  * service->AddObserver(this);
  *
  */
@@ -47,10 +47,13 @@ typedef unsigned int readerID;
 class CardService
 {
 public:
+    // Constructor is protected
+    virtual ~CardService();
+
     /**
      * Get service instance
      */
-    static CardService* getInstance();
+    static boost::shared_ptr<CardService> getInstance();
     /**
      * Find readers with valid card
      */
@@ -130,13 +133,12 @@ public:
 
 protected:
     CardService();
-    virtual ~CardService();
 
     /* Get access to smartcard manager instance */
     virtual ManagerInterface & getManager();
 
     /* Singleton instance variable */
-    static CardService* sCardService;
+    static boost::weak_ptr<CardService> sCardService;
 
     class idCardCacheEntry {
     public:
