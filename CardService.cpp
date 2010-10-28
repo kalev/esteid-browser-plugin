@@ -34,7 +34,7 @@ boost::weak_ptr<CardService> CardService::sCardService;
  * We might reconsider when times change :P
  */
 CardService::CardService()
-    : m_manager(NULL),
+    : m_manager(new SmartCardManager()),
       m_thread(boost::bind(&CardService::monitor, this))
 {
 }
@@ -43,7 +43,6 @@ CardService::~CardService()
 {
     m_thread.interrupt();
     m_thread.join();
-    if(m_manager) delete m_manager;
 }
 
 /**
@@ -92,14 +91,6 @@ void CardService::monitor()
     }
 }
 
-ManagerInterface &CardService::getManager()
-{
-    if(!m_manager)
-        m_manager = new SmartCardManager();
-
-    return *m_manager;
-}
-
 void CardService::AddObserver(messageObserver *obs)
 {
     boost::mutex::scoped_lock l(m_mutex); // TODO: Maybe use a different lock?
@@ -127,11 +118,9 @@ void CardService::Poll()
 {
     size_t nReaders;
 
-    ManagerInterface &mgr = getManager();
-
     {
         boost::mutex::scoped_lock l(m_mutex);
-        nReaders = mgr.getReaderCount();
+        nReaders = m_manager->getReaderCount();
     }
 
     /* See if the list of readers has been changed */
@@ -150,7 +139,7 @@ void CardService::Poll()
     }
 
     /* Check for card status changes */
-    EstEidCard card(mgr);
+    EstEidCard card(*m_manager);
     for (unsigned int i = 0; i < m_cache.size(); i++ ) {
         bool inReader = readerHasCard(card, i);
 
@@ -168,10 +157,9 @@ void CardService::Poll()
 bool CardService::readerHasCard(EstEidCard& card, readerID i)
 {
     boost::mutex::scoped_lock l(m_mutex);
-    ManagerInterface &mgr = getManager();
 
     /* Ask manager if a token is inserted into that slot */
-    std::string state = mgr.getReaderState(i);
+    std::string state = m_manager->getReaderState(i);
     if (state.find("PRESENT") == std::string::npos ) return false;
 
     /* TODO: Investigate if this caching is actually needed */
@@ -182,11 +170,6 @@ bool CardService::readerHasCard(EstEidCard& card, readerID i)
     return card.isInReader(i);
 }
 
-#define CREATE_LOCKED_ESTEID_INSTANCE \
-    boost::mutex::scoped_lock l(m_mutex); \
-    ManagerInterface &mgr = getManager(); \
-    EstEidCard card(mgr, reader);
-    
 void CardService::readPersonalData(vector <std::string>& data)
 {
     readPersonalData(data, findFirstEstEID());
@@ -197,7 +180,8 @@ void CardService::readPersonalData(vector <std::string>& data,
 {
     /* Populate cache if needed */
     if(m_cache[reader].mPData.size() <= 0) {
-        CREATE_LOCKED_ESTEID_INSTANCE
+        boost::mutex::scoped_lock l(m_mutex);
+        EstEidCard card(*m_manager, reader);
         card.readPersonalData(m_cache[reader].mPData, PDATA_MIN, PDATA_MAX);
     }
     data = m_cache[reader].mPData;
@@ -210,7 +194,8 @@ void CardService::readPersonalData(vector <std::string>& data,
     \
     ByteVec CardService::get##id##Cert(readerID reader) { \
         if(m_cache[reader].m##id##Cert.size() <= 0) { \
-            CREATE_LOCKED_ESTEID_INSTANCE \
+            boost::mutex::scoped_lock l(m_mutex); \
+            EstEidCard card(*m_manager, reader); \
             m_cache[reader].m##id##Cert = card.get##id##Cert(); \
         } \
         return m_cache[reader].m##id##Cert; \
@@ -236,7 +221,8 @@ std::string CardService::signSHA1(const std::string& hash,
         throw std::runtime_error("Invalid SHA1 hash");
     }
 
-    CREATE_LOCKED_ESTEID_INSTANCE
+    boost::mutex::scoped_lock l(m_mutex);
+    EstEidCard card(*m_manager, reader);
 
     // FIXME: Ugly, ugly hack! This needs to be implemented correctly
     //        in order to protect PIN codes in program memory.
@@ -252,8 +238,8 @@ bool CardService::getRetryCounts(byte& puk,
 bool CardService::getRetryCounts(byte& puk,
     byte &pinAuth,byte &pinSign, readerID reader)
 {
-
-    CREATE_LOCKED_ESTEID_INSTANCE
+    boost::mutex::scoped_lock l(m_mutex);
+    EstEidCard card(*m_manager, reader);
     return card.getRetryCounts(puk, pinAuth, pinSign);
 }
 
@@ -264,6 +250,7 @@ bool CardService::hasSecurePinEntry()
 
 bool CardService::hasSecurePinEntry(readerID reader)
 {
-    CREATE_LOCKED_ESTEID_INSTANCE
+    boost::mutex::scoped_lock l(m_mutex);
+    EstEidCard card(*m_manager, reader);
     return card.hasSecurePinEntry();
 }

@@ -35,6 +35,7 @@
 #define ESTEIDSERVICE_H_
 
 #include <smartcardpp/smartcardpp.h>
+#include <boost/scoped_ptr.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 
@@ -134,9 +135,6 @@ public:
 protected:
     CardService();
 
-    /* Get access to smartcard manager instance */
-    virtual ManagerInterface & getManager();
-
     /* Singleton instance variable */
     static boost::weak_ptr<CardService> sCardService;
 
@@ -165,7 +163,7 @@ private:
     void Poll();
     bool readerHasCard(EstEidCard &card,readerID i);
 
-    ManagerInterface *m_manager;
+    boost::scoped_ptr<ManagerInterface> m_manager;
 
     boost::mutex m_mutex;
     boost::thread m_thread;
