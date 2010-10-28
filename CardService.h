@@ -154,8 +154,9 @@ protected:
     virtual void PostMessage(msgType e, readerID i);
 
 private:
-    //! Copy constructor.
-    CardService(const CardService& source);
+    // Declarations only for copy constructor and assignment operator
+    CardService(const CardService&);
+    CardService& operator=(const CardService&);
 
     void findEstEID();
     void monitor();
