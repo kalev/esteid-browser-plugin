@@ -61,8 +61,9 @@ boost::shared_ptr<CardService> CardService::getInstance()
 
 void CardService::findEstEid(vector<ReaderID>& readers)
 {
-    readers.clear();
+    boost::mutex::scoped_lock l(m_mutex);
 
+    readers.clear();
     for (ReaderID i = 0; i < m_cache.size(); i++ ) {
         if (m_cache[i].cardPresent)
             readers.push_back(i);
@@ -136,14 +137,10 @@ void CardService::postMessage(MsgType m, ReaderID r)
 
 void CardService::poll()
 {
-    size_t nReaders;
-
-    {
-        boost::mutex::scoped_lock l(m_mutex);
-        nReaders = cardManager().getReaderCount();
-    }
+    boost::mutex::scoped_lock l(m_mutex);
 
     /* See if the list of readers has been changed */
+    size_t nReaders = cardManager().getReaderCount();
     if (m_cache.size() != nReaders) {
         /* We have no way of knowing which reader was
            removed, so it's safe to send card removed event to
@@ -175,8 +172,6 @@ void CardService::poll()
 
 bool CardService::readerHasCard(EstEidCard& card, ReaderID i)
 {
-    boost::mutex::scoped_lock l(m_mutex);
-
     /* Ask manager if a token is inserted into that slot */
     std::string state = cardManager().getReaderState(i);
     if (state.find("PRESENT") == std::string::npos)
@@ -198,9 +193,10 @@ void CardService::readPersonalData(vector<std::string>& data)
 void CardService::readPersonalData(vector<std::string>& data,
                                    ReaderID reader)
 {
+    boost::mutex::scoped_lock l(m_mutex);
+
     /* Populate cache if needed */
     if (m_cache[reader].m_pData.size() <= 0) {
-        boost::mutex::scoped_lock l(m_mutex);
         EstEidCard card(cardManager(), reader);
         card.readPersonalData(m_cache[reader].m_pData, PDATA_MIN, PDATA_MAX);
     }
@@ -214,9 +210,10 @@ ByteVec CardService::getAuthCert()
 
 ByteVec CardService::getAuthCert(ReaderID reader)
 {
+    boost::mutex::scoped_lock l(m_mutex);
+
     /* Populate cache if needed */
     if (m_cache[reader].m_authCert.size() <= 0) {
-        boost::mutex::scoped_lock l(m_mutex);
         EstEidCard card(cardManager(), reader);
         m_cache[reader].m_authCert = card.getAuthCert();
     }
@@ -230,9 +227,10 @@ ByteVec CardService::getSignCert()
 
 ByteVec CardService::getSignCert(ReaderID reader)
 {
+    boost::mutex::scoped_lock l(m_mutex);
+
     /* Populate cache if needed */
     if (m_cache[reader].m_signCert.size() <= 0) {
-        boost::mutex::scoped_lock l(m_mutex);
         EstEidCard card(cardManager(), reader);
         m_cache[reader].m_signCert = card.getSignCert();
     }
