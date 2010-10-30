@@ -135,6 +135,9 @@ public:
 protected:
     CardService();
 
+    /* Get access to smartcard manager instance */
+    ManagerInterface& cardManager();
+
     /* Singleton instance variable */
     static boost::weak_ptr<CardService> sCardService;
 

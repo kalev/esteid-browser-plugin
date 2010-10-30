@@ -34,8 +34,7 @@ boost::weak_ptr<CardService> CardService::sCardService;
  * We might reconsider when times change :P
  */
 CardService::CardService()
-    : m_manager(new SmartCardManager()),
-      m_thread(boost::bind(&CardService::monitor, this))
+    : m_thread(boost::bind(&CardService::monitor, this))
 {
 }
 
@@ -93,6 +92,21 @@ void CardService::monitor()
     }
 }
 
+/*
+ * SmartCardManager constructor throws if the pcsc daemon isn't running.
+ * CardService class however needs to start polling even if the pcsc daemon
+ * isn't currently running. As a workaround, all calls to SmartCardManager are
+ * proxied through cardManager() which attempts to start SmartCardManager if
+ * needed.
+ */
+ManagerInterface& CardService::cardManager()
+{
+    if (!m_manager)
+        m_manager.reset(new SmartCardManager());
+
+    return *m_manager;
+}
+
 void CardService::addObserver(MessageObserver *obs)
 {
     boost::mutex::scoped_lock l(m_mutex); // TODO: Maybe use a different lock?
@@ -126,7 +140,7 @@ void CardService::poll()
 
     {
         boost::mutex::scoped_lock l(m_mutex);
-        nReaders = m_manager->getReaderCount();
+        nReaders = cardManager().getReaderCount();
     }
 
     /* See if the list of readers has been changed */
@@ -145,7 +159,7 @@ void CardService::poll()
     }
 
     /* Check for card status changes */
-    EstEidCard card(*m_manager);
+    EstEidCard card(cardManager());
     for (unsigned int i = 0; i < m_cache.size(); i++ ) {
         bool inReader = readerHasCard(card, i);
 
@@ -164,7 +178,7 @@ bool CardService::readerHasCard(EstEidCard& card, ReaderID i)
     boost::mutex::scoped_lock l(m_mutex);
 
     /* Ask manager if a token is inserted into that slot */
-    std::string state = m_manager->getReaderState(i);
+    std::string state = cardManager().getReaderState(i);
     if (state.find("PRESENT") == std::string::npos)
         return false;
 
@@ -187,7 +201,7 @@ void CardService::readPersonalData(vector<std::string>& data,
     /* Populate cache if needed */
     if (m_cache[reader].m_pData.size() <= 0) {
         boost::mutex::scoped_lock l(m_mutex);
-        EstEidCard card(*m_manager, reader);
+        EstEidCard card(cardManager(), reader);
         card.readPersonalData(m_cache[reader].m_pData, PDATA_MIN, PDATA_MAX);
     }
     data = m_cache[reader].m_pData;
@@ -201,7 +215,7 @@ void CardService::readPersonalData(vector<std::string>& data,
     ByteVec CardService::get##id##Cert(ReaderID reader) { \
         if (m_cache[reader].m_##id##Cert.size() <= 0) { \
             boost::mutex::scoped_lock l(m_mutex); \
-            EstEidCard card(*m_manager, reader); \
+            EstEidCard card(cardManager(), reader); \
             m_cache[reader].m_##id##Cert = card.get##id##Cert(); \
         } \
         return m_cache[reader].m_##id##Cert; \
@@ -228,7 +242,7 @@ std::string CardService::signSHA1(const std::string& hash,
     }
 
     boost::mutex::scoped_lock l(m_mutex);
-    EstEidCard card(*m_manager, reader);
+    EstEidCard card(cardManager(), reader);
 
     // FIXME: Ugly, ugly hack! This needs to be implemented correctly
     //        in order to protect PIN codes in program memory.
@@ -243,7 +257,7 @@ bool CardService::getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign)
 bool CardService::getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign, ReaderID reader)
 {
     boost::mutex::scoped_lock l(m_mutex);
-    EstEidCard card(*m_manager, reader);
+    EstEidCard card(cardManager(), reader);
     return card.getRetryCounts(puk, pinAuth, pinSign);
 }
 
@@ -255,6 +269,6 @@ bool CardService::hasSecurePinEntry()
 bool CardService::hasSecurePinEntry(ReaderID reader)
 {
     boost::mutex::scoped_lock l(m_mutex);
-    EstEidCard card(*m_manager, reader);
+    EstEidCard card(cardManager(), reader);
     return card.hasSecurePinEntry();
 }
