@@ -86,9 +86,9 @@ ReaderID CardService::findFirstEstEid()
 void CardService::monitor()
 {
     while (!boost::this_thread::interruption_requested()) {
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         try {
             poll();
-            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         } catch(const std::runtime_error&) { }
     }
 }
