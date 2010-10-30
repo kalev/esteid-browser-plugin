@@ -39,7 +39,7 @@
 // FIXME: Find a sane way to deal with error messages
 #define CANCEL_MSG _("User cancelled operation")
 
-class EsteidAPI : public FB::JSAPIAuto, CardService::messageObserver
+class EsteidAPI : public FB::JSAPIAuto, CardService::MessageObserver
 {
 public:
     EsteidAPI(FB::BrowserHostPtr host);
@@ -93,7 +93,7 @@ public:
     *        - CardRemoved
     *        - ReadersChanged
     */
-    virtual void onMessage(CardService::msgType, readerID);
+    virtual void onMessage(CardService::MsgType, ReaderID);
 
 #ifdef SUPPORT_OLD_APIS
     void deprecatedCall();

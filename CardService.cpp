@@ -60,21 +60,23 @@ boost::shared_ptr<CardService> CardService::getInstance()
     return p;
 }
 
-void CardService::FindEstEID(vector <readerID>& readers)
+void CardService::findEstEid(vector<ReaderID>& readers)
 {
     readers.clear();
 
-    for (readerID i = 0; i < m_cache.size(); i++ )
-        if(m_cache[i].cardPresent) readers.push_back(i);
+    for (ReaderID i = 0; i < m_cache.size(); i++ ) {
+        if (m_cache[i].cardPresent)
+            readers.push_back(i);
+    }
 }
 
-readerID CardService::findFirstEstEID()
+ReaderID CardService::findFirstEstEid()
 {
-    vector <readerID> readers;
-    FindEstEID(readers);
+    vector<ReaderID> readers;
+    findEstEid(readers);
 
     // FIXME: Define a more sane exception to throw from here
-    if(readers.size() <= 0)
+    if (readers.size() <= 0)
         throw std::runtime_error("No cards found");
     else
         return readers[0];
@@ -85,36 +87,40 @@ void CardService::monitor()
 {
     while (!boost::this_thread::interruption_requested()) {
         try {
-            Poll();
+            poll();
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         } catch(const std::runtime_error&) { }
     }
 }
 
-void CardService::AddObserver(messageObserver *obs)
+void CardService::addObserver(MessageObserver *obs)
 {
     boost::mutex::scoped_lock l(m_mutex); // TODO: Maybe use a different lock?
 
     m_observers.push_back(obs);
 }
 
-void CardService::RemoveObserver(messageObserver *obs)
+void CardService::removeObserver(MessageObserver *obs)
 {
     boost::mutex::scoped_lock l(m_mutex);
 
-    vector <messageObserver *>::iterator i;
-    for (i = m_observers.begin(); i != m_observers.end(); i++)
-        if(*i == obs) { m_observers.erase(i); break; }
+    vector<MessageObserver *>::iterator i;
+    for (i = m_observers.begin(); i != m_observers.end(); i++) {
+        if (*i == obs) {
+            m_observers.erase(i);
+            break;
+        }
+    }
 }
 
-void CardService::PostMessage(msgType m, readerID r)
+void CardService::postMessage(MsgType m, ReaderID r)
 {
-    vector <messageObserver *>::iterator i;
-    for (i = m_observers.begin(); i != m_observers.end(); i++ )
+    vector<MessageObserver *>::iterator i;
+    for (i = m_observers.begin(); i != m_observers.end(); i++)
         (*i)->onMessage(m, r);
 }
 
-void CardService::Poll()
+void CardService::poll()
 {
     size_t nReaders;
 
@@ -124,18 +130,18 @@ void CardService::Poll()
     }
 
     /* See if the list of readers has been changed */
-    if(m_cache.size() != nReaders) {
+    if (m_cache.size() != nReaders) {
         /* We have no way of knowing which reader was
            removed, so it's safe to send card removed event to
            all readers and purge all cached data */
         for (unsigned int i = 0; i < m_cache.size(); i++ ) {
-            if(m_cache[i].cardPresent) {
+            if (m_cache[i].cardPresent) {
                 m_cache[i].purge();
-                PostMessage(CARD_REMOVED, i);
+                postMessage(CARD_REMOVED, i);
             }
         }
         m_cache.resize(nReaders);
-        PostMessage(READERS_CHANGED, nReaders);
+        postMessage(READERS_CHANGED, nReaders);
     }
 
     /* Check for card status changes */
@@ -145,22 +151,22 @@ void CardService::Poll()
 
         if (inReader && !m_cache[i].cardPresent) {
             m_cache[i].cardPresent = true;
-            PostMessage(CARD_INSERTED, i);
-        }
-        else if (!inReader && m_cache[i].cardPresent) {
+            postMessage(CARD_INSERTED, i);
+        } else if (!inReader && m_cache[i].cardPresent) {
             m_cache[i].purge();
-            PostMessage(CARD_REMOVED, i);
+            postMessage(CARD_REMOVED, i);
         }
     }
 }
 
-bool CardService::readerHasCard(EstEidCard& card, readerID i)
+bool CardService::readerHasCard(EstEidCard& card, ReaderID i)
 {
     boost::mutex::scoped_lock l(m_mutex);
 
     /* Ask manager if a token is inserted into that slot */
     std::string state = m_manager->getReaderState(i);
-    if (state.find("PRESENT") == std::string::npos ) return false;
+    if (state.find("PRESENT") == std::string::npos)
+        return false;
 
     /* TODO: Investigate if this caching is actually needed */
     if (m_cache[i].cardPresent)
@@ -170,35 +176,35 @@ bool CardService::readerHasCard(EstEidCard& card, readerID i)
     return card.isInReader(i);
 }
 
-void CardService::readPersonalData(vector <std::string>& data)
+void CardService::readPersonalData(vector<std::string>& data)
 {
-    readPersonalData(data, findFirstEstEID());
+    readPersonalData(data, findFirstEstEid());
 }
 
-void CardService::readPersonalData(vector <std::string>& data,
-                                   readerID reader)
+void CardService::readPersonalData(vector<std::string>& data,
+                                   ReaderID reader)
 {
     /* Populate cache if needed */
-    if(m_cache[reader].mPData.size() <= 0) {
+    if (m_cache[reader].m_pData.size() <= 0) {
         boost::mutex::scoped_lock l(m_mutex);
         EstEidCard card(*m_manager, reader);
-        card.readPersonalData(m_cache[reader].mPData, PDATA_MIN, PDATA_MAX);
+        card.readPersonalData(m_cache[reader].m_pData, PDATA_MIN, PDATA_MAX);
     }
-    data = m_cache[reader].mPData;
+    data = m_cache[reader].m_pData;
 }
 
 #define ESTEIDSERVICE_GETCERTIMPL(id) \
     ByteVec CardService::get##id##Cert() { \
-        return get##id##Cert(findFirstEstEID()); \
+        return get##id##Cert(findFirstEstEid()); \
     }\
     \
-    ByteVec CardService::get##id##Cert(readerID reader) { \
-        if(m_cache[reader].m##id##Cert.size() <= 0) { \
+    ByteVec CardService::get##id##Cert(ReaderID reader) { \
+        if (m_cache[reader].m_##id##Cert.size() <= 0) { \
             boost::mutex::scoped_lock l(m_mutex); \
             EstEidCard card(*m_manager, reader); \
-            m_cache[reader].m##id##Cert = card.get##id##Cert(); \
+            m_cache[reader].m_##id##Cert = card.get##id##Cert(); \
         } \
-        return m_cache[reader].m##id##Cert; \
+        return m_cache[reader].m_##id##Cert; \
     }
 
 ESTEIDSERVICE_GETCERTIMPL(Auth)
@@ -208,13 +214,13 @@ std::string CardService::signSHA1(const std::string& hash,
                                   EstEidCard::KeyType keyId,
                                   const std::string& pin)
 {
-    return signSHA1(hash, keyId, pin, findFirstEstEID());
+    return signSHA1(hash, keyId, pin, findFirstEstEid());
 }
 
 std::string CardService::signSHA1(const std::string& hash,
                                   EstEidCard::KeyType keyId,
                                   const std::string& pin,
-                                  readerID reader)
+                                  ReaderID reader)
 {
     ByteVec bhash = fromHex(hash);
     if (bhash.size() != 20) {
@@ -229,14 +235,12 @@ std::string CardService::signSHA1(const std::string& hash,
     return toHex(card.calcSignSHA1(bhash, keyId, PinString(pin.c_str())));
 }
 
-bool CardService::getRetryCounts(byte& puk,
-    byte &pinAuth,byte &pinSign)
+bool CardService::getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign)
 {
-    return getRetryCounts(puk, pinAuth, pinSign, findFirstEstEID());
+    return getRetryCounts(puk, pinAuth, pinSign, findFirstEstEid());
 }
 
-bool CardService::getRetryCounts(byte& puk,
-    byte &pinAuth,byte &pinSign, readerID reader)
+bool CardService::getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign, ReaderID reader)
 {
     boost::mutex::scoped_lock l(m_mutex);
     EstEidCard card(*m_manager, reader);
@@ -245,10 +249,10 @@ bool CardService::getRetryCounts(byte& puk,
 
 bool CardService::hasSecurePinEntry()
 {
-    return hasSecurePinEntry(findFirstEstEID());
+    return hasSecurePinEntry(findFirstEstEid());
 }
 
-bool CardService::hasSecurePinEntry(readerID reader)
+bool CardService::hasSecurePinEntry(ReaderID reader)
 {
     boost::mutex::scoped_lock l(m_mutex);
     EstEidCard card(*m_manager, reader);

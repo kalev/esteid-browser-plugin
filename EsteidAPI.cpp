@@ -138,14 +138,14 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
         throw FB::script_error("Unable to load plugin user interface");
 #endif
 
-    m_service->AddObserver(this);
+    m_service->addObserver(this);
 }
 
 EsteidAPI::~EsteidAPI()
 {
     ESTEID_DEBUG("EsteidAPI::~EsteidAPI()");
 
-    m_service->RemoveObserver(this);
+    m_service->removeObserver(this);
 }
 
 void EsteidAPI::setWindow(FB::PluginWindow* win)
@@ -272,7 +272,7 @@ void EsteidAPI::ShowSettings()
     CloseNotificationBar();
 }
 
-void EsteidAPI::onMessage(CardService::msgType e, readerID i)
+void EsteidAPI::onMessage(CardService::MsgType e, ReaderID i)
 {
     //const char *evtname;
     std::string evtname;

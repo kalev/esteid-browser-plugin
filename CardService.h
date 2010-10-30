@@ -27,12 +27,12 @@
  * Typical usage:
  *
  * boost::shared_ptr<CardService> service = CardService::getInstance();
- * service->AddObserver(this);
+ * service->addObserver(this);
  *
  */
 
-#ifndef ESTEIDSERVICE_H_
-#define ESTEIDSERVICE_H_
+#ifndef CARDSERVICE_H_
+#define CARDSERVICE_H_
 
 #include <smartcardpp/smartcardpp.h>
 #include <boost/scoped_ptr.hpp>
@@ -42,7 +42,7 @@
 #define PDATA_MIN EstEidCard::SURNAME
 #define PDATA_MAX EstEidCard::COMMENT4
 
-typedef unsigned int readerID;
+typedef unsigned int ReaderID;
 
 
 class CardService
@@ -58,19 +58,19 @@ public:
     /**
      * Find readers with valid card
      */
-    void FindEstEID(vector <readerID> & readers);
+    void findEstEid(vector<ReaderID>& readers);
     /**
      * Find the reader with first valid card
      */
-    readerID findFirstEstEID();
+    ReaderID findFirstEstEid();
     /**
      * Read personal data file off the first card
      */
-    void readPersonalData(vector <std::string> & data);
+    void readPersonalData(vector<std::string>& data);
     /**
      * Read personal data file off the card in specified reader
      */
-    void readPersonalData(vector <std::string> & data, readerID);
+    void readPersonalData(vector<std::string>& data, ReaderID);
     /**
      * Read authentication certificate off the first card
      */
@@ -78,7 +78,7 @@ public:
     /**
      * Read authentication certificate off the card in specified reader
      */
-    ByteVec getAuthCert(readerID);
+    ByteVec getAuthCert(ReaderID);
     /**
      * Read signature certificate off the first card
      */
@@ -86,15 +86,15 @@ public:
     /**
      * Read signature certificate off the card in specified reader
      */
-    ByteVec getSignCert(readerID);
+    ByteVec getSignCert(ReaderID);
     /**
      * Retrieve retry counts from the first card
      */
-    bool getRetryCounts(byte &puk, byte &pinAuth,byte &pinSign);
+    bool getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign);
     /**
      * Retrieve retry counts from the card in specified reader
      */
-    bool getRetryCounts(byte &puk, byte &pinAuth,byte &pinSign, readerID);
+    bool getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign, ReaderID);
     /**
      * Check if first card is in a reader with a PinPAD
      */
@@ -102,7 +102,7 @@ public:
     /**
      * Check if the specified card is in a reader with a PinPAD
      */
-    bool hasSecurePinEntry(readerID);
+    bool hasSecurePinEntry(ReaderID);
     /**
      * Sign a SHA1 hash with the first card
      */
@@ -115,22 +115,22 @@ public:
     std::string signSHA1(const std::string& hash,
                          EstEidCard::KeyType keyId,
                          const std::string& pin,
-                         readerID);
+                         ReaderID);
 
     /* Message observer interface */
-    enum msgType {
+    enum MsgType {
         CARD_INSERTED,
         CARD_REMOVED,
         READERS_CHANGED,
         CARD_ERROR
     };
-    class messageObserver {
+    class MessageObserver {
         friend class CardService;
 
-        virtual void onMessage(msgType e, readerID i) = 0;
+        virtual void onMessage(MsgType e, ReaderID i) = 0;
     };
-    virtual void AddObserver(messageObserver *obs);
-    virtual void RemoveObserver(messageObserver *obs);
+    virtual void addObserver(MessageObserver *obs);
+    virtual void removeObserver(MessageObserver *obs);
 
 protected:
     CardService();
@@ -138,30 +138,30 @@ protected:
     /* Singleton instance variable */
     static boost::weak_ptr<CardService> sCardService;
 
-    class idCardCacheEntry {
+    class IdCardCacheEntry {
     public:
         bool cardPresent;
-        vector <std::string> mPData;
-        ByteVec mAuthCert;
-        ByteVec mSignCert;
-        void purge() { cardPresent = false; mPData.clear(); mAuthCert.clear(); mSignCert.clear(); }
-        idCardCacheEntry() : cardPresent(false) {}
+        vector<std::string> m_pData;
+        ByteVec m_AuthCert;
+        ByteVec m_SignCert;
+        void purge() { cardPresent = false; m_pData.clear(); m_AuthCert.clear(); m_SignCert.clear(); }
+        IdCardCacheEntry() : cardPresent(false) {}
     };
-    typedef vector <idCardCacheEntry> idCardCache;
+    typedef vector<IdCardCacheEntry> IdCardCache;
 
-    idCardCache m_cache;
-    vector <messageObserver *> m_observers;
-    virtual void PostMessage(msgType e, readerID i);
+    IdCardCache m_cache;
+    vector<MessageObserver *> m_observers;
+    virtual void postMessage(MsgType e, ReaderID i);
 
 private:
     // Declarations only for copy constructor and assignment operator
     CardService(const CardService&);
     CardService& operator=(const CardService&);
 
-    void findEstEID();
+    void findEstEid();
     void monitor();
-    void Poll();
-    bool readerHasCard(EstEidCard &card,readerID i);
+    void poll();
+    bool readerHasCard(EstEidCard& card, ReaderID i);
 
     boost::scoped_ptr<ManagerInterface> m_manager;
 
@@ -169,4 +169,4 @@ private:
     boost::thread m_thread;
 };
 
-#endif /* ESTEIDSERVICE_H_ */
+#endif /* CARDSERVICE_H_ */
