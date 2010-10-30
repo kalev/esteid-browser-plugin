@@ -207,22 +207,37 @@ void CardService::readPersonalData(vector<std::string>& data,
     data = m_cache[reader].m_pData;
 }
 
-#define ESTEIDSERVICE_GETCERTIMPL(id) \
-    ByteVec CardService::get##id##Cert() { \
-        return get##id##Cert(findFirstEstEid()); \
-    }\
-    \
-    ByteVec CardService::get##id##Cert(ReaderID reader) { \
-        if (m_cache[reader].m_##id##Cert.size() <= 0) { \
-            boost::mutex::scoped_lock l(m_mutex); \
-            EstEidCard card(cardManager(), reader); \
-            m_cache[reader].m_##id##Cert = card.get##id##Cert(); \
-        } \
-        return m_cache[reader].m_##id##Cert; \
-    }
+ByteVec CardService::getAuthCert()
+{
+    return getAuthCert(findFirstEstEid());
+}
 
-ESTEIDSERVICE_GETCERTIMPL(Auth)
-ESTEIDSERVICE_GETCERTIMPL(Sign)
+ByteVec CardService::getAuthCert(ReaderID reader)
+{
+    /* Populate cache if needed */
+    if (m_cache[reader].m_authCert.size() <= 0) {
+        boost::mutex::scoped_lock l(m_mutex);
+        EstEidCard card(cardManager(), reader);
+        m_cache[reader].m_authCert = card.getAuthCert();
+    }
+    return m_cache[reader].m_authCert;
+}
+
+ByteVec CardService::getSignCert()
+{
+    return getSignCert(findFirstEstEid());
+}
+
+ByteVec CardService::getSignCert(ReaderID reader)
+{
+    /* Populate cache if needed */
+    if (m_cache[reader].m_signCert.size() <= 0) {
+        boost::mutex::scoped_lock l(m_mutex);
+        EstEidCard card(cardManager(), reader);
+        m_cache[reader].m_signCert = card.getSignCert();
+    }
+    return m_cache[reader].m_signCert;
+}
 
 std::string CardService::signSHA1(const std::string& hash,
                                   EstEidCard::KeyType keyId,

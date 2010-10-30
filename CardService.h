@@ -145,9 +145,9 @@ protected:
     public:
         bool cardPresent;
         vector<std::string> m_pData;
-        ByteVec m_AuthCert;
-        ByteVec m_SignCert;
-        void purge() { cardPresent = false; m_pData.clear(); m_AuthCert.clear(); m_SignCert.clear(); }
+        ByteVec m_authCert;
+        ByteVec m_signCert;
+        void purge() { cardPresent = false; m_pData.clear(); m_authCert.clear(); m_signCert.clear(); }
         IdCardCacheEntry() : cardPresent(false) {}
     };
     typedef vector<IdCardCacheEntry> IdCardCache;
