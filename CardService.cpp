@@ -21,7 +21,8 @@
 #include "CardService.h"
 #include "converters.h"
 #include <boost/bind.hpp>
-#include <boost/make_shared.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 /* Singleton instance variable */
 boost::weak_ptr<CardService> CardService::sCardService;
