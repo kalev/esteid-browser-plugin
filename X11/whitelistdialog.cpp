@@ -40,6 +40,9 @@ WhitelistDialog::WhitelistDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk
     m_refGlade->get_widget("okButton", m_okButton);
     m_refGlade->get_widget("cancelButton", m_cancelButton);
 
+    signal_show().connect( sigc::mem_fun (*this,
+                &WhitelistDialog::make_transient) );
+
     // Connect buttons to their signal handlers
     if (m_entry) {
         m_entry->signal_changed().connect( sigc::mem_fun(*this,
@@ -293,4 +296,17 @@ std::vector<std::string> WhitelistDialog::getWhitelist()
     }
 
     return ret;
+}
+
+void WhitelistDialog::setParent(GdkWindow *parent)
+{
+    m_parent = parent;
+}
+
+void WhitelistDialog::make_transient()
+{
+    if (m_parent) {
+        GdkWindow *window = get_window()->gobj();
+        gdk_window_set_transient_for(window, m_parent);
+    }
 }

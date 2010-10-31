@@ -43,6 +43,8 @@ public:
     // Call this to retrieve modified whitelist
     std::vector<std::string> getWhitelist();
 
+    void setParent(GdkWindow *parent);
+
 protected:
     class WhitelistModelColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -66,6 +68,7 @@ protected:
     void on_treeview_row_activated(const Gtk::TreeModel::Path & path, Gtk::TreeViewColumn *column);
     void on_treeview_cursor_changed();
     void on_cellrenderer_edited(const Glib::ustring& path_string, const Glib::ustring& new_text);
+    void make_transient();
 
     void enableDisableButtons();
     Gtk::TreeView *getTreeView();
@@ -73,6 +76,7 @@ protected:
     void startEditing(Gtk::TreePath& path);
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
+    GdkWindow *m_parent;
 
     Gtk::Entry *m_entry;
     Gtk::Button *m_addButton;

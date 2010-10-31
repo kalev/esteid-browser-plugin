@@ -191,6 +191,8 @@ void GtkUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
     m_whitelistDialog->addDefaultSites(conf.default_whitelist);
     m_whitelistDialog->addSites(conf.whitelist);
 
+    m_whitelistDialog->setParent(browserWindow());
+
     m_whitelistDialog->show_all();
     m_dialog_up = true;
 }
