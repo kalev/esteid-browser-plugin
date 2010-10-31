@@ -48,6 +48,9 @@ PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::
     m_refGlade->get_widget("url_value", m_url);
     m_refGlade->get_widget("hash_value", m_hash);
 
+    signal_show().connect( sigc::mem_fun (*this,
+                &PinInputDialog::make_transient) );
+
     m_entry->signal_changed().connect( sigc::mem_fun (*this,
                 &PinInputDialog::on_pin_changed) );
 }
@@ -100,8 +103,7 @@ void PinInputDialog::setTries(int tries)
 
 void PinInputDialog::setParent(GdkWindow* parent)
 {
-    GdkWindow* window = get_window()->gobj();
-    gdk_window_set_transient_for(window, parent);
+    m_parent = parent;
 }
 
 std::string PinInputDialog::getPin()
@@ -118,4 +120,12 @@ void PinInputDialog::on_pin_changed()
 {
     // Enable/Disable the OK button appropriately
     m_okButton->set_sensitive(m_entry->get_text_length() >= m_minPinLength);
+}
+
+void PinInputDialog::make_transient()
+{
+    if (m_parent) {
+        GdkWindow* window = get_window()->gobj();
+        gdk_window_set_transient_for(window, m_parent);
+    }
 }

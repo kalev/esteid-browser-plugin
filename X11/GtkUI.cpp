@@ -113,12 +113,10 @@ void GtkUI::PromptForPinAsync(const std::string& subject,
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
 
+    m_pinInputDialog->setParent(browserWindow());
+
     m_pinInputDialog->show();
     m_dialog_up = true;
-
-    GdkWindow* window = browserWindow();
-    if (window)
-        m_pinInputDialog->setParent(window);
 }
 
 #ifdef SUPPORT_OLD_APIS
@@ -135,6 +133,8 @@ std::string GtkUI::PromptForPin(const std::string& subject,
     m_pinInputDialog->setPinPadTimeout(pinPadTimeout);
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
+
+    m_pinInputDialog->setParent(browserWindow());
 
     // temporarily block asynchronous API signals
     m_pinInputConnection.block();

@@ -44,8 +44,10 @@ public:
 protected:
     // Signal handlers:
     void on_pin_changed();
+    void make_transient();
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
+    GdkWindow* m_parent;
 
     // Child widgets:
     Gtk::Button *m_okButton;
