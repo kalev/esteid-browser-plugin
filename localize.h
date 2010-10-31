@@ -23,7 +23,7 @@
 
 #include "esteid-config.h"
 
-#ifdef HAVE_LIBINTL
+#ifdef HAVE_LIBINTL_H
 #include <libintl.h>
 #include <locale.h>
 #define _(STRING)    gettext(STRING)
