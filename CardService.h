@@ -168,7 +168,8 @@ private:
 
     boost::scoped_ptr<ManagerInterface> m_manager;
 
-    boost::mutex m_mutex;
+    boost::mutex m_cardMutex;
+    boost::mutex m_messageMutex;
     boost::thread m_thread;
 };
 

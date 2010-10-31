@@ -62,7 +62,7 @@ boost::shared_ptr<CardService> CardService::getInstance()
 
 void CardService::findEstEid(vector<ReaderID>& readers)
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
 
     readers.clear();
     for (ReaderID i = 0; i < m_cache.size(); i++ ) {
@@ -112,14 +112,14 @@ ManagerInterface& CardService::cardManager()
 
 void CardService::addObserver(MessageObserver *obs)
 {
-    boost::mutex::scoped_lock l(m_mutex); // TODO: Maybe use a different lock?
+    boost::mutex::scoped_lock l(m_messageMutex);
 
     m_observers.push_back(obs);
 }
 
 void CardService::removeObserver(MessageObserver *obs)
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_messageMutex);
 
     vector<MessageObserver *>::iterator i;
     for (i = m_observers.begin(); i != m_observers.end(); i++) {
@@ -132,6 +132,8 @@ void CardService::removeObserver(MessageObserver *obs)
 
 void CardService::postMessage(MsgType m, ReaderID r)
 {
+    boost::mutex::scoped_lock l(m_messageMutex);
+
     vector<MessageObserver *>::iterator i;
     for (i = m_observers.begin(); i != m_observers.end(); i++)
         (*i)->onMessage(m, r);
@@ -139,7 +141,7 @@ void CardService::postMessage(MsgType m, ReaderID r)
 
 void CardService::poll()
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
 
     /* See if the list of readers has been changed */
     size_t nReaders = cardManager().getReaderCount();
@@ -195,7 +197,7 @@ void CardService::readPersonalData(vector<std::string>& data)
 void CardService::readPersonalData(vector<std::string>& data,
                                    ReaderID reader)
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
 
     /* Populate cache if needed */
     if (m_cache[reader].m_pData.size() <= 0) {
@@ -212,7 +214,7 @@ ByteVec CardService::getAuthCert()
 
 ByteVec CardService::getAuthCert(ReaderID reader)
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
 
     /* Populate cache if needed */
     if (m_cache[reader].m_authCert.size() <= 0) {
@@ -229,7 +231,7 @@ ByteVec CardService::getSignCert()
 
 ByteVec CardService::getSignCert(ReaderID reader)
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
 
     /* Populate cache if needed */
     if (m_cache[reader].m_signCert.size() <= 0) {
@@ -256,7 +258,7 @@ std::string CardService::signSHA1(const std::string& hash,
         throw std::runtime_error("Invalid SHA1 hash");
     }
 
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
     EstEidCard card(cardManager(), reader);
 
     // FIXME: Ugly, ugly hack! This needs to be implemented correctly
@@ -271,7 +273,7 @@ bool CardService::getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign)
 
 bool CardService::getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign, ReaderID reader)
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
     EstEidCard card(cardManager(), reader);
     return card.getRetryCounts(puk, pinAuth, pinSign);
 }
@@ -283,7 +285,7 @@ bool CardService::hasSecurePinEntry()
 
 bool CardService::hasSecurePinEntry(ReaderID reader)
 {
-    boost::mutex::scoped_lock l(m_mutex);
+    boost::mutex::scoped_lock l(m_cardMutex);
     EstEidCard card(cardManager(), reader);
     return card.hasSecurePinEntry();
 }
