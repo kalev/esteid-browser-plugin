@@ -87,8 +87,10 @@ function esteidFindJavaCodeAttr(elem) {
   if(!code) {
     var params = elem.getElementsByTagName('param');
     for(var i in params) {
-      if(params[i].getAttribute("name") == "java_code")
-        code = params[i].getAttribute("value");
+      try {
+        if(params[i].getAttribute("name") == "java_code")
+          code = params[i].getAttribute("value");
+      } catch(err) { }
     }
   }
 

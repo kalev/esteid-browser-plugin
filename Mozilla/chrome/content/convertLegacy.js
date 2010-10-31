@@ -76,18 +76,20 @@ function esteidConvertObject(o, doc) {
   var op = null, fSig, fCert, fCancel, fError, hash, slot;
   var params = o.getElementsByTagName('param');
   for(var i in params) {
-    var name = params[i].getAttribute("name");
-    var value = params[i].getAttribute("value");
-    switch(name) {
-      case "OPERATION"       : op      = value; break;
-      case "HASH"            : hash    = value; break;
-      case "TOKEN_ID"        : slot    = value; break;
-      case "FUNC_SET_CERT"   : fCert   = value; break;
-      case "FUNC_SET_SIGN"   : fSig    = value; break;
-      case "FUNC_DRIVER_ERR" : fError  = value; break;
-      case "FUNC_CANCEL"     : fCancel = value; break;
-      default: break;
-    }
+    try {
+      var name = params[i].getAttribute("name");
+      var value = params[i].getAttribute("value");
+      switch(name) {
+        case "OPERATION"       : op      = value; break;
+        case "HASH"            : hash    = value; break;
+        case "TOKEN_ID"        : slot    = value; break;
+        case "FUNC_SET_CERT"   : fCert   = value; break;
+        case "FUNC_SET_SIGN"   : fSig    = value; break;
+        case "FUNC_DRIVER_ERR" : fError  = value; break;
+        case "FUNC_CANCEL"     : fCancel = value; break;
+        default: break;
+      }
+    } catch(err) { }
   }
 
   o = p.removeChild(o);
@@ -160,8 +162,10 @@ function esteidFindJavaCodeAttr(elem) {
   if(!code) {
     var params = elem.getElementsByTagName('param');
     for(var i in params) {
-      if(params[i].getAttribute("name") == "java_code")
-        code = params[i].getAttribute("value");
+      try {
+        if(params[i].getAttribute("name") == "java_code")
+          code = params[i].getAttribute("value");
+      } catch(err) { }
     }
   }
 
