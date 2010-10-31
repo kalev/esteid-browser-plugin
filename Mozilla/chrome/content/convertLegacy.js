@@ -112,6 +112,7 @@ function esteidConvertObject(o, doc) {
   var start = (new Date()).getTime();
   while(!loadedOK) {
     try {
+      var e = doc.getElementById(id).wrappedJSObject;
       if(e.getVersion())
         loadedOK = true;
     } catch(err) { }
