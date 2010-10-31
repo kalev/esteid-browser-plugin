@@ -118,9 +118,10 @@ function cardRemoved(reader) {
 function readPersonalData() {
     var stat = document.getElementById("pdstatus");
     try {
+        var pdata = esteid["personalData"];
         for(var i in names) {
             var e = document.getElementById("s" + names[i]);
-            e.innerHTML = esteid[names[i]];
+            e.innerHTML = pdata[names[i]];
         }
         stat.innerHTML = "OK";
         stat.style.background = "";

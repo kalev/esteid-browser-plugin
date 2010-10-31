@@ -30,7 +30,6 @@
 #include "DOM/Element.h"
 #include "BrowserHost.h"
 #include "NpapiBrowserHost.h"
-#include "CertificateAPI.h"
 #include "PluginUI.h"
 #include "CardService.h"
 #include "CallbackAPI.h"
@@ -68,23 +67,8 @@ public:
     FB::JSAPIPtr get_authCert();
     FB::JSAPIPtr get_signCert();
 
-    /** Personal data file attributes (read-only properties) */
-    std::string get_lastName();
-    std::string get_firstName();
-    std::string get_middleName();
-    std::string get_sex();
-    std::string get_citizenship();
-    std::string get_birthDate();
-    std::string get_personalID();
-    std::string get_documentID();
-    std::string get_expiryDate();
-    std::string get_placeOfBirth();
-    std::string get_issuedDate();
-    std::string get_residencePermit();
-    std::string get_comment1();
-    std::string get_comment2();
-    std::string get_comment3();
-    std::string get_comment4();
+    /** Personal data file (read-only properties) */
+    FB::JSAPIPtr get_personalData();
 
     void onPinEntered(const std::string& hash);
 
@@ -122,7 +106,6 @@ private:
     FB::JSObjectPtr m_barJSO;
     FB::JSObjectPtr m_signCallback;
     boost::shared_ptr<CardService> m_service;
-    vector <std::string> m_pdata;
     std::string m_subject;
     std::string m_hash;
     std::string m_url;
@@ -161,7 +144,6 @@ private:
     boost::shared_ptr<PluginUI::UICallbacks> m_uiCallback;
 
     std::string pageURL();
-    void UpdatePersonalData();
     void prepareSign(const std::string& hash, const std::string& url);
     void promptForPinAsync(bool retrying = false);
     std::string signSHA1(const std::string& hash, const std::string& pin);

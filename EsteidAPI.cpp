@@ -41,8 +41,9 @@
 #endif
 
 #include "EsteidAPI.h"
+#include "CertificateAPI.h"
+#include "PersonalDataAPI.h"
 #include "JSUtil.h"
-#include "converter.h"
 #include "debug.h"
 #include "esteid-config.h"
 #include "urlparser.h"
@@ -89,22 +90,7 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
 
     REGISTER_RO_PROPERTY(authCert);
     REGISTER_RO_PROPERTY(signCert);
-    REGISTER_RO_PROPERTY(lastName);
-    REGISTER_RO_PROPERTY(firstName);
-    REGISTER_RO_PROPERTY(middleName);
-    REGISTER_RO_PROPERTY(sex);
-    REGISTER_RO_PROPERTY(citizenship);
-    REGISTER_RO_PROPERTY(birthDate);
-    REGISTER_RO_PROPERTY(personalID);
-    REGISTER_RO_PROPERTY(documentID);
-    REGISTER_RO_PROPERTY(expiryDate);
-    REGISTER_RO_PROPERTY(placeOfBirth);
-    REGISTER_RO_PROPERTY(issuedDate);
-    REGISTER_RO_PROPERTY(residencePermit);
-    REGISTER_RO_PROPERTY(comment1);
-    REGISTER_RO_PROPERTY(comment2);
-    REGISTER_RO_PROPERTY(comment3);
-    REGISTER_RO_PROPERTY(comment4);
+    REGISTER_RO_PROPERTY(personalData);
 
 #ifdef SUPPORT_OLD_APIS
     REGISTER_METHOD(getCertificates);
@@ -292,11 +278,6 @@ void EsteidAPI::onMessage(CardService::MsgType e, ReaderID i)
     FireEvent("on" + evtname, FB::variant_list_of(i));
 }
 
-void EsteidAPI::UpdatePersonalData()
-{
-    RTERROR_TO_SCRIPT(m_service->readPersonalData(m_pdata));
-}
-
 // TODO: Optimize memory usage. Don't create new object if cert hasn't changed.
 FB::JSAPIPtr EsteidAPI::get_authCert()
 {
@@ -312,6 +293,17 @@ FB::JSAPIPtr EsteidAPI::get_signCert()
 
     RTERROR_TO_SCRIPT(
         return FB::JSAPIPtr(new CertificateAPI(m_host, m_service->getSignCert())));
+}
+
+FB::JSAPIPtr EsteidAPI::get_personalData()
+{
+    whitelistRequired();
+
+    RTERROR_TO_SCRIPT(
+        std::vector<std::string> pData;
+        m_service->readPersonalData(pData);
+        return FB::JSAPIPtr(new PersonalDataAPI(m_host, pData))
+    );
 }
 
 std::string EsteidAPI::getVersion()
@@ -673,31 +665,3 @@ std::string EsteidAPI::subjectToHumanReadable(const std::string& subject)
 
     return ret;
 }
-
-
-#define ESTEID_PD_GETTER_IMP(index, attr) \
-    std::string EsteidAPI::get_##attr() \
-    { \
-        whitelistRequired(); \
-        UpdatePersonalData(); \
-        if(m_pdata.size() <= index) \
-            throw FB::script_error("PD index out of range"); \
-        return Converter::CP1252_to_UTF8(m_pdata[index]); \
-    }
-
-ESTEID_PD_GETTER_IMP(EstEidCard::SURNAME,         lastName)
-ESTEID_PD_GETTER_IMP(EstEidCard::FIRSTNAME,       firstName);
-ESTEID_PD_GETTER_IMP(EstEidCard::MIDDLENAME,      middleName);
-ESTEID_PD_GETTER_IMP(EstEidCard::SEX,             sex);
-ESTEID_PD_GETTER_IMP(EstEidCard::CITIZEN,         citizenship);
-ESTEID_PD_GETTER_IMP(EstEidCard::BIRTHDATE,       birthDate);
-ESTEID_PD_GETTER_IMP(EstEidCard::ID,              personalID);
-ESTEID_PD_GETTER_IMP(EstEidCard::DOCUMENTID,      documentID);
-ESTEID_PD_GETTER_IMP(EstEidCard::EXPIRY,          expiryDate);
-ESTEID_PD_GETTER_IMP(EstEidCard::BIRTHPLACE,      placeOfBirth);
-ESTEID_PD_GETTER_IMP(EstEidCard::ISSUEDATE,       issuedDate);
-ESTEID_PD_GETTER_IMP(EstEidCard::RESIDENCEPERMIT, residencePermit);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT1,        comment1);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT2,        comment2);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT3,        comment3);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT4,        comment4);
