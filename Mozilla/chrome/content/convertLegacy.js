@@ -105,6 +105,22 @@ function esteidConvertObject(o, doc) {
 
   e = p.appendChild(e);
 
+  // Wait for plugin to load
+  var loadedOK = false;
+  var start = (new Date()).getTime();
+  while(!loadedOK) {
+    try {
+      if(e.getVersion())
+        loadedOK = true;
+    } catch(err) { }
+
+    var now = (new Date()).getTime();
+    if(now - start > 10000) {
+      esteid_error("Timed out while waiting for plugin to load");
+      break;
+    }
+  }
+
   /* Execute "parameter driven" mode function */
   if(op) {
     var cmd = "document.getElementById('" + id + "')";
