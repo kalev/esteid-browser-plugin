@@ -51,6 +51,8 @@ public:
     std::string get_comment4();
 
 private:
+    std::string getRecord(size_t index);
+
     FB::BrowserHostPtr m_host;
     std::vector<std::string> m_pData;
 };

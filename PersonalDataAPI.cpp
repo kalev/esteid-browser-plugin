@@ -52,27 +52,27 @@ PersonalDataAPI::~PersonalDataAPI()
 {
 }
 
-#define ESTEID_PD_GETTER_IMP(index, attr) \
-    std::string PersonalDataAPI::get_##attr() \
-    { \
-        if (m_pData.size() <= index) \
-            throw FB::script_error("PD index out of range"); \
-        return Converter::CP1252_to_UTF8(m_pData[index]); \
-    }
+std::string PersonalDataAPI::getRecord(size_t index)
+{
+    if (m_pData.size() <= index)
+        throw FB::script_error("PD index out of range");
 
-ESTEID_PD_GETTER_IMP(EstEidCard::SURNAME,         lastName)
-ESTEID_PD_GETTER_IMP(EstEidCard::FIRSTNAME,       firstName);
-ESTEID_PD_GETTER_IMP(EstEidCard::MIDDLENAME,      middleName);
-ESTEID_PD_GETTER_IMP(EstEidCard::SEX,             sex);
-ESTEID_PD_GETTER_IMP(EstEidCard::CITIZEN,         citizenship);
-ESTEID_PD_GETTER_IMP(EstEidCard::BIRTHDATE,       birthDate);
-ESTEID_PD_GETTER_IMP(EstEidCard::ID,              personalID);
-ESTEID_PD_GETTER_IMP(EstEidCard::DOCUMENTID,      documentID);
-ESTEID_PD_GETTER_IMP(EstEidCard::EXPIRY,          expiryDate);
-ESTEID_PD_GETTER_IMP(EstEidCard::BIRTHPLACE,      placeOfBirth);
-ESTEID_PD_GETTER_IMP(EstEidCard::ISSUEDATE,       issuedDate);
-ESTEID_PD_GETTER_IMP(EstEidCard::RESIDENCEPERMIT, residencePermit);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT1,        comment1);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT2,        comment2);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT3,        comment3);
-ESTEID_PD_GETTER_IMP(EstEidCard::COMMENT4,        comment4);
+    return Converter::CP1252_to_UTF8(m_pData[index]);
+}
+
+std::string PersonalDataAPI::get_lastName()        { return getRecord(EstEidCard::SURNAME); }
+std::string PersonalDataAPI::get_firstName()       { return getRecord(EstEidCard::FIRSTNAME); }
+std::string PersonalDataAPI::get_middleName()      { return getRecord(EstEidCard::MIDDLENAME); }
+std::string PersonalDataAPI::get_sex()             { return getRecord(EstEidCard::SEX); }
+std::string PersonalDataAPI::get_citizenship()     { return getRecord(EstEidCard::CITIZEN); }
+std::string PersonalDataAPI::get_birthDate()       { return getRecord(EstEidCard::BIRTHDATE); }
+std::string PersonalDataAPI::get_personalID()      { return getRecord(EstEidCard::ID); }
+std::string PersonalDataAPI::get_documentID()      { return getRecord(EstEidCard::DOCUMENTID); }
+std::string PersonalDataAPI::get_expiryDate()      { return getRecord(EstEidCard::EXPIRY); }
+std::string PersonalDataAPI::get_placeOfBirth()    { return getRecord(EstEidCard::BIRTHPLACE); }
+std::string PersonalDataAPI::get_issuedDate()      { return getRecord(EstEidCard::ISSUEDATE); }
+std::string PersonalDataAPI::get_residencePermit() { return getRecord(EstEidCard::RESIDENCEPERMIT); }
+std::string PersonalDataAPI::get_comment1()        { return getRecord(EstEidCard::COMMENT1); }
+std::string PersonalDataAPI::get_comment2()        { return getRecord(EstEidCard::COMMENT2); }
+std::string PersonalDataAPI::get_comment3()        { return getRecord(EstEidCard::COMMENT3); }
+std::string PersonalDataAPI::get_comment4()        { return getRecord(EstEidCard::COMMENT4); }
