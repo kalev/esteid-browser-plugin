@@ -80,8 +80,38 @@ public:
     virtual void onMessage(CardService::MsgType, ReaderID);
 
 #ifdef SUPPORT_OLD_APIS
+    struct sign_method_wrapper {
+        typedef FB::variant result_type;
+        sign_method_wrapper() {}
+        FB::variant operator()(EsteidAPI* instance, const FB::VariantList& in)
+        {
+            /* Sign method with two arguments (legacy Moz plugin) */
+            if(in.size() == 2) {
+                return instance->sign(
+                    FB::detail::methods::convertArgument<std::string>(in[0], 1),
+                    FB::detail::methods::convertLastArgument<std::string>(in, 2)
+                );
+            }
+            /* Sign method with 6 arguments (legacy XMLSignatureApplet) */
+            if(in.size() == 6) {
+                return instance->signXML(
+                    FB::detail::methods::convertArgument<std::string>(in[0], 1),
+                    FB::detail::methods::convertArgument<std::string>(in[1], 2),
+                    FB::detail::methods::convertArgument<std::string>(in[2], 3),
+                    FB::detail::methods::convertArgument<std::string>(in[3], 4),
+                    FB::detail::methods::convertArgument<std::string>(in[4], 5),
+                    FB::detail::methods::convertLastArgument<std::string>(in, 6)
+                );
+            }
+            // FIXME: Throw error
+            return FB::variant();
+        }
+    };
     void deprecatedCall();
     std::string sign(const std::string&, const std::string&);
+    std::string signXML(const std::string&, const std::string&,
+        const std::string&, const std::string&, const std::string&,
+        const std::string&);
     std::string promptForPin(bool retrying = false);
     std::string askPinAndSign(const std::string& hash, const std::string& url);
     std::string getCertificates();

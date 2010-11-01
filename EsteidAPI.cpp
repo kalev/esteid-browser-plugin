@@ -94,7 +94,7 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
 
 #ifdef SUPPORT_OLD_APIS
     REGISTER_METHOD(getCertificates);
-    REGISTER_METHOD(sign);
+    registerMethod("sign", boost::bind(sign_method_wrapper(), this, _1));
     REGISTER_METHOD(getInfo);
     REGISTER_METHOD(getSigningCertificate);
     REGISTER_METHOD(getSignedHash);
@@ -543,6 +543,22 @@ std::string EsteidAPI::sign(const std::string& a, const std::string& b)
 
         return signedHash;
     }
+}
+
+std::string EsteidAPI::signXML(
+    const std::string& data,
+    const std::string& onSuccess,
+    const std::string& lang,
+    const std::string& charset,
+    const std::string& encoding,
+    const std::string& onCancel)
+
+{
+    printf("signXML('%s','%s','%s','%s','%s','%s')\n", data.c_str(),
+           onSuccess.c_str(), lang.c_str(), charset.c_str(),
+           encoding.c_str(), onCancel.c_str());
+
+    return "";
 }
 
 std::string EsteidAPI::getInfo()
