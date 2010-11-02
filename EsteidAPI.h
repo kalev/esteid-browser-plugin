@@ -70,6 +70,16 @@ public:
     /** Personal data file (read-only properties) */
     FB::JSAPIPtr get_personalData();
 
+    /** Last error code (not implemented yet)
+      * @returns int error code
+      */
+    int get_errorCode();
+
+    /** Last error message (not implemented yet)
+      * @returns string error message
+      */
+    std::string get_errorMessage();
+
     void onPinEntered(const std::string& hash);
 
     /**  Will fire event handlers

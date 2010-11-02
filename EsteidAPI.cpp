@@ -322,6 +322,28 @@ std::string EsteidAPI::getVersion()
 }
 
 
+int EsteidAPI::get_errorCode()
+{
+    try {
+        whitelistRequired();
+
+        return 0;
+    } catch(...) {
+        return 0;
+    }
+}
+
+std::string EsteidAPI::get_errorMessage()
+{
+    try {
+        whitelistRequired();
+
+        return "";
+    } catch(...) {
+        return "No cards found"; // FIXME: Use translatable messages
+    }
+}
+
 /*
  * Ask for PIN and return; the signed hash is later asynchronously returned
  * through callback.
