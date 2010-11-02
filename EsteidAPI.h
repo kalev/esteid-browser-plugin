@@ -92,9 +92,9 @@ public:
                     FB::detail::methods::convertLastArgument<std::string>(in, 2)
                 );
             }
-            /* Sign method with 6 arguments (legacy XMLSignatureApplet) */
+            /* Sign method with 6 arguments (legacy XMLSignApplet) */
             if(in.size() == 6) {
-                return instance->signXML(
+                instance->signXML(
                     FB::detail::methods::convertArgument<std::string>(in[0], 1),
                     FB::detail::methods::convertArgument<std::string>(in[1], 2),
                     FB::detail::methods::convertArgument<std::string>(in[2], 3),
@@ -102,6 +102,7 @@ public:
                     FB::detail::methods::convertArgument<std::string>(in[4], 5),
                     FB::detail::methods::convertLastArgument<std::string>(in, 6)
                 );
+                return ""; // signXML does not return anything
             }
             // FIXME: Throw error
             return FB::variant();
@@ -109,7 +110,7 @@ public:
     };
     void deprecatedCall();
     std::string sign(const std::string&, const std::string&);
-    std::string signXML(const std::string&, const std::string&,
+    void signXML(const std::string&, const std::string&,
         const std::string&, const std::string&, const std::string&,
         const std::string&);
     std::string promptForPin(bool retrying = false);

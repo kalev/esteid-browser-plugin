@@ -22,6 +22,16 @@
 #include <iomanip>
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp> 
+
+#ifdef USE_OPENSSL
+#include <openssl/sha.h>
+#endif
+
+#ifdef SUPPORT_OLD_APIS
+#include "Base64.h"
+#include "utility/converters.h"
+#endif
 
 #include "JSObject.h"
 #include "variant_list.h"
@@ -545,7 +555,45 @@ std::string EsteidAPI::sign(const std::string& a, const std::string& b)
     }
 }
 
-std::string EsteidAPI::signXML(
+/* This emulates old Java XMLSignApplet behaviour.
+ * XML manipulations done here are butt ugly, just like the "real solution",
+ * that was originally written by Mr. Veiko Sinivee.
+ *
+ * NB! This is a compatibility mode function and should
+ *     NEVER be used in any new code.
+ */
+
+#ifdef USE_OPENSSL
+/* Calculate SHA1 from ByteVec and encode it to Base64 */
+static std::string B64SHA1(ByteVec& in) {
+    std::string out(20, '\0');
+    SHA1(reinterpret_cast<const unsigned char *>(in.data()), in.size(),
+         reinterpret_cast<unsigned char *>(&out[0]));
+    return base64_encode(out);
+}
+/* Calculate SHA1 from string and encode it to Base64 */
+static std::string B64SHA1(const std::string& in) {
+    std::string out(20, '\0');
+    SHA1(reinterpret_cast<const unsigned char *>(in.data()), in.size(),
+         reinterpret_cast<unsigned char *>(&out[0]));
+    return base64_encode(out);
+}
+/* Calculate SHA1 from string and encode it to Hex */
+std::string HEXSHA1(const std::string& in) {
+    ByteVec bv(20, '\0');
+
+    SHA1(reinterpret_cast<const unsigned char *>(in.data()), in.size(),
+         &bv[0]);
+
+    std::ostringstream buf;
+    for(ByteVec::const_iterator it = bv.begin(); it!=bv.end();it++)
+        buf << std::setfill('0') << std::setw(2) << std::hex << (short)*it;
+
+    return buf.str();
+}
+#endif
+
+void EsteidAPI::signXML(
     const std::string& data,
     const std::string& onSuccess,
     const std::string& lang,
@@ -554,11 +602,157 @@ std::string EsteidAPI::signXML(
     const std::string& onCancel)
 
 {
-    printf("signXML('%s','%s','%s','%s','%s','%s')\n", data.c_str(),
+    ESTEID_DEBUG("signXML('%s','%s','%s','%s','%s','%s')\n", data.c_str(),
            onSuccess.c_str(), lang.c_str(), charset.c_str(),
            encoding.c_str(), onCancel.c_str());
 
-    return "";
+#ifdef USE_OPENSSL
+    /* SHA1 Digest URL used in XML generation */
+    const std::string sha1Url = "http://www.w3.org/2000/09/xmldsig#sha1";
+
+    std::string decoded_data = data;
+    if(encoding == "EMBEDDED_BASE64") {
+        decoded_data = base64_decode(data);
+    }
+    std::string dataLen = boost::lexical_cast<std::string>(decoded_data.length());
+
+    /* FIXME: Old XMLSignApplet recodes character data to UTF-8,
+     *        replaces newlines (\n and \r) with spaces and re-encodes
+     *        back to Base64, but is this actually needed? I don't think so.
+     */
+
+    //recode_from_charset_to_UTF8(data);
+    //std::replace(decoded_data.begin(), decoded_data.end(), '\n', ' ');
+    //std::replace(decoded_data.begin(), decoded_data.end(), '\r', ' ');
+    //if(encoding == "EMBEDDED_BASE64") {
+    //    data = base64_encode(decoded_data);
+    //}
+
+    /* Get required info from certificate */
+    std::string certDigest;
+    std::string certSerial;
+    std::string certData;
+
+    try { RTERROR_TO_SCRIPT(
+        ByteVec bv = m_service->getSignCert();
+        X509Certificate cert(bv);
+
+        certSerial = boost::lexical_cast<std::string>(cert.getSerial());
+        certDigest = B64SHA1(bv);
+        certData = base64_encode(bv);
+    )} catch(...) {
+        m_host->evaluateJavaScript(onCancel + "();");
+        return;
+    }
+
+    /* Make current time
+     * Please note that this is NOT valid XML date format.
+     * XML Date format is %Y-%m-%dT%H:%M:%SZ, where
+     * Z denotes universal time. However XMLSignApplet
+     * separates date components with dots and uses local time
+     * so we implement it incorrectly too in order to maintain
+     * bug-for-bug compatibility */
+    boost::posix_time::time_facet* tf = 
+        new boost::posix_time::time_facet("%Y.%m.%dT%H:%M:%SZ");
+    std::stringstream tmp;
+    tmp.imbue(std::locale(tmp.getloc(), tf));
+    tmp << boost::posix_time::second_clock::local_time();
+    std::string sigTime = tmp.str();
+
+    /* Start constructing XML */
+
+    // <DataFile>
+    std::string dataFileXml = 
+      "<DataFile ContentType=\"" + encoding + "\" "
+        "Filename=\"msg.xml\" Id=\"D0\" MimeType=\"text/xml\" "
+        "Size=\"" + dataLen + "\">" + data +
+      "</DataFile>";
+
+    // <SignedProperties>
+    std::string sigPropXml =
+      "<SignedProperties xmlns=\"http://www.w3.org/2000/09/xmldsig#\" "
+          "Id=\"S0-SignedProperties\" Target=\"#S0\">"
+        "<SignedSignatureProperties>"
+          "<SigningTime>" + sigTime + "</SigningTime>"
+          "<SigningCertificate><Cert Id=\"S0-CERTINFO\">"
+            "<CertDigest>"
+              "<DigestMethod Algorithm=\"" + sha1Url + "\"></DigestMethod>"
+              "<DigestValue>" + certDigest + "</DigestValue>"
+            "</CertDigest>"
+            "<IssuerSerial>" + certSerial + "</IssuerSerial>"
+          "</Cert></SigningCertificate>"
+          "<SignaturePolicyIdentifier>"
+            "<SignaturePolicyImplied></SignaturePolicyImplied>"
+          "</SignaturePolicyIdentifier>"
+          "<SignatureProductionPlace></SignatureProductionPlace>"
+          "<SignerRole></SignerRole>"
+        "</SignedSignatureProperties>"
+        "<SignedDataObjectProperties></SignedDataObjectProperties>"
+      "</SignedProperties>";
+
+    // <SignedInfo>
+    std::string sigInfoXml =
+      "<SignedInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+        "<CanonicalizationMethod "
+          "Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\">"
+        "</CanonicalizationMethod>"
+        "<SignatureMethod "
+          "Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\">"
+        "</SignatureMethod>"
+        "<Reference URI=\"#D0\">"
+          "<DigestMethod Algorithm=\"" + sha1Url + "\"></DigestMethod>"
+          "<DigestValue>" + B64SHA1(dataFileXml) + "</DigestValue>"
+        "</Reference>"
+        "<Reference URI=\"#S0-SignedProperties\">"
+          "<DigestMethod Algorithm=\"" + sha1Url + "\"></DigestMethod>"
+          "<DigestValue>" + B64SHA1(sigPropXml) + "</DigestValue>"
+        "</Reference>"
+      "</SignedInfo>";
+
+    /* Perform signing operation */
+
+    /* FIXME: The original API is non-blocking, but the callbacks
+       are so braindead (callback function name is passed as a string)
+       so we implement the compatibility version as a blocking call for now */
+    std::string sigValue;
+
+    try {
+        std::string signedHash = 
+            askPinAndSign(HEXSHA1(sigInfoXml), std::string(COMPAT_URL));
+        sigValue = base64_encode(fromHex(signedHash));
+    } catch(const std::runtime_error& e) {
+        m_host->evaluateJavaScript(onCancel + "();");
+        return;
+    }
+
+    // <Signature>
+    std::string sigXml =
+      "<Signature Id=\"S0\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
+        /* <SignedInfo> */ + sigInfoXml +
+        "<SignatureValue Id=\"S0-SIG\">" + sigValue + "</SignatureValue>"
+        "<KeyInfo>"
+          "<X509Data>"
+            "<X509Certificate Id=\"S0-CERT\">" + certData + "</X509Certificate>"
+          "</X509Data>"
+        "</KeyInfo>"
+        "<Object>"
+          "<QualifyingProperties>" + sigPropXml + "</QualifyingProperties>"
+        "</Object>"
+      "</Signature>";
+
+    std::string finalXml =
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+      "<SignedDoc format=\"DIGIDOC-XML\" version=\"1.1\">"
+        /* <DataFile> */  + dataFileXml
+        /* <Signature> */ + sigXml +
+      "</SignedDoc>";
+
+    ESTEID_DEBUG("\n%s\n", finalXml.c_str());
+
+    m_host->evaluateJavaScript(onSuccess + "('" + finalXml + "');");
+#else
+    throw FB::script_error("XML Signer requires OpenSSL-enabled build");
+#endif
 }
 
 std::string EsteidAPI::getInfo()

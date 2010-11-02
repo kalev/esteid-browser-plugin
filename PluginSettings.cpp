@@ -48,6 +48,7 @@ PluginSettings::PluginSettings()
     default_whitelist.push_back("id.swedbank.ee");
     default_whitelist.push_back("id.business.swedbank.ee");
     default_whitelist.push_back("id.seb.ee");
+    default_whitelist.push_back("idnetbank.nordea.com");
     default_whitelist.push_back("id.eesti.ee");
     default_whitelist.push_back("www.eesti.ee");
     default_whitelist.push_back("digidoc.sk.ee");

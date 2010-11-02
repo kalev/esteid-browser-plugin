@@ -53,11 +53,6 @@ function hideSignButton() {
 }
 
 function findMainForm(doc) {
-/*
-  var mf = doc.getElementsByName("unmainForm")[0];
-  if(mf == null) { mf = doc.getElementsByName("vorm")[0]; } 
-*/
-
   var mf = null;
   var forms = doc.getElementsByTagName("form");
   for(i in forms) {
@@ -163,7 +158,6 @@ function DoDigiSignHash() {
   }
 }
 
-
 function appendToBody(e) {
   var b = document.getElementsByTagName("body")[0];
   return b.appendChild(e);
@@ -178,118 +172,4 @@ function createEstEidObject(id) {
   return document.getElementById(id);
 }
 
-/* Extract hash and docid from a response that looks like this:
- * <html xmlns:fo="http://www.w3.org/1999/XSL/Format">
- * <body>
- * <form name="hashreqform">
- * <input type="hidden" name="status" value="50">
- * <input type="hidden" name="signhash" value="...">
- * <input type="hidden" name="docid" value="...">
- * </form>
- * </body>
- * </html>
-*/
-
-function extractHashAndSign(res) {
-  //alert("Result: " + res);
-
-  var hashreg = new RegExp('name="signhash" value="(.*?)"', "i");
-  var docidreg = new RegExp('name="docid" value="(.*?)"', "i");
-  var hash = hashreg.exec(res)[1];
-  var docid = docidreg.exec(res)[1];
-  if(hash == null || docid == null || hash == "" || docid == "") {
-    alert("SEBHack error: Unable to get hash code from server");
-    showSignButton();
-    window.CancelDigiSign();
-  } else {
-    //alert("Extracted Hash: " + hash + " DocId: " + docid);
-    var e = document.getElementById("SEBHackSigner");
-    var hex = e.getSignedHash(hash, e.selectedCertNumber);
-    if(hex == "") {
-      showSignButton();
-      window.CancelDigiSign();
-    }
-    else {
-      var mf        = findMainForm(document);
-      var codeInput = findFormElement(mf, "code");
-      codeInput.value = docid;
-      window.SetDigiSign(hex);
-    }
-  }
-}
-
-/* Send a hash request to U-Net
- * An original request form looks like this:
- *
- * <form method="post" action="un3.w" name="hashreqform" target="reqframeforhash">
- * <input type="hidden" name="signCertHex">
- * <input type="hidden" name="signStr" value="...">
- * <input type="hidden" name="act" value="dshash">
- * <input type="hidden" name="sesskey" value="...">
- * <input type="hidden" name="frnam" value="0">
- * <input type="hidden" name="unetmenuhigh" value="">
- * <input type="hidden" name="unetmenulow" value="">
- * <input type="hidden" name="unetmenulowdiv" value="">
- * <input type="hidden" name="lang" value="EST">
- * </form>
- */
-
-function getHashFromUnet(cert) {
-  var url = "un3.w";
-
-  try {
-    var http       = new XMLHttpRequest();
-    var doc        = breakFreeFromFrames();
-    var mf         = findMainForm(doc);
-    var alInput    = findFormElement(mf, "allkirjastatav");
-    var skInput    = findFormElement(mf, "sesskey");
-    var codeInput  = findFormElement(mf, "code");
-
-    if(codeInput == null) {
-      codeInput = document.createElement("input");
-      codeInput.type = "hidden";
-      codeInput.name = "code";
-      codeInput = mf.appendChild(codeInput);
-    }
-
-    var params  = "signCertHex=" + encodeURIComponent(cert);
-        params += "&signStr="    + encodeURIComponent(alInput.value);
-        params += "&sesskey="    + encodeURIComponent(skInput.value);
-        params += "&act=dshash";
-        params += "&frnam=0&unetmenuhigh=&unetmenulow=&unetmenulowdiv=&lang=EST";
-
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.setRequestHeader("Content-length", params.length);
-    http.setRequestHeader("Connection", "close");
-
-    http.onreadystatechange = function() {
-      if(http.readyState == 4 && http.status == 200) {
-        var res = http.responseText;
-        extractHashAndSign(res);
-      } // FIXME: handle HTTP errors
-    };
-    http.send(params);
-  } catch(e) {
-    alert("SEBHack error: " + e);
-  }
-}
-
-/* Re-implementation of SEB's signing code to use new plugins */
-function DoDigiSign() {
-  //alert("SEBHack DoDigiSign");
-  try {
-    var e = document.getElementById("SEBHackSigner");
-    if(e == null) e = createEstEidObject("SEBHackSigner");
-    var cert = e.getSigningCertificate();
-    if(cert == "") {
-      window.CancelDigiSign();
-    } else {
-      hideSignButton();
-      getHashFromUnet(cert);
-    }
-  } catch(e) {
-    alert("SEBHack error: " + e);
-  }
-  return false;
-}
+document.XMLSignApplet = createEstEidObject("SEBHackSigner");

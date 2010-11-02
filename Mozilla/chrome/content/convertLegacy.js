@@ -70,16 +70,15 @@ function esteidConvertObject(o, doc) {
   var id   = o.getAttribute("id");
   var name = o.getAttribute("name");
 
-  esteid_log('Converting ' + id + ' to new plugin on page ' + doc.location.href);
-
   /* Support ancient Java Applets "parameter driven" mode */
-  var op = null, fSig, fCert, fCancel, fError, hash, slot;
+  var op = null, fInit = null, fSig, fCert, fCancel, fError, hash, slot;
   var params = o.getElementsByTagName('param');
   for(var i in params) {
     try {
-      var name = params[i].getAttribute("name");
+      var pname = params[i].getAttribute("name");
       var value = params[i].getAttribute("value");
-      switch(name) {
+      switch(pname) {
+        case "name"            : name    = value; break;
         case "OPERATION"       : op      = value; break;
         case "HASH"            : hash    = value; break;
         case "TOKEN_ID"        : slot    = value; break;
@@ -87,10 +86,14 @@ function esteidConvertObject(o, doc) {
         case "FUNC_SET_SIGN"   : fSig    = value; break;
         case "FUNC_DRIVER_ERR" : fError  = value; break;
         case "FUNC_CANCEL"     : fCancel = value; break;
+        case "FUNC_INIT"       : fInit   = value; break;
         default: break;
       }
     } catch(err) { }
   }
+
+  esteid_log('Converting ' + (id ? id : name) + ' to new plugin on page ' +
+             doc.location.href);
 
   o = p.removeChild(o);
   delete o;
@@ -107,7 +110,11 @@ function esteidConvertObject(o, doc) {
 
   e = p.appendChild(e);
 
-  /* Execute "parameter driven" mode function */
+  /* Execute "parameter driven" mode functions */
+  if(fInit) {
+    esteidInjectJS(doc, fInit + "();");
+  }
+
   if(op) {
     var cmd = "document.getElementById('" + id + "')";
 
@@ -120,8 +127,6 @@ function esteidConvertObject(o, doc) {
              "','" + fCancel + "','" + fError + "');";
       cmd += "function CertHack" + rnd + "(a, b) { " + fCert + "(b, a); }";
     }
-    
-    //esteid_log("Injecting to page: " + cmd);
     esteidInjectJS(doc, cmd);
   }
 }
@@ -172,7 +177,8 @@ function esteidConvertLegacy(doc) {
       var e = els[j];
       var code = esteidFindJavaCodeAttr(e);
 
-      if(code == "SignatureApplet.class" || code == "SignApplet.class")
+      if(code == "SignatureApplet.class" || code == "SignApplet.class" ||
+         code == "XMLSignApplet.class")
         esteidConvertObject(e, doc);
       else if(axreg.exec(e.getAttribute("classid")))
         esteidConvertObject(e, doc);
