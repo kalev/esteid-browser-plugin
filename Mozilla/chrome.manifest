@@ -20,3 +20,8 @@ resource esteid chrome/modules/
 locale esteid en-US chrome/locale/en-US/
 locale esteid et-EE chrome/locale/et-EE/
 locale esteid ru-RU chrome/locale/ru-RU/
+
+# Register Old Java blocker Component (Firefox 4 and newer)
+component {299c2970-575f-91d5-8a39-9790297c5a65} components/OldJavaBlocker.js
+contract @esteid.googlecode.com/esteid-blocker;1 {299c2970-575f-91d5-8a39-9790297c5a65}
+category content-policy esteidBlocker @esteid.googlecode.com/esteid-blocker;1

@@ -49,24 +49,34 @@ esteidBlocker.prototype = {
      * code="org.opensc.webapplet.WebApplet"
      */
     var jre = new RegExp("^application/x-java-", "i");
-    if ((Ci.nsIContentPolicy.TYPE_OBJECT == aContentType) &&
-        jre.exec(aMimeTypeGuess)) {
+    if ((Ci.nsIContentPolicy.TYPE_OBJECT == aContentType)) {
+      //dump("esteidBlocker: object with MimeType: " + aMimeTypeGuess + "\n");
 
-      var code = esteidFindJavaCodeAttr(aContext);
+      if(jre.exec(aMimeTypeGuess)) {
+        var code = esteidFindJavaCodeAttr(aContext);
 
-      //dump("Java object found, code = " + code + "\n");
-      if(code == "SignatureApplet.class" || code == "SignApplet.class" ||
-         code == "XMLSignApplet.class")
-        return Ci.nsIContentPolicy.REJECT_REQUEST;
+        //dump("esteidBlocker: Java object found, code = " + code + "\n");
+        if(code == "SignatureApplet.class" || code == "SignApplet.class" ||
+           code == "XMLSignApplet.class") {
+          //dump("esteidBlocker: blocking Java object code = " + code + "\n");
+          return Ci.nsIContentPolicy.REJECT_REQUEST;
+        }
+      }
     }
   
     return result;  
   }
 };
 
-function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([ esteidBlocker ]);
-}
+
+/**
+ * XPCOMUtils.generateNSGetFactory was introduced in Mozilla 2 (Firefox 4).
+ * XPCOMUtils.generateNSGetModule is for Mozilla 1.9.2 (Firefox 3.6).
+ */
+if (XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([ esteidBlocker ]);
+else
+    var NSGetModule = XPCOMUtils.generateNSGetModule([ esteidBlocker ]);
 
 /* Try to find Java code attribute
  * NB! Please keep this code in sync with chrome/content/convertLegacy.js
