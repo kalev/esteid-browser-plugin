@@ -27,6 +27,7 @@
 
 #include "localize.h"
 #include "JSAPIAuto.h"
+#include "Util/JSArray.h"
 #include "DOM/Element.h"
 #include "BrowserHost.h"
 #include "NpapiBrowserHost.h"
@@ -95,12 +96,18 @@ public:
         sign_method_wrapper() {}
         FB::variant operator()(EsteidAPI* instance, const FB::VariantList& in)
         {
-            /* Sign method with two arguments (legacy Moz plugin) */
+            /* Sign method with two arguments
+             * (legacy Mozilla plugin, or SK leakplugin) */
             if(in.size() == 2) {
                 return instance->sign(
                     FB::detail::methods::convertArgument<std::string>(in[0], 1),
                     FB::detail::methods::convertLastArgument<std::string>(in, 2)
                 );
+            }
+            /* Sign method with 3 arguments (SK leakplugin) */
+            if(in.size() == 3) {
+                return instance->signSK("",
+                    FB::detail::methods::convertArgument<std::string>(in[1], 2));
             }
             /* Sign method with 6 arguments (legacy XMLSignApplet) */
             if(in.size() == 6) {
@@ -120,12 +127,18 @@ public:
     };
     void deprecatedCall();
     std::string sign(const std::string&, const std::string&);
+    std::string get_version(); // SK leakplugin
+    FB::JSAPIPtr getCertificate(); // SK leakplugin
+    FB::VariantList getCertificatesSK(); // SK leakplugin
+    std::string signSK(const std::string&, const std::string&,
+                       FB::variant = FB::variant()); // SK leakplugin
+    std::string getCertificatesMoz(); // Old Mozilla plugin
+    FB::variant getCertificates(); // SK leakplugin, Old Mozilla plugin
     void signXML(const std::string&, const std::string&,
         const std::string&, const std::string&, const std::string&,
         const std::string&);
     std::string promptForPin(bool retrying = false);
     std::string askPinAndSign(const std::string& hash, const std::string& url);
-    std::string getCertificates();
     std::string getInfo();
     std::string getSigningCertificate();
     std::string getSignedHash(const std::string&, const std::string&);

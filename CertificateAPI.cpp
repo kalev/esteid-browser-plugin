@@ -43,6 +43,8 @@ CertificateAPI::CertificateAPI(FB::BrowserHostPtr host, ByteVec bv) :
     REGISTER_RO_PROPERTY(cert);
     REGISTER_RO_PROPERTY(serial);
     REGISTER_RO_PROPERTY(isValid);
+    REGISTER_RO_PROPERTY(certificateAsPEM);
+    REGISTER_RO_PROPERTY(certificateAsHex);
 }
 
 CertificateAPI::~CertificateAPI()
@@ -75,4 +77,10 @@ std::string CertificateAPI::get_serial() {
 }
 bool CertificateAPI::get_isValid() { 
     RTERROR_TO_SCRIPT(return m_cert.isValid());
+}
+std::string CertificateAPI::get_certificateAsPEM() {
+    RTERROR_TO_SCRIPT(return m_cert.getPEM());
+}
+std::string CertificateAPI::get_certificateAsHex() {
+    RTERROR_TO_SCRIPT(return m_cert.getHex());
 }

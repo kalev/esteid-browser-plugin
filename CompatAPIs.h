@@ -1,7 +1,7 @@
 /*
  * esteid-browser-plugin - a browser plugin for Estonian EID card
  *
- * Copyright (C) 2010  Smartlink OÜ
+ * Copyright (C) 2010  Antti Andreimann
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,32 +18,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "FactoryBase.h"
-#include "EsteidPlugin.h"
-#include <boost/make_shared.hpp>
+#ifndef COMPATAPIS_H
+#define COMPATAPIS_H
 
-class PluginFactory : public FB::FactoryBase
+#include "CertificateAPI.h"
+#include "Util/JSArray.h"
+
+#ifdef SUPPORT_OLD_APIS
+
+#define MAGIC_ID  "37337F4CF4CE"
+#define MAGIC_ID2 "37337A55F4CE"
+
+/* SK Leakplugin */
+class SKCertificateAPI : public CertificateAPI
 {
 public:
-    FB::PluginCorePtr createPlugin(const std::string& mimetype)
-    {
-        return boost::make_shared<EsteidPlugin>(mimetype);
-    }
-
-    void globalPluginInitialize()
-    {
-        EsteidPlugin::StaticInitialize();
-    }
-
-    void globalPluginDeinitialize()
-    {
-        EsteidPlugin::StaticDeinitialize();
-    }
+    SKCertificateAPI(FB::BrowserHostPtr host, ByteVec bv);
+    virtual std::string get_id();
+    virtual std::string get_cert();
+    virtual std::string ToString();
 };
-
-FB::FactoryBasePtr getFactoryInstance()
-{
-    static boost::shared_ptr<PluginFactory> factory = boost::make_shared<PluginFactory>();
-    return factory;
-}
-
+#endif //SUPPORT_OLD_APIS
+#endif //CERTIFICATEAPI_H

@@ -44,12 +44,16 @@ public:
     std::string getValidFrom();
     std::string getValidTo();
     std::string getKeyUsage();
+    /** Returns certificate as PEM */
     std::string getPEM();
+    /** Returns certificate as Hex encoded DER */
+    std::string getHex();
     long getSerial();
     bool isValid();
 
 protected:
     ApiCert* m_cert;
+    ByteVec m_rawcert;
     std::string getError();
 #ifdef USE_OPENSSL
     std::string X509NameToUTF8(X509_NAME *name, int nid);

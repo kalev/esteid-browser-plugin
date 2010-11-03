@@ -20,6 +20,7 @@
  */
 
 #include "X509Certificate.h"
+#include "utility/converters.h"
 
 #define THROW_API_ERROR(a) { \
     std::string msg(a); \
@@ -34,7 +35,7 @@
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
 
-X509Certificate::X509Certificate(ByteVec bv) : m_cert(NULL) {
+X509Certificate::X509Certificate(ByteVec bv) : m_cert(NULL), m_rawcert(bv) {
     if(bv.empty())
         throw std::runtime_error("Invalid certificate: no data");
 
@@ -93,6 +94,9 @@ bool X509Certificate::isValid() {
     if(!t1 || !t2) THROW_API_ERROR("Failed to parse certificate");
 
     return X509_cmp_current_time(t1) < 0 && X509_cmp_current_time(t2) > 0;
+}
+std::string X509Certificate::getHex() {
+    return toHex(m_rawcert);
 }
 
 std::string X509Certificate::getKeyUsage() {

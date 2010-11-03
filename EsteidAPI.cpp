@@ -31,6 +31,7 @@
 #ifdef SUPPORT_OLD_APIS
 #include "Base64.h"
 #include "utility/converters.h"
+#include "CompatAPIs.h"
 #endif
 
 #include "JSObject.h"
@@ -102,10 +103,25 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype) :
     REGISTER_RO_PROPERTY(authCert);
     REGISTER_RO_PROPERTY(signCert);
     REGISTER_RO_PROPERTY(personalData);
+    REGISTER_RO_PROPERTY(errorCode);
+    REGISTER_RO_PROPERTY(errorMessage);
 
 #ifdef SUPPORT_OLD_APIS
-    REGISTER_METHOD(getCertificates);
-    registerMethod("sign", boost::bind(sign_method_wrapper(), this, _1));
+    if(m_mimeType == "application/x-digidoc") {
+        registerMethod("getCertificates",
+            make_method(this, &EsteidAPI::getCertificatesSK));
+        //registerMethod("sign", make_method(this, &EsteidAPI::signSK));
+    } else if(m_mimeType == "application/x-idcard-plugin") {
+        registerMethod("getCertificates",
+            make_method(this, &EsteidAPI::getCertificatesMoz));
+        registerMethod("sign", make_method(this, &EsteidAPI::sign));
+    }
+    else {
+        REGISTER_METHOD(getCertificates);
+        registerMethod("sign", boost::bind(sign_method_wrapper(), this, _1));
+    }
+    REGISTER_RO_PROPERTY(version); // SK betaplugin
+    REGISTER_METHOD(getCertificate); // SK betaplugin
     REGISTER_METHOD(getInfo);
     REGISTER_METHOD(getSigningCertificate);
     REGISTER_METHOD(getSignedHash);
@@ -408,7 +424,14 @@ std::string EsteidAPI::signSHA1(const std::string& hash, const std::string& pin)
     if (pin.empty()) // shouldn't happen
         throw std::runtime_error("empty PIN");
 
-    std::string signedHash = m_service->signSHA1(hash, EstEidCard::SIGN, pin);
+    std::string in(hash);
+
+    // Strip spaces and newlines from hash HEX
+    in.erase(std::remove(in.begin(), in.end(), '\n'), in.end());
+    in.erase(std::remove(in.begin(), in.end(), '\r'), in.end());
+    in.erase(std::remove(in.begin(), in.end(), ' '), in.end());
+
+    std::string signedHash = m_service->signSHA1(in, EstEidCard::SIGN, pin);
     if (signedHash.empty()) // shouldn't happen
         throw std::runtime_error("empty hash");
 
@@ -465,8 +488,6 @@ void EsteidAPI::returnSignFailure(const std::string& msg)
 }
 
 #ifdef SUPPORT_OLD_APIS
-
-#define MAGIC_ID "37337F4CF4CE"
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
 
 using namespace boost::date_time;
@@ -521,7 +542,8 @@ std::string EsteidAPI::askPinAndSign(const std::string& hash, const std::string&
     }
 }
 
-std::string EsteidAPI::getCertificates()
+/* Old Mozilla plugin */
+std::string EsteidAPI::getCertificatesMoz()
 {
     whitelistRequired();
     deprecatedCall();
@@ -559,7 +581,9 @@ std::string EsteidAPI::sign(const std::string& a, const std::string& b)
 
     std::string signedHash;
 
-    if(!a.compare(MAGIC_ID)) { // Old Mozilla Plugin compat mode
+    if(!a.compare(MAGIC_ID2)) { // SK leakplugin compat mode
+        return signSK(a, b);
+    } else if(!a.compare(MAGIC_ID)) { // Old Mozilla Plugin compat mode
         try {
             signedHash = askPinAndSign(b, std::string(COMPAT_URL));
             return "({signature:'" + signedHash + "', returnCode: 0})";
@@ -576,6 +600,55 @@ std::string EsteidAPI::sign(const std::string& a, const std::string& b)
 
         return signedHash;
     }
+}
+
+/* Emulate SK leakplugin AND the old Mozilla plugin in one function */
+FB::variant EsteidAPI::getCertificates() {
+    try {
+        return getCertificatesSK();
+    } catch(...) {
+        // TODO: Return proper error code from plugin (when it's implemented)
+        return "({returnCode: 12})";
+    }
+}
+
+/* Emulate SK leakplugin (application/x-digidoc) */
+std::string EsteidAPI::get_version()
+{
+    return getVersion();
+}
+
+FB::JSAPIPtr EsteidAPI::getCertificate() {
+    whitelistRequired();
+    deprecatedCall();
+
+    RTERROR_TO_SCRIPT(
+        FB::VariantList outVar;
+        ByteVec bv = m_service->getSignCert();
+        return FB::JSAPIPtr(new SKCertificateAPI(m_host, bv));
+    );
+}
+
+FB::VariantList EsteidAPI::getCertificatesSK() {
+    whitelistRequired();
+    deprecatedCall();
+
+    RTERROR_TO_SCRIPT(
+        FB::VariantList outVar;
+        ByteVec bv = m_service->getSignCert();
+        outVar.push_back(FB::JSAPIPtr(new SKCertificateAPI(m_host, bv)));
+        return outVar;
+    );
+}
+
+std::string EsteidAPI::signSK(const std::string& id,
+                              const std::string& hash, FB::variant crap)
+{
+    whitelistRequired();
+    deprecatedCall();
+
+    RTERROR_TO_SCRIPT(
+        return askPinAndSign(hash, std::string(COMPAT_URL)));
 }
 
 /* This emulates old Java XMLSignApplet behaviour.

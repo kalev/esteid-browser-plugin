@@ -30,30 +30,32 @@
 class CertificateAPI : public FB::JSAPIAuto
 {
 public:
-    //CertificateAPI(FB::BrowserHostPtr host, X509Certificate cert);
     CertificateAPI(FB::BrowserHostPtr host, ByteVec bv);
     virtual ~CertificateAPI();
 
     /** Subject CN */
-    std::string get_CN();
+    virtual std::string get_CN();
     /** Date and time in format dd.mm.yyyy hh:mm:ss */
-    std::string get_validFrom();
+    virtual std::string get_validFrom();
     /** Date and time in format dd.mm.yyyy hh:mm:ss */
-    std::string get_validTo();
+    virtual std::string get_validTo();
     /** Issuer CN */
-    std::string get_issuerCN();
+    virtual std::string get_issuerCN();
     /** security, Non-Repudiation, digital signing etc. */
-    std::string get_keyUsage();
+    virtual std::string get_keyUsage();
     /** Certificate in PEM format */
-    std::string get_cert();
+    virtual std::string get_cert();
     /** A unique serial number for this certificate */
-    std::string get_serial();
+    virtual std::string get_serial();
     /** True if certificate seems to be valid (check against workstation clock) */
     bool get_isValid();
+    /** Certificate in PEM format */
+    virtual std::string get_certificateAsPEM();
+    /** Certificate in Hex encoded DER format */
+    virtual std::string get_certificateAsHex();
 
-private:
+protected:
     FB::BrowserHostPtr m_host;
-
     X509Certificate m_cert;
 };
 

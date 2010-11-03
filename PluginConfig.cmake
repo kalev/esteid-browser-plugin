@@ -58,7 +58,7 @@ set(FBSTRING_MIMEType "application/x-esteid")
 #           MIMEType and FileExtents in format: one|two|three|... 
 #           
 #if(ENABLE_OLD_APIS)
-#    set(FBSTRING_MIMEType "application/x-esteid|application/x-idcard-plugin")
+#    set(FBSTRING_MIMEType "application/x-esteid|application/x-digidoc|application/x-idcard-plugin")
 #else(ENABLE_OLD_APIS)
 #    set(FBSTRING_MIMEType "application/x-esteid")
 #endif(ENABLE_OLD_APIS)

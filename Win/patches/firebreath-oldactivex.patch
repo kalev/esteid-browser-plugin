@@ -38,7 +38,7 @@ diff -up firebreath/gen_templates/firebreathWin.rc.orig firebreath/gen_templates
              VALUE "FileOpenName", FBSTRING_PluginName
 -            VALUE "MIMEType", FBSTRING_MIMEType
 +#ifdef SUPPORT_OLD_APIS
-+            VALUE "MIMEType", "application/x-esteid|application/x-idcard-plugin"
++            VALUE "MIMEType", "application/x-esteid|application/x-digidoc|application/x-idcard-plugin"
 +#else
 +            VALUE "MIMEType", FBSTRING_MIMEType
 +#endif
