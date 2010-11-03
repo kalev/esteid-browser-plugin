@@ -42,9 +42,10 @@ void EsteidPlugin::StaticDeinitialize()
 }
 
 
-EsteidPlugin::EsteidPlugin()
+EsteidPlugin::EsteidPlugin(const std::string& mimetype)
     : m_pluginAPI(),
-      m_window(NULL)
+      m_window(NULL),
+      m_mimeType(mimetype)
 {
 }
 
@@ -55,7 +56,7 @@ EsteidPlugin::~EsteidPlugin()
 FB::JSAPIPtr EsteidPlugin::createJSAPI()
 {
     // m_host is the BrowserHostPtr
-    m_pluginAPI = boost::shared_ptr<EsteidAPI>(new EsteidAPI(m_host));
+    m_pluginAPI = boost::shared_ptr<EsteidAPI>(new EsteidAPI(m_host, m_mimeType));
     m_pluginAPI->setWindow(m_window);
     return m_pluginAPI;
 }

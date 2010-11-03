@@ -41,7 +41,7 @@
 class EsteidAPI : public FB::JSAPIAuto, CardService::MessageObserver
 {
 public:
-    EsteidAPI(FB::BrowserHostPtr host);
+    EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype);
     virtual ~EsteidAPI();
 
     void setWindow(FB::PluginWindow*);
@@ -150,6 +150,8 @@ private:
     std::string m_subject;
     std::string m_hash;
     std::string m_url;
+    std::string m_mimeType; /* This is here for the future, current Firebreath
+                             * (2010/03/11) always passes an empty string */
     bool m_pinpad;
     PluginSettings m_conf; // TODO: Optimize this?
 

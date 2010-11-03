@@ -39,7 +39,7 @@ public:
     static void StaticDeinitialize();
 
 public:
-    EsteidPlugin();
+    EsteidPlugin(const std::string& mimetype);
     virtual ~EsteidPlugin();
 
 public:
@@ -66,6 +66,7 @@ public:
 private:
     boost::shared_ptr<EsteidAPI> m_pluginAPI;
     FB::PluginWindow* m_window;
+    std::string m_mimeType;
 };
 
 extern logger eidlog;

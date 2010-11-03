@@ -66,15 +66,16 @@
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(EsteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(EsteidAPI, a)
 
-EsteidAPI::EsteidAPI(FB::BrowserHostPtr host) :
+EsteidAPI::EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype) :
     m_host(host),
+    m_mimeType(mimetype),
     m_pageURL(pageURL()),
     m_settingsCallback(new SettingsCallback(host, *this)),
     m_closeCallback(new CloseCallback(host, *this)),
     m_service(CardService::getInstance()),
     m_uiCallback(new UICallback(*this))
 {
-    ESTEID_DEBUG("EsteidAPI::EsteidAPI()");
+    ESTEID_DEBUG("EsteidAPI::EsteidAPI(%s)", m_mimeType.c_str());
 
 #ifdef HAVE_LIBINTL_H
     bindtextdomain("esteid-browser-plugin", ESTEID_LOCALEDIR);

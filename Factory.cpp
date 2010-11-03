@@ -21,13 +21,14 @@
 #include "FactoryBase.h"
 #include "EsteidPlugin.h"
 #include <boost/make_shared.hpp>
+#include <stdio.h>
 
 class PluginFactory : public FB::FactoryBase
 {
 public:
     FB::PluginCorePtr createPlugin(const std::string& mimetype)
     {
-        return boost::make_shared<EsteidPlugin>();
+        return boost::make_shared<EsteidPlugin>(mimetype);
     }
 
     void globalPluginInitialize()
