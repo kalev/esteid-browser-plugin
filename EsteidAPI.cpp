@@ -661,7 +661,7 @@ std::string EsteidAPI::signSK(const std::string& id,
 
 #ifdef USE_OPENSSL
 /* Calculate SHA1 from ByteVec and encode it to Base64 */
-static std::string B64SHA1(ByteVec& in) {
+static std::string B64SHA1(const ByteVec& in) {
     std::string out(20, '\0');
     SHA1(reinterpret_cast<const unsigned char *>(&in[0]), in.size(),
          reinterpret_cast<unsigned char *>(&out[0]));
