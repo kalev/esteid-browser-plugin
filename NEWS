@@ -1,13 +1,24 @@
-esteid-browser-plugin 1.2.0 (2010-XX-XX)
+esteid-browser-plugin 1.2.0 (2010-11-04)
+========================================
 
 Plugin:
+- Implement XMLSign emulation to support SEB and Nordea (Antti Andreimann)
+- Implement application/x-digidoc emulation (Antti Andreimann)
 - Initial i18n work (boamaod) (#110)
+- Estonian translation corrections (Sander Lepik)
 - Firebreath 1.3 support (Kalev Lember)
-- Work around broken boost/date_time.hpp on openSUSE 11.2 (Kalev Lember)
-- Various code cleanups (Kalev Lember)
+- Reworked CardService to stop polling when last plugin instance is destroyed (Kalev Lember)
+- Register ActiveX control as preapproved (Kalev Lember) (#114)
+- Expose personal data file properties in a separate JS object (Kalev Lember) (#124)
+- Fixed Windows dialogs to show in IE 8.0 with protected mode on (Kalev Lember) (#116)
 
 Mozilla extension:
 - Do not load plugin into every browser window (Antti Andreimann)
+- Firefox 4 compatibility fixes (Antti Andreimann)
+
+Many thanks to all the contributors:
+Antti Andreimann, boamaod, Kalev Lember, Sander Lepik.
+
 
 esteid-browser-plugin 1.1.0 (2010-09-29)
 ========================================
