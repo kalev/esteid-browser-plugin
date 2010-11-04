@@ -51,7 +51,7 @@ extern "C" char * NP_GetMIMEDescription()
 {
 // FIXME: Fix FireBreath!!!!
 #ifdef SUPPORT_OLD_APIS
-    return (char *)"application/x-digidoc::SK leakplugin emulation (without the leaks);application/x-esteid::Open EstEID universal signer;application/x-idcard-plugin::Old Mozilla plugin emulation";
+    return (char *)"application/x-esteid::Open EstEID universal signer;application/x-digidoc::SK leakplugin emulation (without the leaks);application/x-idcard-plugin::Old Mozilla plugin emulation";
 #else
     return (char *)FBSTRING_X11MIMEType;
 #endif
