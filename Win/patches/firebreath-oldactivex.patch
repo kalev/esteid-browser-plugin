@@ -27,8 +27,8 @@ diff -up firebreath/gen_templates/firebreathWin.rc.orig firebreath/gen_templates
  VS_VERSION_INFO VERSIONINFO
 - FILEVERSION 1,0,0,1
 - PRODUCTVERSION 1,0,0,1
-+ FILEVERSION 1,1,0,0
-+ PRODUCTVERSION 1,1,0,0
++ FILEVERSION 1,2,0,0
++ PRODUCTVERSION 1,2,0,0
   FILEFLAGSMASK 0x3fL
  #ifdef _DEBUG
   FILEFLAGS 0x1L

@@ -1,4 +1,4 @@
-set(ESTEID_BROWSER_PLUGIN_VERSION "1.1.0")
+set(ESTEID_BROWSER_PLUGIN_VERSION "1.2.0")
 
 # Written to work with cmake 2.6
 cmake_minimum_required (VERSION 2.6)
