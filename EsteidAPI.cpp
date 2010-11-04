@@ -663,14 +663,14 @@ std::string EsteidAPI::signSK(const std::string& id,
 /* Calculate SHA1 from ByteVec and encode it to Base64 */
 static std::string B64SHA1(ByteVec& in) {
     std::string out(20, '\0');
-    SHA1(reinterpret_cast<const unsigned char *>(in.data()), in.size(),
+    SHA1(reinterpret_cast<const unsigned char *>(&in[0]), in.size(),
          reinterpret_cast<unsigned char *>(&out[0]));
     return base64_encode(out);
 }
 /* Calculate SHA1 from string and encode it to Base64 */
 static std::string B64SHA1(const std::string& in) {
     std::string out(20, '\0');
-    SHA1(reinterpret_cast<const unsigned char *>(in.data()), in.size(),
+    SHA1(reinterpret_cast<const unsigned char *>(&in[0]), in.size(),
          reinterpret_cast<unsigned char *>(&out[0]));
     return base64_encode(out);
 }
