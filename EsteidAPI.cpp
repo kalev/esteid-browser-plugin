@@ -69,11 +69,11 @@
 
 EsteidAPI::EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype) :
     m_host(host),
-    m_mimeType(mimetype),
     m_pageURL(pageURL()),
     m_settingsCallback(new SettingsCallback(host, *this)),
     m_closeCallback(new CloseCallback(host, *this)),
     m_service(CardService::getInstance()),
+    m_mimeType(mimetype),
     m_uiCallback(new UICallback(*this))
 {
     ESTEID_DEBUG("EsteidAPI::EsteidAPI(%s)", m_mimeType.c_str());
