@@ -44,9 +44,9 @@ void EsteidPlugin::StaticDeinitialize()
 
 EsteidPlugin::EsteidPlugin(const std::string& mimetype)
     : m_pluginAPI(),
-      m_window(NULL),
-      m_mimeType(mimetype)
+      m_window(NULL)
 {
+      m_mimeType = mimetype;
 }
 
 EsteidPlugin::~EsteidPlugin()

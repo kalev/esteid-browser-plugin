@@ -14,9 +14,9 @@ resource 'STR#' (127)
 
 resource 'STR#' (128) 
 { {
-    "${FBSTRING_MIMEType}",
-    "${FBSTRING_FileExtents}",
     "application/x-digidoc",
+    "${FBSTRING_FileExtents}",
+    "${FBSTRING_MIMEType}",
     "${FBSTRING_FileExtents}",
     "application/x-idcard-plugin",
     "${FBSTRING_FileExtents}"

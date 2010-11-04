@@ -44,12 +44,15 @@
 	<string>${FBSTRING_FileDescription}</string>
 	<key>WebPluginMIMETypes</key>
 	<dict>
-		<key>${FBSTRING_MIMEType}</key>
+	        <!-- The order here is important, digidoc.sk.ee JavaScript is
+	             broken and only looks for the first MIME Type enlisted
+	             by the plugin thus we have to list x-digidoc first -->
+		<key>application/x-digidoc</key>
 		<dict>
 			<key>WebPluginTypeDescription</key>
-			<string>${FBSTRING_FileDescription}</string>
+			<string>SK leakplugin emulation (without leaks)</string>
 		</dict>
-		<key>application/x-digidoc</key>
+		<key>${FBSTRING_MIMEType}</key>
 		<dict>
 			<key>WebPluginTypeDescription</key>
 			<string>${FBSTRING_FileDescription}</string>
@@ -57,7 +60,7 @@
 		<key>application/x-idcard-plugin</key>
 		<dict>
 			<key>WebPluginTypeDescription</key>
-			<string>${FBSTRING_FileDescription}</string>
+			<string>Old Mozilla plugin emulation</string>
 		</dict>
 	</dict>
 </dict>
