@@ -110,7 +110,7 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype) :
     if(m_mimeType == "application/x-digidoc") {
         registerMethod("getCertificates",
             make_method(this, &EsteidAPI::getCertificatesSK));
-        //registerMethod("sign", make_method(this, &EsteidAPI::signSK));
+        registerMethod("sign", make_method(this, &EsteidAPI::signSK));
     } else if(m_mimeType == "application/x-idcard-plugin") {
         registerMethod("getCertificates",
             make_method(this, &EsteidAPI::getCertificatesMoz));
