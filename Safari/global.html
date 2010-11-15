@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<title>Estonian ID Card Global Page</title>
+<script>
+function handleCommand(event)
+{
+	var commands = {
+		openSettings: function()
+		{
+			alert("Viska villast");
+			try {
+			var e = document.createElement("object");
+			e.type = "application/x-esteid";
+			e.style.width = "1px";
+			e.style.height = "1px";
+			e.id = "openSettingsPluginObject";
+			e = document.body.appendChild(e);
+			alert(e.getVersion());
+			// var tab = event.target.browserWindow.openTab();
+			// tab.url = safari.extension.baseURI + "settings.html";
+			} catch(urror) { alert(urror); }
+		}
+	};
+	commands[event.command]();
+}
+
+safari.application.addEventListener("command", handleCommand, false);
+</script>
+</html>
