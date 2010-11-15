@@ -31,7 +31,30 @@ function esteidUSleep(millis) {
   }
 }
 
-/* TODO: esteidHackTable */
+/* Fix braindead web pages by loading specific JS hacks
+ * into HTML page in order to change broken behaviour.
+ */
+var esteidHackTable = [
+  { url: "^https://id.seb.ee", js: "sebHack.js" }
+];
+
+/* Shamelessly stolen from:
+ *  * http://forums.mozillazine.org/viewtopic.php?p=921150#921150 */
+function getFileContentsMoz(aURL) {
+  var ioService=Components.classes["@mozilla.org/network/io-service;1"]
+    .getService(Components.interfaces.nsIIOService);
+  var scriptableStream=Components
+    .classes["@mozilla.org/scriptableinputstream;1"]
+    .getService(Components.interfaces.nsIScriptableInputStream);
+
+  var channel=ioService.newChannel(aURL,null,null);
+  var input=channel.open();
+  scriptableStream.init(input);
+  var str=scriptableStream.read(input.available());
+  scriptableStream.close();
+  input.close();
+  return str;
+}
 
 function esteidInjectJS(doc, js) {
   var se = doc.createElement('script');
@@ -41,7 +64,25 @@ function esteidInjectJS(doc, js) {
   pe.appendChild(se);
 }
 
-/* TODO: function esteidLoadHacks(doc) */
+function esteidLoadHackFile(doc, jsFile) {
+  // TODO: if(Mozilla) {
+    esteidInjectJS(doc, getFileContentsMoz("chrome://esteid/content/" + o.js));
+  // TODO: } else if(Safari) {
+  // }
+}
+
+function esteidLoadHacks(doc) {
+  for(var i in esteidHackTable) {
+    var o = esteidHackTable[i];
+    try {
+      var urlreg = new RegExp(o.url, "i");
+      if(urlreg.exec(doc.location.href)) {
+        esteid_log('Loading ' + o.js + ' on page ' + doc.location.href);
+        esteidLoadHackFile(doc, o.js);
+      }
+    } catch(e) { esteid_log("Error in esteidLoadHacks: " + e); }
+  }
+}
 
 function esteidConvertObject(o, doc) {
   var p    = o.parentNode;
@@ -174,4 +215,20 @@ function esteidConvertLegacy(doc) {
   doc.esteidConvertLegacyRunning = false;
 }
 
-/* TODO: function esteidRegisterLegacyConverter() { */
+function esteidRegisterLegacyConverter(appcontent) {
+  if(!appcontent) return;
+
+  esteid_log('Activating legacy plugin tag converter');
+
+  appcontent.addEventListener("DOMContentLoaded", function(aEvent) {
+    var doc = aEvent.originalTarget;
+
+    doc.addEventListener("DOMNodeInserted", function() {
+      var doc = aEvent.originalTarget;
+      if(!doc.esteidConvertLegacyRunning)
+        esteidConvertLegacy(doc);
+    }, false);
+    esteidConvertLegacy(doc); }, false);
+
+    /* TODO: Load page specific hacks */
+}

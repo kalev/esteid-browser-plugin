@@ -31,6 +31,8 @@ try {
 
 (function init() {
   //if(safari.extension.settings.getItem('convertLegacy')) {
+    esteidRegisterLegacyConverter(document);
+
     //document.addEventListener('DOMContentLoaded', blockApplets, false);
     //document.addEventListener('DOMNodeInserted', blockApplets, false);
 
