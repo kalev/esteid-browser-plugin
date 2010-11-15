@@ -1,3 +1,24 @@
+/*
+ * esteid-browser-plugin - a browser plugin for Estonian EID card
+ *
+ * Copyright (C) 2010  Estonian Informatics Centre
+ * Copyright (C) 2010  Smartlink OÜ
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 function esteid_log(msg) {
     alert(msg);
 }
@@ -10,17 +31,17 @@ function esteidUSleep(millis) {
   }
 }
 
-/*
-function makePluginObj(id) {
-  const namespaceURI = document.documentElement.namespaceURI;
-  var pluginObj = document.createElementNS(namespaceURI, 'div');
-  pluginObj.innerHTML = "Java! Kaob uttu ja kohe!";
-  pluginObj.style.height = "100px";
-  pluginObj.id = id;
+/* TODO: esteidHackTable */
 
-  return pluginObj;
+function esteidInjectJS(doc, js) {
+  var se = doc.createElement('script');
+  se.type = "text/javascript";
+  var pe = doc.documentElement;
+  se.innerHTML = js;
+  pe.appendChild(se);
 }
-*/
+
+/* TODO: function esteidLoadHacks(doc) */
 
 function esteidConvertObject(o, doc) {
   var p    = o.parentNode;
@@ -31,7 +52,6 @@ function esteidConvertObject(o, doc) {
   if(p == null) return;
 
   /* Support ancient Java Applets "parameter driven" mode */
-///*
   var op = null, fInit = null, fSig, fCert, fCancel, fError, hash, slot;
   var params = o.getElementsByTagName('param');
   for(var i in params) {
@@ -55,7 +75,7 @@ function esteidConvertObject(o, doc) {
 
   esteid_log('Converting ' + (id ? id : name) + ' to new plugin on page ' +
              doc.location.href);
-//*/
+
   o = p.removeChild(o);
   delete o;
 
@@ -72,7 +92,6 @@ function esteidConvertObject(o, doc) {
   e = p.appendChild(e);
 
   /* Execute "parameter driven" mode functions */
-//*
   if(fInit) {
     esteidInjectJS(doc, fInit + "();");
   }
@@ -91,9 +110,11 @@ function esteidConvertObject(o, doc) {
     }
     esteidInjectJS(doc, cmd);
   }
-//*/
 }
 
+/* Try to find Java code attribute
+ * NB! Please keep this code in sync with components/OldJavaBlocker.js
+ */
 function esteidFindJavaCodeAttr(elem) {
   var code = elem.getAttribute("code");
 
@@ -132,5 +153,25 @@ function esteidInspectObject(e) {
     return true;
   else if(axreg.exec(e.getAttribute("classid")))
     return true;
+
+  return false;
 }
 
+function esteidConvertLegacy(doc) {
+  if(!doc.location) return; // Optimize
+
+  doc.esteidConvertLegacyRunning = true;
+
+  /* Find candidate objects */
+  var ot = [ "applet", "embed", "object" ];
+  for(var i in ot) {
+    var els = doc.getElementsByTagName(ot[i]);
+    for(var j = 0; j < els.length; j++) {
+      var e = els[j];
+      if(esteidInspectObject(e)) esteidConvertObject(e, doc);
+    }
+  }
+  doc.esteidConvertLegacyRunning = false;
+}
+
+/* TODO: function esteidRegisterLegacyConverter() { */
