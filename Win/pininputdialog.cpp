@@ -23,6 +23,7 @@
 #include "basedialog.h"
 #include "utf8_tools.h"
 
+#include <boost/lexical_cast.hpp>
 #include <windows.h>
 #include <commctrl.h>
 #include "Win/pininputdialog_res.h"
@@ -198,9 +199,7 @@ void PinInputDialog::moveControl(HWND hWnd, HWND hControl, int dx, int dy)
 void PinInputDialog::showWrongPin(HWND hParent, int tries)
 {
     static const std::wstring title = L"Wrong PIN!";
-    std::wstringstream out;
-    out << L"Tries left: " << m_triesLeft;
-    std::wstring text = out.str();
+    std::wstring text(L"Tries left: " + boost::lexical_cast<std::wstring>(tries));
 
 // mingw doesn't have EDITBALLOONTIP
 #ifdef EM_SHOWBALLOONTIP
