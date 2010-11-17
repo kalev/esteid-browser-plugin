@@ -61,3 +61,5 @@ target_link_libraries(${PROJNAME}
     ${SMARTCARDPP_LIBRARIES}
     ${EXTRA_LIBRARIES}
     )
+
+install(TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)

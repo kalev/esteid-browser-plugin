@@ -43,3 +43,5 @@ target_link_libraries(${PROJNAME}
     ${SMARTCARDPP_LIBRARIES}
     ws2_32
     )
+
+install(TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
