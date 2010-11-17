@@ -30,7 +30,7 @@
 #include "Win/pininputdialog.h"
 #include "Win/whitelistdialog.h"
 
-#include "converter.h"
+#include "utf8_tools.h"
 #include "debug.h"
 
 WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
@@ -158,7 +158,7 @@ void WindowsUI::on_whitelistdialog_response(int response)
             m_conf->Save();
         } catch(const std::exception& e) {
             std::wstring errorMessage = L"Error saving configuration.\n" +
-                                        Converter::string_to_wstring(e.what());
+                                        FB::utf8_to_wstring(e.what());
             MessageBox(parentHWND(), const_cast<wchar_t *>(errorMessage.c_str()),
                        L"Error", MB_OK | MB_ICONERROR);
         }

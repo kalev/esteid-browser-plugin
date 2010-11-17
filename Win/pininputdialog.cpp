@@ -21,7 +21,7 @@
 
 #include "pininputdialog.h"
 #include "basedialog.h"
-#include "converter.h"
+#include "utf8_tools.h"
 
 #include <windows.h>
 #include <commctrl.h>
@@ -52,7 +52,7 @@ void PinInputDialog::showPinBlocked(HWND hParent)
 
 void PinInputDialog::setSubject(const std::string& subject)
 {
-    m_subject = Converter::string_to_wstring(subject) + L" (PIN2)";
+    m_subject = FB::utf8_to_wstring(subject) + L" (PIN2)";
 }
 
 

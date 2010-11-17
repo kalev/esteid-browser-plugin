@@ -21,7 +21,7 @@
 
 #include "whitelistdialog.h"
 #include "basedialog.h"
-#include "converter.h"
+#include "utf8_tools.h"
 
 #include <windows.h>
 #include "Win/whitelistdialog_res.h"
@@ -61,7 +61,7 @@ std::vector<std::string> WhitelistDialog::getWhitelist()
 
 void WhitelistDialog::setEntryText(const std::string & site)
 {
-    std::wstring ws = Converter::string_to_wstring(site);
+    std::wstring ws = FB::utf8_to_wstring(site);
     SetDlgItemText(m_hWnd, IDC_ADD, const_cast<wchar_t *>(ws.c_str()));
 }
 
@@ -75,7 +75,7 @@ void WhitelistDialog::storeItems()
 
     for (int i = 0; i < itemCount; ++i) {
         ListView_GetItemText(m_hList, i, 0, buf, BUF_SIZE);
-        m_sites.push_back(Converter::wstring_to_string(buf));
+        m_sites.push_back(FB::wstring_to_utf8(buf));
     }
 
     delete[] buf;
@@ -99,7 +99,7 @@ void WhitelistDialog::insertItem(const std::wstring & name, bool editable)
 
 void WhitelistDialog::insertItem(const std::string & name, bool editable)
 {
-    std::wstring ws = Converter::string_to_wstring(name);
+    std::wstring ws = FB::utf8_to_wstring(name);
     insertItem(ws, editable);
 }
 

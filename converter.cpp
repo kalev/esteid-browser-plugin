@@ -23,10 +23,6 @@
 #include "debug.h"
 #include <iconv.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #ifdef ICONV_SECOND_ARGUMENT_IS_CONST
     #define ICONV_CONST const
 #else
@@ -76,31 +72,3 @@ std::string Converter::CP1252_to_UTF8(const std::string & str_in)
 {
     return iconvConvert(str_in, "UTF-8", "CP1252");
 }
-
-
-#ifdef _WIN32
-std::string Converter::wstring_to_string(const std::wstring & in)
-{
-    int len = WideCharToMultiByte(CP_UTF8, 0, in.c_str(), -1, 0, 0, 0, 0);
-    char *buf = new char[len];
-
-    WideCharToMultiByte(CP_UTF8, 0, in.c_str(), -1, buf, len, 0, 0);
-    std::string out(buf);
-    delete[] buf;
-
-    return out;
-}
-
-
-std::wstring Converter::string_to_wstring(const std::string & in)
-{
-    int len = MultiByteToWideChar(CP_UTF8, 0, in.c_str(), -1, 0, 0);
-    wchar_t *buf = new wchar_t[len];
-
-    MultiByteToWideChar(CP_UTF8, 0, in.c_str(), -1, buf, len);
-    std::wstring out(buf);
-    delete[] buf;
-
-    return out;
-}
-#endif //_WIN32

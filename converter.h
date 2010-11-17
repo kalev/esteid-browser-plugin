@@ -28,11 +28,6 @@ namespace Converter
 {
     std::string iconvConvert(const std::string&, const char*, const char*);
     std::string CP1252_to_UTF8(const std::string&);
-
-#ifdef _WIN32
-    std::string wstring_to_string(const std::wstring & str_in);
-    std::wstring string_to_wstring(const std::string & str_in);
-#endif
 };
 
 #endif //CONVERTER_H
