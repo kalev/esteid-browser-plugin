@@ -1,0 +1,156 @@
+/**********************************************************\
+
+  Auto-generated firebreathWin.rc
+
+\**********************************************************/
+
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+#include "config.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+#include "Win/pininputdialog_res.h"
+#include "Win/pininputdialog.rc"
+#include "Win/whitelistdialog_res.h"
+#include "Win/whitelistdialog.rc"
+#ifdef SUPPORT_OLD_APIS
+#include "EIDCompatControl.rc"
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE
+BEGIN
+    "resource.h\r\n"
+    "config.h\r\n\0"
+END
+
+2 TEXTINCLUDE
+BEGIN
+    "#include ""winres.h""\r\n"
+    "#include ""Win/pininputdialog_res.h""\r\n"
+    "#include ""Win/pininputdialog.rc""\r\n"
+    "#include ""Win/whitelistdialog_res.h""\r\n"
+    "#include ""Win/whitelistdialog.rc""\r\n\0"
+END
+
+3 TEXTINCLUDE
+BEGIN
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", FBSTRING_CompanyName
+            VALUE "FileDescription", FBSTRING_FileDescription
+            VALUE "FileVersion", FBSTRING_PLUGIN_VERSION
+            VALUE "LegalCopyright", FBSTRING_LegalCopyright
+            VALUE "InternalName", FBSTRING_PluginFileName
+            VALUE "OriginalFilename", FBSTRING_PluginFileName
+            VALUE "ProductName", FBSTRING_ProductName
+            VALUE "ProductVersion", FBSTRING_PLUGIN_VERSION
+            VALUE "FileExtents", FBSTRING_FileExtents
+            VALUE "FileOpenName", FBSTRING_PluginName
+#ifdef SUPPORT_OLD_APIS
+            VALUE "MIMEType", "application/x-esteid|application/x-digidoc|application/x-idcard-plugin"
+#else
+            VALUE "MIMEType", FBSTRING_MIMEType
+#endif
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_FIREBREATHWIN       REGISTRY                "${GEN_DIR}/gen/FireBreathWin.rgs"
+IDR_FBCONTROL           REGISTRY                "${GEN_DIR}/gen/FBControl.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_PROJNAME            "np${PLUGIN_NAME}"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "${GEN_DIR}/gen/FireBreathWin.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
