@@ -54,6 +54,7 @@ PluginSettings::PluginSettings()
     default_whitelist.push_back("digidoc.sk.ee");
     default_whitelist.push_back("xbrl.rik.ee");
     default_whitelist.push_back("ettevotjaportaal.rik.ee");
+    default_whitelist.push_back("id.lhv.ee");
 }
 
 
