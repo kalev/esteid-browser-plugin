@@ -27,7 +27,6 @@
 
 #include "localize.h"
 #include "JSAPIAuto.h"
-#include "Util/JSArray.h"
 #include "DOM/Element.h"
 #include "BrowserHost.h"
 #include "NpapiBrowserHost.h"

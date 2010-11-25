@@ -38,7 +38,6 @@
 #include "variant_list.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
-#include "Util/JSArray.h"
 #include "config.h"
 
 #ifdef _WIN32

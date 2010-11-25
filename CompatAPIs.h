@@ -22,7 +22,6 @@
 #define COMPATAPIS_H
 
 #include "CertificateAPI.h"
-#include "Util/JSArray.h"
 
 #ifdef SUPPORT_OLD_APIS
 
