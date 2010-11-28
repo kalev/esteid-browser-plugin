@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-22 13:17+0900\n"
+"POT-Creation-Date: 2010-11-28 21:15+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,17 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../EsteidAPI.h:40
+#: ../EsteidAPI.h:39
 msgid "User cancelled operation"
 msgstr ""
 
-#: ../X11/whitelistdialog.cpp:184
-msgid ""
-"In order to use your ID card on newly added site, it may be needed to start "
-"the desired operation from the beginning or reload the page."
-msgstr ""
-
-#: ../X11/pininputdialog.cpp:95
+#: ../X11/pininputdialog.cpp:97
 msgid "<span color=\"red\">Wrong PIN!</span> Tries left: "
 msgstr ""
 
@@ -39,31 +33,31 @@ msgstr ""
 msgid "Please run ID card Utility to unlock the PIN."
 msgstr ""
 
-#: ../X11/GtkUI.cpp:225
+#: ../X11/GtkUI.cpp:227
 msgid "Error saving configuration"
 msgstr ""
 
-#: ../EsteidAPI.cpp:50
-msgid "Settings"
+#: ../EsteidAPI.cpp:62
+msgid "Allow"
 msgstr ""
 
-#: ../EsteidAPI.cpp:51
+#: ../EsteidAPI.cpp:63
 msgid "This site is trying to obtain access to your ID card."
 msgstr ""
 
-#: ../EsteidAPI.cpp:52
+#: ../EsteidAPI.cpp:64
 msgid ""
-"Access to ID card was denied because the connection to the site is not "
+"Access to ID card was denied because the connection to the server is not "
 "secure."
 msgstr ""
 
-#: ../EsteidAPI.cpp:452
+#: ../EsteidAPI.cpp:500
 msgid ""
 "Website is using old signature APIs. Please contact site owner. Click <a "
 "href=\""
 msgstr ""
 
-#: ../EsteidAPI.cpp:453
+#: ../EsteidAPI.cpp:501
 msgid "\" target=\"_blank\" style=\"color: blue;\">here</a> for details."
 msgstr ""
 
