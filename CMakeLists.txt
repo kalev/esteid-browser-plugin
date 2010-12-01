@@ -137,3 +137,5 @@ configure_file(esteid-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/esteid-config.h)
 include_platform()
 
 add_subdirectory(Mozilla)
+
+install(FILES esteid-browser-plugin.conf DESTINATION ${SYSCONF_INSTALL_DIR})
