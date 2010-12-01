@@ -27,7 +27,9 @@
 #include <boost/filesystem/path.hpp>
 
 class PluginSettings {
+    static boost::filesystem::path globalSettingsDir();
     static boost::filesystem::path userSettingsDir();
+    static boost::filesystem::path globalSettingsFile();
     static boost::filesystem::path userSettingsFile();
     static boost::filesystem::path legacySettingsFile();
 
@@ -43,7 +45,8 @@ public:
     /* Returns true if site s is in whitelist */
     bool InWhitelist(const std::string& s);
 
-    void loadUser(const boost::filesystem::path& filename);
+    void load(const boost::filesystem::path& filename,
+              std::vector<std::string>& out_whitelist);
     void loadLegacy(const boost::filesystem::path& filename);
     void convertLegacy();
     void load();

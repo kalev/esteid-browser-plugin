@@ -119,6 +119,8 @@ SET( SOURCES
     ${UTILITY_SOURCES}
     )
 
+set(ESTEID_CONFIGDIR "${SYSCONF_INSTALL_DIR}")
+
 include(CheckIncludeFiles)
 check_include_files(libintl.h HAVE_LIBINTL_H)
 
@@ -138,4 +140,4 @@ include_platform()
 
 add_subdirectory(Mozilla)
 
-install(FILES esteid-browser-plugin.conf DESTINATION ${SYSCONF_INSTALL_DIR})
+install(FILES esteid-browser-plugin.conf DESTINATION ${ESTEID_CONFIGDIR})

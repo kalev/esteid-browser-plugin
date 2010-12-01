@@ -35,6 +35,7 @@
 #include "PluginSettings.h"
 #include "config.h"
 #include "debug.h"
+#include "esteid-config.h"
 
 using namespace boost::filesystem;
 
@@ -43,19 +44,16 @@ PluginSettings::PluginSettings()
       allowDefaults(true)
 {
     load();
+}
 
-    /* Builtin whitelist */
-    default_whitelist.clear();
-    default_whitelist.push_back("id.swedbank.ee");
-    default_whitelist.push_back("id.business.swedbank.ee");
-    default_whitelist.push_back("id.seb.ee");
-    default_whitelist.push_back("idnetbank.nordea.com");
-    default_whitelist.push_back("id.eesti.ee");
-    default_whitelist.push_back("www.eesti.ee");
-    default_whitelist.push_back("digidoc.sk.ee");
-    default_whitelist.push_back("xbrl.rik.ee");
-    default_whitelist.push_back("ettevotjaportaal.rik.ee");
-    default_whitelist.push_back("id.lhv.ee");
+path PluginSettings::globalSettingsDir()
+{
+#ifdef _WIN32
+    // FIXME: lookup path from registry
+    return ESTEID_CONFIGDIR;
+#else // UNIX
+    return ESTEID_CONFIGDIR;
+#endif
 }
 
 path PluginSettings::userSettingsDir()
@@ -76,6 +74,13 @@ PluginSettings::~PluginSettings()
 {
 }
 
+path PluginSettings::globalSettingsFile()
+{
+    static const std::string fileName = "esteid-browser-plugin.conf";
+
+    return globalSettingsDir() / fileName;
+}
+
 path PluginSettings::userSettingsFile()
 {
     static const std::string fileName = "esteid-browser-plugin.conf";
@@ -90,7 +95,8 @@ path PluginSettings::legacySettingsFile()
     return userSettingsDir() / fileName;
 }
 
-void PluginSettings::loadUser(const boost::filesystem::path& filename)
+void PluginSettings::load(const boost::filesystem::path& filename,
+                          std::vector<std::string>& out_whitelist)
 {
     using boost::property_tree::ptree;
 
@@ -99,7 +105,7 @@ void PluginSettings::loadUser(const boost::filesystem::path& filename)
 
     BOOST_FOREACH(ptree::value_type& v, pt.get_child("settings.whitelist")) {
         if (v.first == "url") {
-            whitelist.push_back(v.second.data());
+            out_whitelist.push_back(v.second.data());
         }
     }
 }
@@ -133,8 +139,15 @@ void PluginSettings::convertLegacy()
 void PluginSettings::load()
 {
     try {
+        // Load systemwide settings file
+        load(globalSettingsFile(), default_whitelist);
+    } catch(const std::exception& e) {
+        ESTEID_DEBUG("Error loading settings: %s", e.what());
+    }
+
+    try {
         // Load user settings file from home directory
-        loadUser(userSettingsFile());
+        load(userSettingsFile(), whitelist);
     } catch(const std::exception& e) {
         ESTEID_DEBUG("Error loading user settings: %s", e.what());
     }
