@@ -38,10 +38,7 @@ PluginSettings::PluginSettings()
     : allowLocal(true),
       allowDefaults(true)
 {
-    static const std::string fileName = "esteidplugin.conf";
-
-    m_configFile = configDirectory() / fileName;
-    loadConfig(m_configFile);
+    load();
 
     /* Builtin whitelist */
     default_whitelist.clear();
@@ -57,8 +54,7 @@ PluginSettings::PluginSettings()
     default_whitelist.push_back("id.lhv.ee");
 }
 
-
-path PluginSettings::configDirectory()
+path PluginSettings::userSettingsDir()
 {
 #ifdef _WIN32
     return path(getenv("APPDATA"), native);
@@ -76,7 +72,14 @@ PluginSettings::~PluginSettings()
 {
 }
 
-void PluginSettings::loadConfig(const boost::filesystem::path& configFile)
+path PluginSettings::userSettingsFile()
+{
+    static const std::string fileName = "esteidplugin.conf";
+
+    return userSettingsDir() / fileName;
+}
+
+void PluginSettings::load(const boost::filesystem::path& configFile)
 {
     std::string line;
     ifstream input(configFile);
@@ -92,21 +95,26 @@ void PluginSettings::loadConfig(const boost::filesystem::path& configFile)
     }
 }
 
-void PluginSettings::Save()
+void PluginSettings::load()
+{
+    load(userSettingsFile());
+}
+
+void PluginSettings::save(const boost::filesystem::path& configFile)
 {
     std::vector<std::string>::const_iterator i;
 
     removeDuplicateEntries(whitelist);
     removeDefaultEntries(whitelist);
 
-    path configDir = configDirectory();
+    path configDir = configFile.parent_path();
     if (!exists(configDir))
         create_directory(configDir);
 
     ofstream output;
     output.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 
-    output.open(m_configFile);
+    output.open(configFile);
     if (!allowDefaults)
         output << "@NODEFAULTS" << std::endl;
     if (!allowLocal)
@@ -116,6 +124,11 @@ void PluginSettings::Save()
         output << *i << std::endl;
 
     output.close();
+}
+
+void PluginSettings::Save()
+{
+    save(userSettingsFile());
 }
 
 bool PluginSettings::InWhitelist(const std::string& s)

@@ -27,6 +27,9 @@
 #include <boost/filesystem/path.hpp>
 
 class PluginSettings {
+    static boost::filesystem::path userSettingsDir();
+    static boost::filesystem::path userSettingsFile();
+
 public:
     PluginSettings();
     virtual ~PluginSettings();
@@ -38,15 +41,17 @@ public:
 
     /* Returns true if site s is in whitelist */
     bool InWhitelist(const std::string& s);
+
+    void load(const boost::filesystem::path& filename);
+    void load();
+
     /** Saves config. Will throw ios_base::failure on failure */
+    void save(const boost::filesystem::path& filename);
     void Save();
+
 private:
-    void loadConfig(const boost::filesystem::path& configFile);
     void removeDuplicateEntries(std::vector<std::string>& v);
     void removeDefaultEntries(std::vector<std::string>& v);
     bool inDefaultWhitelist(const std::string& s);
-    boost::filesystem::path configDirectory();
-
-    boost::filesystem::path m_configFile;
 };
 #endif
