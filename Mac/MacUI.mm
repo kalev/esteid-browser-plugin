@@ -164,7 +164,8 @@ void MacUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
         MacSettingsPanel *panel = [[MacSettingsPanel alloc] init];
         NSMutableArray *websites = [NSMutableArray array];
         
-        for(std::vector<std::string>::const_iterator it = settings.whitelist.begin(); it != settings.whitelist.end(); it++) {
+        std::vector<std::string> whitelist = settings.whitelist();
+        for (std::vector<std::string>::const_iterator it = whitelist.begin(); it != whitelist.end(); it++) {
             [websites addObject:CPlusStringToNSString(*it)];
         }
         

@@ -39,7 +39,7 @@
 using namespace boost::filesystem;
 
 PluginSettings::PluginSettings()
-    : allowLocal(true)
+    : m_allowLocal(true)
 {
     load();
 }
@@ -113,14 +113,14 @@ void PluginSettings::loadLegacy(const boost::filesystem::path& configFile)
     std::string line;
     ifstream input(configFile);
 
-    whitelist.clear();
+    m_whitelist.clear();
     while (std::getline(input, line) && !line.empty()) {
         if (line == "@NODEFAULTS")
             ;
         else if (line == "@NOLOCAL")
-            allowLocal = false;
+            m_allowLocal = false;
         else
-            whitelist.push_back(line);
+            m_whitelist.push_back(line);
     }
 }
 
@@ -138,14 +138,14 @@ void PluginSettings::load()
 {
     try {
         // Load systemwide settings file
-        load(globalSettingsFile(), default_whitelist);
+        load(globalSettingsFile(), m_defaultWhitelist);
     } catch(const std::exception& e) {
         ESTEID_DEBUG("Error loading settings: %s", e.what());
     }
 
     try {
         // Load user settings file from home directory
-        load(userSettingsFile(), whitelist);
+        load(userSettingsFile(), m_whitelist);
     } catch(const std::exception& e) {
         ESTEID_DEBUG("Error loading user settings: %s", e.what());
     }
@@ -171,7 +171,7 @@ void PluginSettings::save(const boost::filesystem::path& filename)
     ptree settings;
 
     ptree wl_tree;
-    BOOST_FOREACH(const std::string& url, whitelist) {
+    BOOST_FOREACH(const std::string& url, m_whitelist) {
         wl_tree.add("url", url);
     }
 
@@ -185,8 +185,8 @@ void PluginSettings::save(const boost::filesystem::path& filename)
 
 void PluginSettings::save()
 {
-    removeDuplicateEntries(whitelist);
-    removeDuplicateEntries(whitelist, default_whitelist);
+    removeDuplicateEntries(m_whitelist);
+    removeDuplicateEntries(m_whitelist, m_defaultWhitelist);
 
     try {
         // Save user settings file
@@ -198,7 +198,37 @@ void PluginSettings::save()
 
 bool PluginSettings::inWhitelist(const std::string& s)
 {
-    bool ret = ::inWhitelist(default_whitelist, s) ||
-               ::inWhitelist(whitelist, s);
+    bool ret = ::inWhitelist(m_defaultWhitelist, s) ||
+               ::inWhitelist(m_whitelist, s);
     return ret;
+}
+
+Whitelist PluginSettings::defaultWhitelist()
+{
+    return m_defaultWhitelist;
+}
+
+Whitelist PluginSettings::whitelist()
+{
+    return m_whitelist;
+}
+
+void PluginSettings::setWhitelist(const Whitelist& whitelist)
+{
+    m_whitelist = whitelist;
+}
+
+void PluginSettings::addSite(const std::string& site)
+{
+    m_whitelist.push_back(site);
+}
+
+void PluginSettings::clearWhitelist()
+{
+    m_whitelist.clear();
+}
+
+bool PluginSettings::allowLocal()
+{
+    return m_allowLocal;
 }

@@ -127,8 +127,8 @@ void WindowsUI::ShowSettings(PluginSettings& settings, const std::string& pageUr
 
     m_settings = &settings;
 
-    m_whitelistDialog->addDefaultSites(settings.default_whitelist);
-    m_whitelistDialog->addSites(settings.whitelist);
+    m_whitelistDialog->addDefaultSites(m_settings->defaultWhitelist());
+    m_whitelistDialog->addSites(m_settings->whitelist());
     m_whitelistDialog->doDialog(parentHWND());
 
     if (pageUrl.length() > 0)
@@ -153,7 +153,7 @@ void WindowsUI::on_pininputdialog_response(int response)
 void WindowsUI::on_whitelistdialog_response(int response)
 {
     if (response == WhitelistDialog::RESPONSE_OK) {
-        m_settings->whitelist = m_whitelistDialog->getWhitelist();
+        m_settings->setWhitelist(m_whitelistDialog->getWhitelist());
         try {
             m_settings->save();
         } catch(const std::exception& e) {

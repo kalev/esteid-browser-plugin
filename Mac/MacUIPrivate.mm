@@ -207,9 +207,9 @@ static inline NSString *CPlusStringToNSString(std::string str)
 	NSEnumerator *enumerator = [[panel websites] objectEnumerator];
 	NSString *website;
 
-	m_settings->whitelist.clear();
+	m_settings->clearWhitelist();
 	while ((website = [enumerator nextObject]) != nil) {
-		m_settings->whitelist.push_back([website UTF8String]);
+		m_settings->addSite([website UTF8String]);
 	}
 
 	try {

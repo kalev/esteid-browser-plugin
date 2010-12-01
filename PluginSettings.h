@@ -37,10 +37,6 @@ public:
     PluginSettings();
     virtual ~PluginSettings();
 
-    Whitelist whitelist;
-    Whitelist default_whitelist;
-    bool allowLocal;
-
     /* Returns true if site s is in whitelist */
     bool inWhitelist(const std::string& s);
 
@@ -53,5 +49,17 @@ public:
     /** Saves config. Will throw ios_base::failure on failure */
     void save(const boost::filesystem::path& filename);
     void save();
+
+    Whitelist defaultWhitelist();
+    Whitelist whitelist();
+    void setWhitelist(const Whitelist& whitelist);
+    void addSite(const std::string& site);
+    void clearWhitelist();
+    bool allowLocal();
+
+private:
+    Whitelist m_whitelist;
+    Whitelist m_defaultWhitelist;
+    bool m_allowLocal;
 };
 #endif

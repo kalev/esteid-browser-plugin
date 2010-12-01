@@ -188,8 +188,8 @@ void GtkUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
         m_whitelistDialog->setEntryText(pageUrl);
 
     m_whitelistDialog->clear();
-    m_whitelistDialog->addDefaultSites(settings.default_whitelist);
-    m_whitelistDialog->addSites(settings.whitelist);
+    m_whitelistDialog->addDefaultSites(m_settings->defaultWhitelist());
+    m_whitelistDialog->addSites(m_settings->whitelist());
 
     m_whitelistDialog->setParent(browserWindow());
 
@@ -220,7 +220,7 @@ void GtkUI::on_pininputdialog_response(int response_id)
 void GtkUI::on_whitelistdialog_response(int response_id)
 {
     if (response_id == Gtk::RESPONSE_OK) {
-        m_settings->whitelist = m_whitelistDialog->getWhitelist();
+        m_settings->setWhitelist(m_whitelistDialog->getWhitelist());
         try {
             m_settings->save();
         } catch(const std::exception& e) {

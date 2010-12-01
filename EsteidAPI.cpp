@@ -167,7 +167,7 @@ void EsteidAPI::setWindow(FB::PluginWindow* win)
 
 bool EsteidAPI::IsLocal()
 {
-    if (!m_settings.allowLocal)
+    if (!m_settings.allowLocal())
         return false;
 
     if (m_pageURL.protocol() == "file" ||
