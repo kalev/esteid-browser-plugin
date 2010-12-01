@@ -39,8 +39,7 @@
 using namespace boost::filesystem;
 
 PluginSettings::PluginSettings()
-    : allowLocal(true),
-      allowDefaults(true)
+    : allowLocal(true)
 {
     load();
 }
@@ -117,7 +116,7 @@ void PluginSettings::loadLegacy(const boost::filesystem::path& configFile)
     whitelist.clear();
     while (std::getline(input, line) && !line.empty()) {
         if (line == "@NODEFAULTS")
-            allowDefaults = false;
+            ;
         else if (line == "@NOLOCAL")
             allowLocal = false;
         else
@@ -199,7 +198,7 @@ void PluginSettings::Save()
 
 bool PluginSettings::InWhitelist(const std::string& s)
 {
-    bool ret = allowDefaults && inWhitelist(default_whitelist, s) ||
-                                inWhitelist(whitelist, s);
+    bool ret = inWhitelist(default_whitelist, s) ||
+               inWhitelist(whitelist, s);
     return ret;
 }

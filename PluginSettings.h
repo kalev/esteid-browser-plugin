@@ -40,7 +40,6 @@ public:
     Whitelist whitelist;
     Whitelist default_whitelist;
     bool allowLocal;
-    bool allowDefaults;
 
     /* Returns true if site s is in whitelist */
     bool InWhitelist(const std::string& s);
