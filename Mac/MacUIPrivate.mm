@@ -54,9 +54,9 @@ static inline NSString *CPlusStringToNSString(std::string str)
 	self->m_callbacks = cb;
 }
 
-- (void)setConf:(PluginSettings *)conf
+- (void)setConf:(PluginSettings *)settings
 {
-	self->m_conf = conf;
+	self->m_settings = settings;
 }
 
 - (void)abortModal
@@ -207,13 +207,13 @@ static inline NSString *CPlusStringToNSString(std::string str)
 	NSEnumerator *enumerator = [[panel websites] objectEnumerator];
 	NSString *website;
 
-	m_conf->whitelist.clear();
+	m_settings->whitelist.clear();
 	while ((website = [enumerator nextObject]) != nil) {
-		m_conf->whitelist.push_back([website UTF8String]);
+		m_settings->whitelist.push_back([website UTF8String]);
 	}
 
 	try {
-		m_conf->Save();
+		m_settings->save();
 	} catch(const std::exception& err) {
 		NSLog(@"%@: Couldn't save configuration!", NSStringFromClass([panel class]));
 	}

@@ -31,7 +31,7 @@
 	BOOL m_async;
 	NSWindow *m_window;
 	boost::shared_ptr<MacUI::UICallbacks> m_callbacks;
-	PluginSettings *m_conf;
+	PluginSettings *m_settings;
 }
 
 - (NSWindow *)window;
@@ -40,7 +40,7 @@
 - (void)setLocked:(BOOL)locked;
 
 - (void)registerCallbacks:(boost::shared_ptr<MacUI::UICallbacks>)cb;
-- (void)setConf:(PluginSettings *)conf;
+- (void)setConf:(PluginSettings *)settings;
 
 - (void)abortModal;
 - (void)runAsync:(id <MacUIPanel>)panel;

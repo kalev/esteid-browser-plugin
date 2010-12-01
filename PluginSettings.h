@@ -42,7 +42,7 @@ public:
     bool allowLocal;
 
     /* Returns true if site s is in whitelist */
-    bool InWhitelist(const std::string& s);
+    bool inWhitelist(const std::string& s);
 
     void load(const boost::filesystem::path& filename,
               Whitelist& out_whitelist);
@@ -52,6 +52,6 @@ public:
 
     /** Saves config. Will throw ios_base::failure on failure */
     void save(const boost::filesystem::path& filename);
-    void Save();
+    void save();
 };
 #endif

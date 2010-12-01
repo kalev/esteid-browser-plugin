@@ -41,7 +41,7 @@ public:
                              int pinPadTimeout, bool retry, int tries);
 #endif
     void ShowPinBlockedMessage(int pin);
-    void ShowSettings(PluginSettings& conf, const std::string& pageUrl = "");
+    void ShowSettings(PluginSettings& settings, const std::string& pageUrl = "");
         
     static void SetWindow(void *window);
 private:

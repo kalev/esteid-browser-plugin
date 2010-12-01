@@ -129,7 +129,7 @@ void PluginSettings::convertLegacy()
     path legacySettings = legacySettingsFile();
     if (exists(legacySettings)) {
         loadLegacy(legacySettings);
-        Save();
+        save();
         remove(legacySettings);
     }
 }
@@ -183,7 +183,7 @@ void PluginSettings::save(const boost::filesystem::path& filename)
               xml_writer_make_settings(' ', 4));
 }
 
-void PluginSettings::Save()
+void PluginSettings::save()
 {
     removeDuplicateEntries(whitelist);
     removeDuplicateEntries(whitelist, default_whitelist);
@@ -196,9 +196,9 @@ void PluginSettings::Save()
     }
 }
 
-bool PluginSettings::InWhitelist(const std::string& s)
+bool PluginSettings::inWhitelist(const std::string& s)
 {
-    bool ret = inWhitelist(default_whitelist, s) ||
-               inWhitelist(whitelist, s);
+    bool ret = ::inWhitelist(default_whitelist, s) ||
+               ::inWhitelist(whitelist, s);
     return ret;
 }

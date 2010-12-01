@@ -121,14 +121,14 @@ void WindowsUI::ShowPinBlockedMessage(int pin)
 }
 
 
-void WindowsUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
+void WindowsUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
 {
     ESTEID_DEBUG("WindowsUI::ShowSettings()");
 
-    m_conf = &conf;
+    m_settings = &settings;
 
-    m_whitelistDialog->addDefaultSites(conf.default_whitelist);
-    m_whitelistDialog->addSites(conf.whitelist);
+    m_whitelistDialog->addDefaultSites(settings.default_whitelist);
+    m_whitelistDialog->addSites(settings.whitelist);
     m_whitelistDialog->doDialog(parentHWND());
 
     if (pageUrl.length() > 0)
@@ -153,9 +153,9 @@ void WindowsUI::on_pininputdialog_response(int response)
 void WindowsUI::on_whitelistdialog_response(int response)
 {
     if (response == WhitelistDialog::RESPONSE_OK) {
-        m_conf->whitelist = m_whitelistDialog->getWhitelist();
+        m_settings->whitelist = m_whitelistDialog->getWhitelist();
         try {
-            m_conf->Save();
+            m_settings->save();
         } catch(const std::exception& e) {
             std::wstring errorMessage = L"Error saving configuration.\n" +
                                         FB::utf8_to_wstring(e.what());

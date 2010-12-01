@@ -41,7 +41,7 @@ public:
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries);
 #endif
-    void ShowSettings(PluginSettings& conf, const std::string& pageUrl = "");
+    void ShowSettings(PluginSettings& settings, const std::string& pageUrl = "");
     void ShowPinBlockedMessage(int pin);
 
 protected:
@@ -51,7 +51,7 @@ protected:
     HWND browserHWND();
     HWND parentHWND();
 
-    PluginSettings *m_conf;
+    PluginSettings *m_settings;
     std::auto_ptr<PinInputDialog> m_pinInputDialog;
     std::auto_ptr<WhitelistDialog> m_whitelistDialog;
     PinInputDialog::Connection m_pinInputConnection;

@@ -171,9 +171,9 @@ void GtkUI::ShowPinBlockedMessage(int pin)
 }
 
 
-void GtkUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
+void GtkUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
 {
-    m_conf = &conf;
+    m_settings = &settings;
 
     if (!m_whitelistDialog)
         throw std::runtime_error("WhitelistDialog not loaded");
@@ -188,8 +188,8 @@ void GtkUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
         m_whitelistDialog->setEntryText(pageUrl);
 
     m_whitelistDialog->clear();
-    m_whitelistDialog->addDefaultSites(conf.default_whitelist);
-    m_whitelistDialog->addSites(conf.whitelist);
+    m_whitelistDialog->addDefaultSites(settings.default_whitelist);
+    m_whitelistDialog->addSites(settings.whitelist);
 
     m_whitelistDialog->setParent(browserWindow());
 
@@ -220,11 +220,11 @@ void GtkUI::on_pininputdialog_response(int response_id)
 void GtkUI::on_whitelistdialog_response(int response_id)
 {
     if (response_id == Gtk::RESPONSE_OK) {
-        m_conf->whitelist = m_whitelistDialog->getWhitelist();
+        m_settings->whitelist = m_whitelistDialog->getWhitelist();
         try {
-            m_conf->Save();
+            m_settings->save();
         } catch(const std::exception& e) {
-            Gtk::MessageDialog dialog(_("Error saving configuration"), false, Gtk::MESSAGE_ERROR);
+            Gtk::MessageDialog dialog(_("Error saving settings"), false, Gtk::MESSAGE_ERROR);
             dialog.set_secondary_text(e.what());
             dialog.run();
         }

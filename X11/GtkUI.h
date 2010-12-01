@@ -47,7 +47,7 @@ public:
         const std::string& docUrl, const std::string& docHash,
         int pinPadTimeout, bool retry, int tries);
 #endif
-    void ShowSettings(PluginSettings& conf, const std::string& pageUrl = "");
+    void ShowSettings(PluginSettings& settings, const std::string& pageUrl = "");
     void ShowPinBlockedMessage(int pin);
 
 protected:
@@ -58,7 +58,7 @@ protected:
 
     PinInputDialog *m_pinInputDialog;
     WhitelistDialog *m_whitelistDialog;
-    PluginSettings *m_conf;
+    PluginSettings *m_settings;
 
 private:
     bool m_dialog_up;

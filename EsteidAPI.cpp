@@ -167,7 +167,7 @@ void EsteidAPI::setWindow(FB::PluginWindow* win)
 
 bool EsteidAPI::IsLocal()
 {
-    if (!m_conf.allowLocal)
+    if (!m_settings.allowLocal)
         return false;
 
     if (m_pageURL.protocol() == "file" ||
@@ -188,7 +188,7 @@ bool EsteidAPI::IsSecure()
 
 bool EsteidAPI::IsWhiteListed()
 {
-    if (IsLocal() || m_conf.InWhitelist(m_pageURL.hostname()))
+    if (IsLocal() || m_settings.inWhitelist(m_pageURL.hostname()))
         return true;
 
     return false;
@@ -261,7 +261,7 @@ void EsteidAPI::showSettings()
     if (m_pageURL.protocol() == "file" ||
         m_pageURL.protocol() == "chrome") {
         try {
-            m_UI->ShowSettings(m_conf);
+            m_UI->ShowSettings(m_settings);
         } catch(const std::exception& e) {
             ESTEID_DEBUG("Unable to display whitelist editor: %s", e.what());
         }
@@ -274,9 +274,9 @@ void EsteidAPI::ShowSettings()
 {
     try {
         if (IsSecure())
-            m_UI->ShowSettings(m_conf, m_pageURL.hostname());
+            m_UI->ShowSettings(m_settings, m_pageURL.hostname());
         else
-            m_UI->ShowSettings(m_conf);
+            m_UI->ShowSettings(m_settings);
     } catch(const std::exception& e) {
         ESTEID_DEBUG("Unable to display whitelist editor: %s", e.what());
     }

@@ -154,17 +154,17 @@ void MacUI::ShowPinBlockedMessage(int pin)
     [pool release];
 }
 
-void MacUI::ShowSettings(PluginSettings& conf, const std::string& pageUrl)
+void MacUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     if(![(MacUIPrivate *)m_internal isLocked]) {
-        [(MacUIPrivate *)m_internal setConf:&conf];
+        [(MacUIPrivate *)m_internal setConf:&settings];
 
         MacSettingsPanel *panel = [[MacSettingsPanel alloc] init];
         NSMutableArray *websites = [NSMutableArray array];
         
-        for(std::vector<std::string>::const_iterator it = conf.whitelist.begin(); it != conf.whitelist.end(); it++) {
+        for(std::vector<std::string>::const_iterator it = settings.whitelist.begin(); it != settings.whitelist.end(); it++) {
             [websites addObject:CPlusStringToNSString(*it)];
         }
         
