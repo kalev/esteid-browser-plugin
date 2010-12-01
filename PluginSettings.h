@@ -45,11 +45,11 @@ public:
 
     void loadUser(const boost::filesystem::path& filename);
     void loadLegacy(const boost::filesystem::path& filename);
+    void convertLegacy();
     void load();
 
     /** Saves config. Will throw ios_base::failure on failure */
-    void saveUser(const boost::filesystem::path& filename);
-    void saveLegacy(const boost::filesystem::path& filename);
+    void save(const boost::filesystem::path& filename);
     void Save();
 
 private:

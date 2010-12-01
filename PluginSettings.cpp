@@ -34,6 +34,7 @@
 
 #include "PluginSettings.h"
 #include "config.h"
+#include "debug.h"
 
 using namespace boost::filesystem;
 
@@ -119,12 +120,34 @@ void PluginSettings::loadLegacy(const boost::filesystem::path& configFile)
     }
 }
 
-void PluginSettings::load()
+void PluginSettings::convertLegacy()
 {
-    loadLegacy(legacySettingsFile());
+    path legacySettings = legacySettingsFile();
+    if (exists(legacySettings)) {
+        loadLegacy(legacySettings);
+        Save();
+        remove(legacySettings);
+    }
 }
 
-void PluginSettings::saveUser(const boost::filesystem::path& filename)
+void PluginSettings::load()
+{
+    try {
+        // Load user settings file from home directory
+        loadUser(userSettingsFile());
+    } catch(const std::exception& e) {
+        ESTEID_DEBUG("Error loading user settings: %s", e.what());
+    }
+
+    try {
+        // Convert legacy settings into the new format
+        convertLegacy();
+    } catch(const std::exception& e) {
+        ESTEID_DEBUG("Error converting legacy settings: %s", e.what());
+    }
+}
+
+void PluginSettings::save(const boost::filesystem::path& filename)
 {
     using boost::property_tree::ptree;
     using boost::property_tree::xml_writer_make_settings;
@@ -149,35 +172,17 @@ void PluginSettings::saveUser(const boost::filesystem::path& filename)
               xml_writer_make_settings(' ', 4));
 }
 
-void PluginSettings::saveLegacy(const boost::filesystem::path& configFile)
+void PluginSettings::Save()
 {
-    std::vector<std::string>::const_iterator i;
-
     removeDuplicateEntries(whitelist);
     removeDefaultEntries(whitelist);
 
-    path configDir = configFile.parent_path();
-    if (!exists(configDir))
-        create_directory(configDir);
-
-    ofstream output;
-    output.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-
-    output.open(configFile);
-    if (!allowDefaults)
-        output << "@NODEFAULTS" << std::endl;
-    if (!allowLocal)
-        output << "@NOLOCAL" << std::endl;
-
-    for (i = whitelist.begin(); i != whitelist.end(); ++i)
-        output << *i << std::endl;
-
-    output.close();
-}
-
-void PluginSettings::Save()
-{
-    saveLegacy(legacySettingsFile());
+    try {
+        // Save user settings file
+        save(userSettingsFile());
+    } catch(const std::exception& e) {
+        ESTEID_DEBUG("Error saving user settings: %s", e.what());
+    }
 }
 
 bool PluginSettings::InWhitelist(const std::string& s)
