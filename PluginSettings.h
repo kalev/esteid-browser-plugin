@@ -28,6 +28,7 @@
 
 class PluginSettings {
     static boost::filesystem::path userSettingsDir();
+    static boost::filesystem::path userSettingsFile();
     static boost::filesystem::path legacySettingsFile();
 
 public:
@@ -42,10 +43,12 @@ public:
     /* Returns true if site s is in whitelist */
     bool InWhitelist(const std::string& s);
 
+    void loadUser(const boost::filesystem::path& filename);
     void loadLegacy(const boost::filesystem::path& filename);
     void load();
 
     /** Saves config. Will throw ios_base::failure on failure */
+    void saveUser(const boost::filesystem::path& filename);
     void saveLegacy(const boost::filesystem::path& filename);
     void Save();
 

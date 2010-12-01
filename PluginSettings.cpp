@@ -28,6 +28,9 @@
 #include <boost/bind.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/foreach.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 #include "PluginSettings.h"
 #include "config.h"
@@ -72,11 +75,32 @@ PluginSettings::~PluginSettings()
 {
 }
 
+path PluginSettings::userSettingsFile()
+{
+    static const std::string fileName = "esteid-browser-plugin.conf";
+
+    return userSettingsDir() / fileName;
+}
+
 path PluginSettings::legacySettingsFile()
 {
     static const std::string fileName = "esteidplugin.conf";
 
     return userSettingsDir() / fileName;
+}
+
+void PluginSettings::loadUser(const boost::filesystem::path& filename)
+{
+    using boost::property_tree::ptree;
+
+    ptree pt;
+    read_xml(filename.string(), pt);
+
+    BOOST_FOREACH(ptree::value_type& v, pt.get_child("settings.whitelist")) {
+        if (v.first == "url") {
+            whitelist.push_back(v.second.data());
+        }
+    }
 }
 
 void PluginSettings::loadLegacy(const boost::filesystem::path& configFile)
@@ -98,6 +122,31 @@ void PluginSettings::loadLegacy(const boost::filesystem::path& configFile)
 void PluginSettings::load()
 {
     loadLegacy(legacySettingsFile());
+}
+
+void PluginSettings::saveUser(const boost::filesystem::path& filename)
+{
+    using boost::property_tree::ptree;
+    using boost::property_tree::xml_writer_make_settings;
+
+    path settingsDir = filename.parent_path();
+    if (!exists(settingsDir))
+        create_directory(settingsDir);
+
+    // Create empty property tree object
+    ptree settings;
+
+    ptree wl_tree;
+    BOOST_FOREACH(const std::string& url, whitelist) {
+        wl_tree.add("url", url);
+    }
+
+    settings.add_child("settings.whitelist", wl_tree);
+
+    write_xml(filename.string(),
+              settings,
+              std::locale(),
+              xml_writer_make_settings(' ', 4));
 }
 
 void PluginSettings::saveLegacy(const boost::filesystem::path& configFile)
