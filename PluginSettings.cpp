@@ -72,14 +72,14 @@ PluginSettings::~PluginSettings()
 {
 }
 
-path PluginSettings::userSettingsFile()
+path PluginSettings::legacySettingsFile()
 {
     static const std::string fileName = "esteidplugin.conf";
 
     return userSettingsDir() / fileName;
 }
 
-void PluginSettings::load(const boost::filesystem::path& configFile)
+void PluginSettings::loadLegacy(const boost::filesystem::path& configFile)
 {
     std::string line;
     ifstream input(configFile);
@@ -97,10 +97,10 @@ void PluginSettings::load(const boost::filesystem::path& configFile)
 
 void PluginSettings::load()
 {
-    load(userSettingsFile());
+    loadLegacy(legacySettingsFile());
 }
 
-void PluginSettings::save(const boost::filesystem::path& configFile)
+void PluginSettings::saveLegacy(const boost::filesystem::path& configFile)
 {
     std::vector<std::string>::const_iterator i;
 
@@ -128,7 +128,7 @@ void PluginSettings::save(const boost::filesystem::path& configFile)
 
 void PluginSettings::Save()
 {
-    save(userSettingsFile());
+    saveLegacy(legacySettingsFile());
 }
 
 bool PluginSettings::InWhitelist(const std::string& s)
