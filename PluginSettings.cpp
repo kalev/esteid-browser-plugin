@@ -23,9 +23,7 @@
 #include <stdlib.h>
 #endif
 
-#include <algorithm>
 #include <fstream>
-#include <boost/bind.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/foreach.hpp>
@@ -33,6 +31,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "PluginSettings.h"
+#include "whitelist.h"
 #include "config.h"
 #include "debug.h"
 #include "esteid-config.h"
@@ -96,7 +95,7 @@ path PluginSettings::legacySettingsFile()
 }
 
 void PluginSettings::load(const boost::filesystem::path& filename,
-                          std::vector<std::string>& out_whitelist)
+                          Whitelist& out_whitelist)
 {
     using boost::property_tree::ptree;
 
@@ -188,7 +187,7 @@ void PluginSettings::save(const boost::filesystem::path& filename)
 void PluginSettings::Save()
 {
     removeDuplicateEntries(whitelist);
-    removeDefaultEntries(whitelist);
+    removeDuplicateEntries(whitelist, default_whitelist);
 
     try {
         // Save user settings file
@@ -200,32 +199,7 @@ void PluginSettings::Save()
 
 bool PluginSettings::InWhitelist(const std::string& s)
 {
-    if (s.empty())
-        return false;
-
-    if (allowDefaults && find(default_whitelist.begin(), default_whitelist.end(), s) != default_whitelist.end()) {
-        return true;
-    } else if (find(whitelist.begin(), whitelist.end(), s) != whitelist.end()) {
-        return true;
-    }
-
-    return false;
-}
-
-void PluginSettings::removeDuplicateEntries(std::vector<std::string>& v)
-{
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end());
-}
-
-// remove all entries which are also in default whitelist
-void PluginSettings::removeDefaultEntries(std::vector<std::string>& v)
-{
-    v.erase(remove_if(v.begin(), v.end(), boost::bind(&PluginSettings::inDefaultWhitelist, this, _1)), v.end());
-}
-
-// predicate for removeDefaultEntries
-bool PluginSettings::inDefaultWhitelist(const std::string& s)
-{
-    return find(default_whitelist.begin(), default_whitelist.end(), s) != default_whitelist.end();
+    bool ret = allowDefaults && inWhitelist(default_whitelist, s) ||
+                                inWhitelist(whitelist, s);
+    return ret;
 }

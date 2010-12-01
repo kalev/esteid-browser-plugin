@@ -23,8 +23,8 @@
 #define H_ESTEID_PLUGINSETTINGS
 
 #include <string>
-#include <vector>
 #include <boost/filesystem/path.hpp>
+#include "whitelist.h"
 
 class PluginSettings {
     static boost::filesystem::path globalSettingsDir();
@@ -37,8 +37,8 @@ public:
     PluginSettings();
     virtual ~PluginSettings();
 
-    std::vector<std::string> whitelist;
-    std::vector<std::string> default_whitelist;
+    Whitelist whitelist;
+    Whitelist default_whitelist;
     bool allowLocal;
     bool allowDefaults;
 
@@ -46,7 +46,7 @@ public:
     bool InWhitelist(const std::string& s);
 
     void load(const boost::filesystem::path& filename,
-              std::vector<std::string>& out_whitelist);
+              Whitelist& out_whitelist);
     void loadLegacy(const boost::filesystem::path& filename);
     void convertLegacy();
     void load();
@@ -54,10 +54,5 @@ public:
     /** Saves config. Will throw ios_base::failure on failure */
     void save(const boost::filesystem::path& filename);
     void Save();
-
-private:
-    void removeDuplicateEntries(std::vector<std::string>& v);
-    void removeDefaultEntries(std::vector<std::string>& v);
-    bool inDefaultWhitelist(const std::string& s);
 };
 #endif
