@@ -61,20 +61,6 @@ FB::JSAPIPtr EsteidPlugin::createJSAPI()
     return m_pluginAPI;
 }
 
-bool EsteidPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)
-{
-    return false;
-}
-
-bool EsteidPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *)
-{
-    return false;
-}
-
-bool EsteidPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *)
-{
-    return false;
-}
 bool EsteidPlugin::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win)
 {
     m_window = win;
