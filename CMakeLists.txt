@@ -42,7 +42,7 @@ if (WITH_SYSTEM_BOOST)
         # boost::signals is only needed for Windows UI code
         set(EXTRA_BOOST_COMPONENTS "signals")
     endif()
-    find_package(Boost COMPONENTS filesystem system thread ${EXTRA_BOOST_COMPONENTS} REQUIRED)
+    find_package(Boost 1.41.0 COMPONENTS filesystem system thread ${EXTRA_BOOST_COMPONENTS} REQUIRED)
 else()
     message(STATUS "Using bundled boost")
     if (WIN32)
