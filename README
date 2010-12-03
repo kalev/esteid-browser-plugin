@@ -42,7 +42,7 @@ BUILD INSTRUCTIONS
 4. Run build with cmake
      mkdir build
      cd build
-     cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+     cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc ..
      make -j4
 5. Test your build in a separate Firefox profile
    (only works when building on Linux)
