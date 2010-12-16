@@ -139,12 +139,16 @@ std::string GtkUI::PromptForPin(const std::string& subject,
     // temporarily block asynchronous API signals
     m_pinInputConnection.block();
     // run dialog
-    m_pinInputDialog->run();
+    int response_id = m_pinInputDialog->run();
     m_pinInputDialog->hide();
     // unblock the signal
     m_pinInputConnection.unblock();
 
-    std::string pin = m_pinInputDialog->getPin();
+    std::string pin;
+    if (response_id == Gtk::RESPONSE_OK)
+        pin = m_pinInputDialog->getPin();
+    else
+        pin = "";
 
     // make sure the dialog doesn't cache PIN
     m_pinInputDialog->clearPin();
