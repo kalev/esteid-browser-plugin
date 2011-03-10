@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #endif
 
+#define BOOST_FILESYSTEM_VERSION 2
 #include <fstream>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
