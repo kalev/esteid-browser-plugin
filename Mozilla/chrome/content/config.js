@@ -38,6 +38,7 @@ const nsIPKCS11Slot           = Components.interfaces.nsIPKCS11Slot;
 const nsIPK11Token            = Components.interfaces.nsIPK11Token;
 const nsHttpProtocolHandler   = "@mozilla.org/network/protocol;1?name=http";
 const nsWindowsRegKey         = "@mozilla.org/windows-registry-key;1";
+const nsPreferencesService    = "@mozilla.org/preferences-service;1";
 
 const brdBundleURL = "chrome://branding/locale/brand.properties";
 const extBundleURL = "chrome://mozapps/locale/extensions/extensions.properties";
@@ -170,6 +171,16 @@ function ConfigureEstEID() {
     const Ci = Components.interfaces;
     const Cc = Components.classes;
 
+    var prefs =  Cc[nsPreferencesService].getService(Ci.nsIPrefService)
+         .getBranch("esteid.");
+
+    var prefModule = "";
+    try {
+        prefModule = prefs.getCharPref("pkcs11module");
+    } catch(e) {
+        esteid_debug("No esteid.pkcs11module in browser preferences");
+    }
+
     /* Detect platform.
      * We could use navigator.platform or navigator.oscpu, but unfortunately
      * those can be overriden by preferences so we have to go to the source
@@ -236,6 +247,13 @@ function ConfigureEstEID() {
     } else {
         esteid_error("Unknown plaform " + platform);
         return;
+    }
+
+    // FIXME: Look up the location of the certDir from prefs
+    // FIXME: Skip plaform logic if both are available in preferences
+    if(prefModule != "") {
+        moduleDlls = [ prefModule ];
+        esteid_log("PKCS#11 module is specified in browser preferences, using it");
     }
 
     esteid_log("Cert Dir: " + certDir);

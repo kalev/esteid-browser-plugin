@@ -10,6 +10,18 @@ set(ENABLE_DEBUG FALSE
 )
 option(ENABLE_OLD_APIS "Support OLD API-s (default: TRUE)" TRUE)
 
+
+# FIXME: Merge with libdigidocpp/CMakeLists.txt and create a proper
+#        cmake module that is used by qesteidutil as well
+if(WIN32)
+    set(PKCS11_MODULE_NAME "onepin-opensc-pkcs11.dll")
+else()
+    set(PKCS11_MODULE_NAME "onepin-opensc-pkcs11.so")
+endif()
+IF(PKCS11_MODULE_DIR)
+    SET(PKCS11_MODULE "${PKCS11_MODULE_DIR}/${PKCS11_MODULE_NAME}")
+ENDIF(PKCS11_MODULE_DIR)
+
 find_package(Subversion)
 if(Subversion_FOUND AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
     Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} PROJECT)

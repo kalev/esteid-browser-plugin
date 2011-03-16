@@ -8,6 +8,7 @@ set(XPI_STAGE_DIR ${CMAKE_CURRENT_BINARY_DIR}/xpi)
 set(XPI_OUT ${PROJECT_BINARY_DIR}/esteid-${FBSTRING_PLUGIN_VERSION}.xpi)
 
 configure_file(install.rdf.in ${CMAKE_CURRENT_BINARY_DIR}/install.rdf)
+configure_file(esteid-prefs.js.in ${CMAKE_CURRENT_BINARY_DIR}/esteid-prefs.js)
 
 # Stage all files which are going to end up in the .xpi
 add_custom_target(xpi-stage
@@ -21,6 +22,7 @@ add_custom_target(xpi-stage
     COMMAND ${CPDIR} defaults        ${XPI_STAGE_DIR}/defaults
     COMMAND ${CP}    chrome.manifest ${XPI_STAGE_DIR}
     COMMAND ${CP}    ${CMAKE_CURRENT_BINARY_DIR}/install.rdf ${XPI_STAGE_DIR}
+    COMMAND ${CP}    ${CMAKE_CURRENT_BINARY_DIR}/esteid-prefs.js ${XPI_STAGE_DIR}/defaults/preferences
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
 )

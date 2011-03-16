@@ -1,0 +1,2 @@
+// Set PKCS#11 module location
+pref("esteid.pkcs11module", "@PKCS11_MODULE@");
