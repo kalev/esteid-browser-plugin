@@ -21,7 +21,6 @@
 
 #include <iomanip>
 #include <boost/algorithm/string.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp> 
 
 #ifdef USE_OPENSSL
@@ -218,16 +217,6 @@ void EsteidAPI::CreateNotificationBar()
                ->getProperty<FB::JSObjectPtr>("EstEIDNotificationBar");
     m_barJSO->Invoke("create",
                      FB::variant_list_of(label)(m_settingsCallback));
-}
-
-void EsteidAPI::DisplayError(const std::string& msg)
-{
-    try {
-        OpenNotificationBar();
-        m_barJSO->Invoke("showError", FB::variant_list_of(msg));
-    } catch(const std::exception& e) {
-        ESTEID_DEBUG("Unable to display error: %s", e.what());
-    }
 }
 
 void EsteidAPI::DisplayNotification(const std::string& msg)
@@ -489,20 +478,6 @@ void EsteidAPI::returnSignFailure(const std::string& msg)
 #ifdef SUPPORT_OLD_APIS
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
 
-using namespace boost::date_time;
-
-void EsteidAPI::deprecatedCall()
-{
-    boost::posix_time::ptime date_for_activating_deprecate_messages(boost::gregorian::date(2011, May, 1));
-    boost::system_time current_time = boost::get_system_time();
-
-    if (current_time > date_for_activating_deprecate_messages) {
-	std::string msg1 = _("Website is using old signature APIs. Please contact site owner. Click <a href=\"");
-	std::string msg2 = _("\" target=\"_blank\" style=\"color: blue;\">here</a> for details.");
-        DisplayError(msg1 + COMPAT_URL + msg2);
-    }
-}
-
 std::string EsteidAPI::promptForPin(bool retrying)
 {
     int triesLeft = getPin2RetryCount();
@@ -545,7 +520,6 @@ std::string EsteidAPI::askPinAndSign(const std::string& hash, const std::string&
 std::string EsteidAPI::getCertificatesMoz()
 {
     whitelistRequired();
-    deprecatedCall();
 
     try { RTERROR_TO_SCRIPT(
         ByteVec bv = m_service->getSignCert();
@@ -576,7 +550,6 @@ std::string EsteidAPI::getCertificatesMoz()
 std::string EsteidAPI::sign(const std::string& a, const std::string& b)
 {
     whitelistRequired();
-    deprecatedCall();
 
     std::string signedHash;
 
@@ -619,7 +592,6 @@ std::string EsteidAPI::get_version()
 
 FB::JSAPIPtr EsteidAPI::getCertificate() {
     whitelistRequired();
-    deprecatedCall();
 
     RTERROR_TO_SCRIPT(
         FB::VariantList outVar;
@@ -630,7 +602,6 @@ FB::JSAPIPtr EsteidAPI::getCertificate() {
 
 FB::VariantList EsteidAPI::getCertificatesSK() {
     whitelistRequired();
-    deprecatedCall();
 
     RTERROR_TO_SCRIPT(
         FB::VariantList outVar;
@@ -644,7 +615,6 @@ std::string EsteidAPI::signSK(const std::string& id,
                               const std::string& hash, FB::variant crap)
 {
     whitelistRequired();
-    deprecatedCall();
 
     RTERROR_TO_SCRIPT(
         return askPinAndSign(hash, std::string(COMPAT_URL)));
@@ -852,15 +822,12 @@ void EsteidAPI::signXML(
 
 std::string EsteidAPI::getInfo()
 {
-    deprecatedCall();
-
     return getVersion();
 }
 
 std::string EsteidAPI::getSigningCertificate()
 {
     whitelistRequired();
-    deprecatedCall();
 
     try {
         ByteVec bv = m_service->getSignCert();
@@ -876,7 +843,6 @@ std::string EsteidAPI::getSigningCertificate()
 std::string EsteidAPI::getSignedHash(const std::string& hash, const std::string& slot)
 {
     whitelistRequired();
-    deprecatedCall();
 
     try {
         std::string signedHash = askPinAndSign(hash, std::string(COMPAT_URL));
@@ -890,7 +856,6 @@ std::string EsteidAPI::getSignedHash(const std::string& hash, const std::string&
 std::string EsteidAPI::get_selectedCertNumber()
 {
     whitelistRequired();
-    deprecatedCall();
 
     return "10"; // Dummy number
 }
@@ -900,7 +865,6 @@ void EsteidAPI::prepare(const std::string& onSuccess,
                         const std::string& onError)
 {
     whitelistRequired();
-    deprecatedCall();
 
     try {
         ByteVec bv = m_service->getSignCert();
@@ -922,7 +886,6 @@ void EsteidAPI::finalize(const std::string& slot,
                          const std::string& onError)
 {
     whitelistRequired();
-    deprecatedCall();
 
     /* FIXME: The original API is non-blocking, but the callbacks
        are so braindead (callback function name is passed as a string)
