@@ -20,9 +20,9 @@ List of officially supported browsers:
 Dependencies
 ============
 
-boost >= 1.41
-firebreath >= 1.3.0
-gtkmm24 >= 2.16
+boost >= 1.41 (optional)
+firebreath >= 1.5.2
+gtkmm24 >= 2.16 (only for X11, not needed on Mac and Windows)
 iconv
 openssl
 smartcardpp >= 0.2.0
@@ -34,8 +34,8 @@ BUILD INSTRUCTIONS
 1. Obtain a copy of the the FireBreath cross-browser plugin framework
    from http://firebreath.googlecode.com
 2. Unpack it and change into FireBreath directory
-     tar jxf firebreath-1.3.0.tar.bz2
-     cd firebreath-1.3.0
+     tar jxf firebreath-x.x.x.tar.bz2
+     cd firebreath-x.x.x
 3. Unpack Esteid Browser Plugin code into projects sub-directory
      mkdir projects
      tar jxf esteid-browser-plugin-x.x.x.tar.bz2 -C projects
