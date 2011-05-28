@@ -99,23 +99,23 @@ public:
              * (legacy Mozilla plugin, or SK leakplugin) */
             if(in.size() == 2) {
                 return instance->sign(
-                    FB::detail::methods::convertArgument<std::string>(in[0], 1),
+                    FB::detail::methods::convertArgumentSoft<std::string>(in, 1),
                     FB::detail::methods::convertLastArgument<std::string>(in, 2)
                 );
             }
             /* Sign method with 3 arguments (SK leakplugin) */
             if(in.size() == 3) {
                 return instance->signSK("",
-                    FB::detail::methods::convertArgument<std::string>(in[1], 2));
+                    FB::detail::methods::convertArgumentSoft<std::string>(in, 2));
             }
             /* Sign method with 6 arguments (legacy XMLSignApplet) */
             if(in.size() == 6) {
                 instance->signXML(
-                    FB::detail::methods::convertArgument<std::string>(in[0], 1),
-                    FB::detail::methods::convertArgument<std::string>(in[1], 2),
-                    FB::detail::methods::convertArgument<std::string>(in[2], 3),
-                    FB::detail::methods::convertArgument<std::string>(in[3], 4),
-                    FB::detail::methods::convertArgument<std::string>(in[4], 5),
+                    FB::detail::methods::convertArgumentSoft<std::string>(in, 1),
+                    FB::detail::methods::convertArgumentSoft<std::string>(in, 2),
+                    FB::detail::methods::convertArgumentSoft<std::string>(in, 3),
+                    FB::detail::methods::convertArgumentSoft<std::string>(in, 4),
+                    FB::detail::methods::convertArgumentSoft<std::string>(in, 5),
                     FB::detail::methods::convertLastArgument<std::string>(in, 6)
                 );
                 return ""; // signXML does not return anything

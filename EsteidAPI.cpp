@@ -37,7 +37,7 @@
 #include "variant_list.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
-#include "config.h"
+#include "global/config.h"
 
 #ifdef _WIN32
 #include "Win/WindowsUI.h"

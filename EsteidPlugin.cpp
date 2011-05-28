@@ -23,10 +23,6 @@
 #include "EsteidAPI.h"
 #include "EsteidPlugin.h"
 
-#if defined(SUPPORT_OLD_APIS) && defined(_WIN32)
-#include "EIDCompatControl.h" // Support loading by old ActiveX CLSID
-#endif
-
 logger eidlog("npesteid");
 
 void EsteidPlugin::StaticInitialize()

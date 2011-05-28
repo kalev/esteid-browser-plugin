@@ -6,8 +6,8 @@
 
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
-#include "config.h"
+#include "global/resource.h"
+#include "global/config.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -20,9 +20,6 @@
 #include "Win/pininputdialog.rc"
 #include "Win/whitelistdialog_res.h"
 #include "Win/whitelistdialog.rc"
-#ifdef SUPPORT_OLD_APIS
-#include "EIDCompatControl.rc"
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -101,11 +98,7 @@ BEGIN
             VALUE "ProductVersion", FBSTRING_PLUGIN_VERSION
             VALUE "FileExtents", FBSTRING_FileExtents
             VALUE "FileOpenName", FBSTRING_PluginName
-#ifdef SUPPORT_OLD_APIS
-            VALUE "MIMEType", "application/x-esteid|application/x-digidoc|application/x-idcard-plugin"
-#else
-            VALUE "MIMEType", FBSTRING_MIMEType
-#endif
+            VALUE "MIMEType", FBSTRING_MIMETypeList
         END
     END
     BLOCK "VarFileInfo"
@@ -120,8 +113,8 @@ END
 // REGISTRY
 //
 
-IDR_FIREBREATHWIN       REGISTRY                "${GEN_DIR}/gen/FireBreathWin.rgs"
-IDR_FBCONTROL           REGISTRY                "${GEN_DIR}/gen/FBControl.rgs"
+IDR_FIREBREATHWIN       REGISTRY                "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.rgs"
+IDR_FBCONTROL           REGISTRY                "${FB_TEMPLATE_DEST_DIR}/FBControl.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -149,7 +142,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "${GEN_DIR}/gen/FireBreathWin.tlb"
+1 TYPELIB "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

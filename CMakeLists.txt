@@ -1,4 +1,4 @@
-set(ESTEID_BROWSER_PLUGIN_VERSION "1.2.0")
+project(${PLUGIN_NAME})
 
 # Written to work with cmake 2.6
 cmake_minimum_required (VERSION 2.6)
@@ -30,12 +30,6 @@ if(Subversion_FOUND AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
 else()
     message( "Unable to determine subversion revision")
 endif()
-
-include(${CMAKE_DIR}/common.cmake)
-
-set (PROJNAME ${PLUGIN_NAME})
-
-browserplugin_project(${PROJNAME})
 
 # Custom cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
@@ -95,8 +89,10 @@ endif(ENABLE_OLD_APIS)
 
 
 include_directories(
+    ${PLUGIN_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTKMM_INCLUDE_DIRS}
     ${ICONV_INCLUDE_DIR}
     ${OPENSSLCRYPTO_INCLUDE_DIR}

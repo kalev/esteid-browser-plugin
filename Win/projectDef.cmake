@@ -25,17 +25,10 @@ set (SOURCES
     ${PLATFORM}
     )
 
-add_library(${PROJNAME} SHARED ${SOURCES})
-
-set_target_properties (${PROJNAME} PROPERTIES
-    OUTPUT_NAME np${PLUGIN_NAME}
-    PROJECT_LABEL ${PROJNAME}
-    RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-    LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-    )
+add_windows_plugin(${PROJECT_NAME} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
-target_link_libraries(${PROJNAME}
+target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
     ${Boost_LIBRARIES}
     ${ICONV_LIBRARIES}
@@ -44,4 +37,4 @@ target_link_libraries(${PROJNAME}
     ws2_32
     )
 
-install(TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
+install(TARGETS ${PROJECT_NAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)

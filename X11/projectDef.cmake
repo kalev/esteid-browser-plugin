@@ -10,14 +10,14 @@ set(GLADE_INSTALL_DIR ${SHARE_INSTALL_PREFIX}/esteid-browser-plugin)
 set(WHITELISTDIALOG_UI ${GLADE_INSTALL_DIR}/whitelistdialog.ui)
 set(PININPUTDIALOG_UI ${GLADE_INSTALL_DIR}/pininputdialog.ui)
 
-# remember that the current source dir is the project root; this file is in ${PLATFORM_NAME}/
+# remember that the current source dir is the project root; this file is in X11/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ${PLATFORM_NAME}/*.cpp
-    ${PLATFORM_NAME}/*.h
-    ${PLATFORM_NAME}/*.cmake
+    X11/*.cpp
+    X11/*.h
+    X11/*.cmake
     )
 
-SOURCE_GROUP(${PLATFORM_NAME} FILES ${PLATFORM})
+SOURCE_GROUP(X11 FILES ${PLATFORM})
 
 # use this to add preprocessor definitions
 add_definitions(
@@ -28,10 +28,10 @@ add_definitions(
 
 if(BUILD_TESTGTKUI)
     set(testgtkui_SRCS
-        ${PLATFORM_NAME}/pininputdialog.cpp
-        ${PLATFORM_NAME}/whitelistdialog.cpp
-        ${PLATFORM_NAME}/test/main.cpp
-        ${PLATFORM_NAME}/test/testgtkui.cpp
+        X11/pininputdialog.cpp
+        X11/whitelistdialog.cpp
+        X11/test/main.cpp
+        X11/test/testgtkui.cpp
     )
 
     add_executable(testgtkui ${testgtkui_SRCS})
@@ -47,19 +47,19 @@ set (SOURCES
 string(REGEX REPLACE " -Wl,--version-script=[^ ]*" "" ESTEID_LINK_FLAGS "${NPAPI_LINK_FLAGS}")
 set(ESTEID_LINK_FLAGS "${ESTEID_LINK_FLAGS} -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/X11/esteid_version_script.txt")
 
-add_library(${PROJNAME} SHARED ${SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-set_target_properties (${PROJNAME} PROPERTIES
+set_target_properties (${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME np${PLUGIN_NAME}
-    PROJECT_LABEL ${PROJNAME}
+    PROJECT_LABEL ${PROJECT_NAME}
     LINK_FLAGS "${ESTEID_LINK_FLAGS}"
     PREFIX ""
-    RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-    LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
+    RUNTIME_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
+    LIBRARY_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
     )
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
-target_link_libraries(${PROJNAME}
+target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
     ${Boost_LIBRARIES}
     ${GTK_LIBRARIES}
@@ -69,6 +69,6 @@ target_link_libraries(${PROJNAME}
     ${SMARTCARDPP_LIBRARIES}
     )
 
-install(TARGETS ${PROJNAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
-install(FILES ${PLATFORM_NAME}/whitelistdialog.ui DESTINATION ${GLADE_INSTALL_DIR})
-install(FILES ${PLATFORM_NAME}/pininputdialog.ui DESTINATION ${GLADE_INSTALL_DIR})
+install(TARGETS ${PROJECT_NAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
+install(FILES X11/whitelistdialog.ui DESTINATION ${GLADE_INSTALL_DIR})
+install(FILES X11/pininputdialog.ui DESTINATION ${GLADE_INSTALL_DIR})

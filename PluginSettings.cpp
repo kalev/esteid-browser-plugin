@@ -33,7 +33,7 @@
 
 #include "PluginSettings.h"
 #include "whitelist.h"
-#include "config.h"
+#include "global/config.h"
 #include "debug.h"
 #include "esteid-config.h"
 

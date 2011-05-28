@@ -23,7 +23,6 @@
 #define WINDOWSUI_H
 
 #include "PluginUI.h"
-#include "Win/win_common.h"
 #include "Win/pininputdialog.h"
 #include "Win/whitelistdialog.h"
 
