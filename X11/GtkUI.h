@@ -53,6 +53,7 @@ public:
 protected:
     void on_pininputdialog_response(int response_id);
     void on_whitelistdialog_response(int response_id);
+    void make_transient(Gtk::Window *window);
 
     GdkWindow* browserWindow();
 

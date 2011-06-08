@@ -161,6 +161,9 @@ void GtkUI::ShowPinBlockedMessage(int pin)
 
     Gtk::MessageDialog dialog(_("PIN2 blocked"), false, Gtk::MESSAGE_WARNING);
     dialog.set_secondary_text(_("Please run ID card Utility to unlock the PIN."));
+    dialog.signal_show().connect(sigc::bind(sigc::mem_fun(*this,
+                &GtkUI::make_transient), &dialog));
+
     m_dialog_up = true;
     dialog.run();
     m_dialog_up = false;
@@ -228,4 +231,13 @@ void GtkUI::on_whitelistdialog_response(int response_id)
 
     m_whitelistDialog->hide();
     m_dialog_up = false;
+}
+
+void GtkUI::make_transient(Gtk::Window *window)
+{
+    GdkWindow *parent = browserWindow();
+    if (parent) {
+        GdkWindow *gdk_window = window->get_window()->gobj();
+        gdk_window_set_transient_for(gdk_window, parent);
+    }
 }
