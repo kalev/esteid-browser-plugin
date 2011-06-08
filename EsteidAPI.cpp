@@ -407,19 +407,14 @@ void EsteidAPI::promptForPinAsync(bool retrying)
 }
 
 
-std::string EsteidAPI::signSHA1(const std::string& hash, const std::string& pin)
+std::string EsteidAPI::signSHA1(std::string hash, const std::string& pin)
 {
     if (pin.empty()) // shouldn't happen
         throw std::runtime_error("empty PIN");
 
-    std::string in(hash);
+    filterWhitespace(hash);
 
-    // Strip spaces and newlines from hash HEX
-    in.erase(std::remove(in.begin(), in.end(), '\n'), in.end());
-    in.erase(std::remove(in.begin(), in.end(), '\r'), in.end());
-    in.erase(std::remove(in.begin(), in.end(), ' '), in.end());
-
-    std::string signedHash = m_service->signSHA1(in, EstEidCard::SIGN, pin);
+    std::string signedHash = m_service->signSHA1(hash, EstEidCard::SIGN, pin);
     if (signedHash.empty()) // shouldn't happen
         throw std::runtime_error("empty hash");
 
@@ -912,6 +907,13 @@ int EsteidAPI::getPin2RetryCount()
     return pin2;
 }
 
+void EsteidAPI::filterWhitespace(std::string& s)
+{
+    // Strip spaces and newlines
+    s.erase(std::remove(s.begin(), s.end(), '\n'), s.end());
+    s.erase(std::remove(s.begin(), s.end(), '\r'), s.end());
+    s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
+}
 
 std::string EsteidAPI::subjectToHumanReadable(const std::string& subject)
 {

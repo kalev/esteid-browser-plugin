@@ -200,7 +200,7 @@ private:
     std::string pageURL();
     void prepareSign(const std::string& hash, const std::string& url);
     void promptForPinAsync(bool retrying = false);
-    std::string signSHA1(const std::string& hash, const std::string& pin);
+    std::string signSHA1(std::string hash, const std::string& pin);
     int getPin2RetryCount();
     void ShowSettings();
     void DisplayNotification(const std::string& msg);
@@ -215,6 +215,7 @@ private:
     void returnSignFailure(const std::string& msg);
 
     std::string EstEIDNotificationBarScript;
+    static void filterWhitespace(std::string& s);
     static std::string subjectToHumanReadable(const std::string& subject);
 };
 
