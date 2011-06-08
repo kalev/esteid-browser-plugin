@@ -9,6 +9,7 @@ set(ENABLE_DEBUG FALSE
     CACHE BOOL "Set to TRUE to enable debug print statements (default: FALSE)"
 )
 option(ENABLE_OLD_APIS "Support OLD API-s (default: TRUE)" TRUE)
+option(ENABLE_RUN_IN_SOURCE_TREE "Enable search for the config file and UI files in local directory" FALSE)
 
 
 # FIXME: Merge with libdigidocpp/CMakeLists.txt and create a proper
@@ -127,7 +128,11 @@ SET( SOURCES
     ${UTILITY_SOURCES}
     )
 
-set(ESTEID_CONFIGDIR "${SYSCONF_INSTALL_DIR}")
+if (ENABLE_RUN_IN_SOURCE_TREE)
+    set(ESTEID_CONFIGDIR "${CMAKE_CURRENT_SOURCE_DIR}")
+else()
+    set(ESTEID_CONFIGDIR "${SYSCONF_INSTALL_DIR}")
+endif()
 
 include(CheckIncludeFiles)
 check_include_files(libintl.h HAVE_LIBINTL_H)

@@ -6,7 +6,12 @@
 # Windows template platform definition CMake file
 # Included from ../CMakeLists.txt
 
-set(GLADE_INSTALL_DIR ${SHARE_INSTALL_PREFIX}/esteid-browser-plugin)
+if (ENABLE_RUN_IN_SOURCE_TREE)
+    set(GLADE_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/X11)
+else()
+    set(GLADE_INSTALL_DIR ${SHARE_INSTALL_PREFIX}/esteid-browser-plugin)
+endif()
+
 set(WHITELISTDIALOG_UI ${GLADE_INSTALL_DIR}/whitelistdialog.ui)
 set(PININPUTDIALOG_UI ${GLADE_INSTALL_DIR}/pininputdialog.ui)
 

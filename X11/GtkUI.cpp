@@ -30,14 +30,6 @@
 
 #include "debug.h"
 
-#ifndef WHITELISTDIALOG_UI
-#define WHITELISTDIALOG_UI "whitelistdialog.ui"
-#endif
-
-#ifndef PININPUTDIALOG_UI
-#define PININPUTDIALOG_UI "pininputdialog.ui"
-#endif
-
 
 GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
     : PluginUI(cb),
