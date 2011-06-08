@@ -16,6 +16,7 @@ file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 # use this to add preprocessor definitions
 add_definitions(
     /D "_ATL_STATIC_REGISTRY"
+    /D ISOLATION_AWARE_ENABLED=1
 )
 
 SOURCE_GROUP(Win FILES ${PLATFORM})
@@ -34,6 +35,7 @@ target_link_libraries(${PROJECT_NAME}
     ${ICONV_LIBRARIES}
     ${OPENSSLCRYPTO_LIBRARIES}
     ${SMARTCARDPP_LIBRARIES}
+    comctl32
     ws2_32
     )
 

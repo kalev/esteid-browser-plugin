@@ -33,6 +33,8 @@
 #include "utf8_tools.h"
 #include "debug.h"
 
+#pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
     : PluginUI(cb),
       m_pinInputDialog(new PinInputDialog(ATL::_AtlBaseModule.GetResourceInstance())),
