@@ -37,23 +37,18 @@ GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
 {
     Gtk::Main::init_gtkmm_internals();
 
-    Glib::RefPtr<Gtk::Builder> refGlade = Gtk::Builder::create();
-    // Load the GtkBuilder file
+    // Load the GtkBuilder files
     try {
-        refGlade->add_from_file(WHITELISTDIALOG_UI);
-    } catch(const Glib::Error& ex) {
-        std::cerr << ex.what() << std::endl;
-    }
-    refGlade->get_widget_derived("WhitelistDialog", m_whitelistDialog);
+        Glib::RefPtr<Gtk::Builder> builder;
 
-    Glib::RefPtr<Gtk::Builder> refGlade2 = Gtk::Builder::create();
-    // Load the GtkBuilder file
-    try {
-        refGlade2->add_from_file(PININPUTDIALOG_UI);
+        builder = Gtk::Builder::create_from_file(WHITELISTDIALOG_UI);
+        builder->get_widget_derived("WhitelistDialog", m_whitelistDialog);
+
+        builder = Gtk::Builder::create_from_file(PININPUTDIALOG_UI);
+        builder->get_widget_derived("PinInputDialog", m_pinInputDialog);
     } catch(const Glib::Error& ex) {
         std::cerr << ex.what() << std::endl;
     }
-    refGlade2->get_widget_derived("PinInputDialog", m_pinInputDialog);
 
     // connect signals
     if (m_pinInputDialog) {
