@@ -89,21 +89,28 @@ HWND WindowsUI::parentHWND()
 
 void WindowsUI::pinDialog(const std::string& subject,
                           const std::string& docUrl,
-                          const std::string& docHash,
-                          bool retry, int tries)
+                          const std::string& docHash)
 {
     ESTEID_DEBUG("WindowsUI::pinDialog()");
 
     m_pinInputDialog->setSubject(subject);
-    m_pinInputDialog->setRetry(retry);
-    m_pinInputDialog->setTries(tries);
     m_pinInputDialog->doDialog(parentHWND());
+}
+
+
+void WindowsUI::retryPinDialog(int triesLeft)
+{
+    ESTEID_DEBUG("WindowsUI::retryPinDialog()");
+
+    m_pinInputDialog->showRetry(triesLeft);
 }
 
 
 void WindowsUI::closePinDialog()
 {
     ESTEID_DEBUG("WindowsUI::closePinDialog()");
+
+    m_pinInputDialog->close();
 }
 
 
@@ -160,6 +167,8 @@ void WindowsUI::on_pininputdialog_response(int response)
 
 void WindowsUI::on_whitelistdialog_response(int response)
 {
+    m_whitelistDialog->close();
+
     if (response == WhitelistDialog::RESPONSE_OK) {
         m_settings->setWhitelist(m_whitelistDialog->getWhitelist());
         try {

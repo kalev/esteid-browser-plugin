@@ -87,8 +87,7 @@ GdkWindow* GtkUI::browserWindow()
 
 void GtkUI::pinDialog(const std::string& subject,
                       const std::string& docUrl,
-                      const std::string& docHash,
-                      bool retry, int tries)
+                      const std::string& docHash)
 {
     if (!m_pinInputDialog)
         throw std::runtime_error("PinInputDialog not loaded");
@@ -102,8 +101,7 @@ void GtkUI::pinDialog(const std::string& subject,
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setUrl(docUrl);
     m_pinInputDialog->setHash(docHash);
-    m_pinInputDialog->setRetry(retry);
-    m_pinInputDialog->setTries(tries);
+    m_pinInputDialog->setRetry(false);
 
     m_pinInputDialog->setParent(browserWindow());
 
@@ -111,15 +109,24 @@ void GtkUI::pinDialog(const std::string& subject,
     m_dialog_up = true;
 }
 
+
+void GtkUI::retryPinDialog(int triesLeft)
+{
+    m_pinInputDialog->setTries(triesLeft);
+    m_pinInputDialog->setRetry(true);
+}
+
+
 void GtkUI::closePinDialog()
 {
+    m_pinInputDialog->hide();
+    m_dialog_up = false;
 }
 
 
 void GtkUI::pinBlockedMessage(int pin)
 {
-    if (m_dialog_up)
-        return;
+    closePinDialog();
 
     Gtk::MessageDialog dialog(_("PIN2 blocked"), false, Gtk::MESSAGE_WARNING);
     dialog.set_secondary_text(_("Please run ID card Utility to unlock the PIN."));
@@ -168,9 +175,6 @@ void GtkUI::iteration()
 void GtkUI::on_pininputdialog_response(int response_id)
 {
     std::string pin;
-
-    m_pinInputDialog->hide();
-    m_dialog_up = false;
 
     if (response_id == Gtk::RESPONSE_OK) {
         pin = m_pinInputDialog->getPin();

@@ -393,6 +393,13 @@ void EsteidAPI::prepareSign(const std::string& hash, const std::string& url)
 #endif
 }
 
+void EsteidAPI::pinDialog(bool retrying, int triesLeft)
+{
+    if (retrying)
+        m_UI->retryPinDialog(triesLeft);
+    else
+        m_UI->pinDialog(m_subject, m_url, m_hash);
+}
 
 void EsteidAPI::askPin(bool retrying)
 {
@@ -402,8 +409,7 @@ void EsteidAPI::askPin(bool retrying)
         throw std::runtime_error("PIN2 locked");
     }
 
-    m_UI->pinDialog(m_subject, m_url, m_hash,
-                    retrying, triesLeft);
+    pinDialog(retrying, triesLeft);
 }
 
 
@@ -467,6 +473,8 @@ void EsteidAPI::invokeSignCallback(const std::string& callback, const std::strin
 
 void EsteidAPI::returnSignedData(const std::string& data)
 {
+    m_UI->closePinDialog();
+
     if (m_signCallback) {
         // in case of async signing API, invoke the JS callback
         invokeSignCallback("onSuccess", data);
@@ -480,6 +488,8 @@ void EsteidAPI::returnSignedData(const std::string& data)
 
 void EsteidAPI::returnSignFailure(const std::string& msg)
 {
+    m_UI->closePinDialog();
+
     if (m_signCallback) {
         // in case of async signing API, invoke the JS callback
         invokeSignCallback("onError", msg);

@@ -203,6 +203,7 @@ private:
     std::string pageURL();
     void prepareSign(const std::string& hash, const std::string& url);
     void askPin(bool retrying = false);
+    void pinDialog(bool retrying, int triesLeft);
     std::string signSHA1(std::string hash, const std::string& pin);
     int getPin2RetryCount();
     void settingsDialog();

@@ -103,8 +103,6 @@ LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
         return on_notify(wParam, lParam);
         break;
     case WM_CLOSE:
-        DestroyWindow(m_hWnd);
-        releaseIEModalLock();
         signalResponse(RESPONSE_CANCEL);
         return TRUE;
         break;
@@ -139,6 +137,12 @@ void BaseDialog::releaseIEModalLock()
         // IE 8.0 or newer
         IEProcess::GetTabWindowExports(ieModule)->ReleaseModalDialogLockAndParent(m_hModalDialogLock);
     }
+}
+
+void BaseDialog::close()
+{
+    DestroyWindow(m_hWnd);
+    releaseIEModalLock();
 }
 
 bool BaseDialog::doDialog(int resourceID, HWND hParent)

@@ -35,8 +35,7 @@ public:
 
     void showPinBlocked(HWND hParent = NULL);
     void setSubject(const std::string& subject);
-    void setRetry(bool retry);
-    void setTries(int tries);
+    void showRetry(int triesLeft);
     std::string getPin();
     void clearPin();
 
@@ -58,8 +57,6 @@ private:
     void showWrongPin(HWND hParent, int tries);
 
     std::wstring m_subject;
-    bool m_retry;
-    int m_triesLeft;
     std::string m_pin;
     size_t m_minPinLength;
 };

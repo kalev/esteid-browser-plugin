@@ -44,8 +44,10 @@ public:
     /** Prompt for Signature PIN */
     virtual void pinDialog(const std::string& subject,
                            const std::string& docUrl,
-                           const std::string& docHash,
-                           bool retry, int tries) = 0;
+                           const std::string& docHash) = 0;
+
+    /** Prompt for Signature PIN again */
+    virtual void retryPinDialog(int triesLeft) = 0;
 
     /** Close Signature PIN dialog */
     virtual void closePinDialog() = 0;

@@ -42,6 +42,7 @@ public:
 
     Connection connect(const ResponseSignal::slot_type& subscriber);
     void disconnect(Connection subscriber);
+    void close();
     virtual bool doDialog(int resourceID, HWND hParent = NULL);
 
 protected:

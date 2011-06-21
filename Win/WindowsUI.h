@@ -33,8 +33,8 @@ public:
 
     void pinDialog(const std::string& subject,
                    const std::string& docUrl,
-                   const std::string& docHash,
-                   bool retry, int tries);
+                   const std::string& docHash);
+    void retryPinDialog(int triesLeft);
     void closePinDialog();
     void settingsDialog(PluginSettings& settings, const std::string& pageUrl = "");
     void pinBlockedMessage(int pin);

@@ -32,8 +32,6 @@
 
 PinInputDialog::PinInputDialog(HINSTANCE hInst)
     : BaseDialog(hInst),
-      m_retry(false),
-      m_triesLeft(0),
       m_minPinLength(5)
 {
 }
@@ -57,15 +55,10 @@ void PinInputDialog::setSubject(const std::string& subject)
 }
 
 
-void PinInputDialog::setRetry(bool retry)
+void PinInputDialog::showRetry(int triesLeft)
 {
-    m_retry = retry;
-}
-
-
-void PinInputDialog::setTries(int tries)
-{
-    m_triesLeft = tries;
+    HWND hPinedit = GetDlgItem(m_hWnd, IDC_PINEDIT);
+    showWrongPin(hPinedit, triesLeft);
 }
 
 
@@ -246,9 +239,6 @@ LRESULT PinInputDialog::on_initdialog(WPARAM wParam)
         moveControl(m_hWnd, GetDlgItem(m_hWnd, IDCANCEL), dx, 0);
     }
 
-    if (m_retry)
-        showWrongPin(hPinedit, m_triesLeft);
-
     if (GetDlgCtrlID((HWND) wParam) != IDC_PINEDIT) {
         SetFocus(hPinedit);
         return FALSE;
@@ -276,8 +266,6 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         m_pin = getPinInternal();
         SetDlgItemTextA(m_hWnd, IDC_PINEDIT, "");
 
-        DestroyWindow(m_hWnd);
-        releaseIEModalLock();
         signalResponse(RESPONSE_OK);
         return TRUE;
         break;
@@ -286,8 +274,6 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         m_pin = "";
         SetDlgItemTextA(m_hWnd, IDC_PINEDIT, "");
 
-        DestroyWindow(m_hWnd);
-        releaseIEModalLock();
         signalResponse(RESPONSE_CANCEL);
         return TRUE;
         break;
