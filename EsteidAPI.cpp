@@ -450,25 +450,31 @@ void EsteidAPI::onPinEntered(const std::string& pin)
     }
 }
 
-
-void EsteidAPI::returnSignedData(const std::string& data)
+void EsteidAPI::invokeSignCallback(const std::string& callback, const std::string& data)
 {
-    try {
-        m_signCallback->Invoke("onSuccess", FB::variant_list_of(data));
-    } catch(const FB::script_error&) {
-        returnSignFailure("Error executing JavaScript code");
-    }
-}
+    if (!m_signCallback)
+        return;
 
-
-void EsteidAPI::returnSignFailure(const std::string& msg)
-{
     try {
-        m_signCallback->Invoke("onError", FB::variant_list_of(msg));
+        m_signCallback->Invoke(callback, FB::variant_list_of(data));
     } catch(const FB::script_error&) {
         // can't really do anything useful here
     }
+
+    // release the callback object
+    m_signCallback.reset();
 }
+
+void EsteidAPI::returnSignedData(const std::string& data)
+{
+    invokeSignCallback("onSuccess", data);
+}
+
+void EsteidAPI::returnSignFailure(const std::string& msg)
+{
+    invokeSignCallback("onError", msg);
+}
+
 
 #ifdef SUPPORT_OLD_APIS
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"

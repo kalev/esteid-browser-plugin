@@ -211,6 +211,7 @@ private:
     bool IsLocal();
     bool IsWhiteListed();
     void whitelistRequired();
+    void invokeSignCallback(const std::string& callback, const std::string& data);
     void returnSignedData(const std::string& data);
     void returnSignFailure(const std::string& msg);
 
