@@ -32,8 +32,7 @@
 
 
 GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
-    : PluginUI(cb),
-      m_dialog_up(false)
+    : PluginUI(cb)
 {
     Gtk::Main::init_gtkmm_internals();
 
@@ -84,6 +83,17 @@ GdkWindow* GtkUI::browserWindow()
 }
 
 
+bool GtkUI::raiseVisiblePinDialog()
+{
+    if (m_pinInputDialog && m_pinInputDialog->get_visible()) {
+        m_pinInputDialog->present();
+        return true;
+    }
+
+    return false;
+}
+
+
 void GtkUI::pinDialog(const std::string& subject,
                       const std::string& docUrl,
                       const std::string& docHash)
@@ -91,11 +101,8 @@ void GtkUI::pinDialog(const std::string& subject,
     if (!m_pinInputDialog)
         throw std::runtime_error("PinInputDialog not loaded");
 
-    if (m_dialog_up) {
-        // Bring the window to the front
-        m_pinInputDialog->present();
+    if (raiseVisiblePinDialog())
         return;
-    }
 
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setUrl(docUrl);
@@ -104,7 +111,6 @@ void GtkUI::pinDialog(const std::string& subject,
     m_pinInputDialog->closeDetails();
 
     m_pinInputDialog->show();
-    m_dialog_up = true;
 }
 
 
@@ -118,7 +124,6 @@ void GtkUI::retryPinDialog(int triesLeft)
 void GtkUI::closePinDialog()
 {
     m_pinInputDialog->hide();
-    m_dialog_up = false;
 }
 
 
@@ -131,9 +136,7 @@ void GtkUI::pinBlockedMessage(int pin)
     dialog.signal_show().connect(sigc::bind(sigc::mem_fun(*this,
                 &GtkUI::make_transient), &dialog));
 
-    m_dialog_up = true;
     dialog.run();
-    m_dialog_up = false;
 }
 
 
@@ -144,8 +147,7 @@ void GtkUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
     if (!m_whitelistDialog)
         throw std::runtime_error("WhitelistDialog not loaded");
 
-    if (m_dialog_up) {
-        // Bring the window to the front
+    if (m_whitelistDialog->get_visible()) {
         m_whitelistDialog->present();
         return;
     }
@@ -158,7 +160,6 @@ void GtkUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
     m_whitelistDialog->addSites(m_settings->whitelist());
 
     m_whitelistDialog->show_all();
-    m_dialog_up = true;
 }
 
 
@@ -198,7 +199,6 @@ void GtkUI::on_whitelistdialog_response(int response_id)
     }
 
     m_whitelistDialog->hide();
-    m_dialog_up = false;
 }
 
 void GtkUI::make_transient(Gtk::Window *window)

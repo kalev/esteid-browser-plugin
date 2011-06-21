@@ -52,6 +52,7 @@ protected:
     void on_whitelistdialog_response(int response_id);
     void make_transient(Gtk::Window *window);
 
+    bool raiseVisiblePinDialog();
     GdkWindow* browserWindow();
 
     PinInputDialog *m_pinInputDialog;
@@ -59,7 +60,6 @@ protected:
     PluginSettings *m_settings;
 
 private:
-    bool m_dialog_up;
     sigc::connection m_pinInputConnection;
 };
 
