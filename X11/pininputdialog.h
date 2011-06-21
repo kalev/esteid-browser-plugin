@@ -36,11 +36,15 @@ public:
     void setHash(const std::string& hash);
     void setRetry(bool retry);
     void setTries(int tries);
+    void closeDetails();
     void setParent(GdkWindow* parent);
     std::string getPin();
     void clearPin();
 
 protected:
+    // reimplemented virtual functions
+    virtual void on_map();
+
     // Signal handlers:
     void on_pin_changed();
     void make_transient();
@@ -53,6 +57,7 @@ protected:
     Gtk::Entry *m_entry;
     Gtk::Label *m_label;
     Gtk::Label *m_warningLabel;
+    Gtk::Expander *m_expander;
     Gtk::Label *m_url;
     Gtk::Label *m_hash;
 

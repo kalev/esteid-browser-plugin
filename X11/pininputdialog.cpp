@@ -36,6 +36,7 @@ PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::
       m_entry(NULL),
       m_label(NULL),
       m_warningLabel(NULL),
+      m_expander(NULL),
       m_url(NULL),
       m_hash(NULL),
       m_minPinLength(5)
@@ -45,6 +46,7 @@ PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::
     m_refGlade->get_widget("pin_entry", m_entry);
     m_refGlade->get_widget("subject_label", m_label);
     m_refGlade->get_widget("warning_label", m_warningLabel);
+    m_refGlade->get_widget("details_area", m_expander);
     m_refGlade->get_widget("url_value", m_url);
     m_refGlade->get_widget("hash_value", m_hash);
 
@@ -96,6 +98,21 @@ void PinInputDialog::setTries(int tries)
     out << text << tries;
 
     m_warningLabel->set_label(out.str());
+}
+
+void PinInputDialog::closeDetails()
+{
+    // close the details area
+    m_expander->set_expanded(false);
+}
+
+void PinInputDialog::on_map()
+{
+    // call the base class
+    Gtk::Dialog::on_map();
+
+    // set keyboard focus
+    m_entry->grab_focus();
 }
 
 void PinInputDialog::setParent(GdkWindow* parent)

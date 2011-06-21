@@ -102,6 +102,7 @@ void GtkUI::pinDialog(const std::string& subject,
     m_pinInputDialog->setUrl(docUrl);
     m_pinInputDialog->setHash(docHash);
     m_pinInputDialog->setRetry(false);
+    m_pinInputDialog->closeDetails();
 
     m_pinInputDialog->setParent(browserWindow());
 
