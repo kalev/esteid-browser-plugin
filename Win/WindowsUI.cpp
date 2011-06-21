@@ -78,7 +78,7 @@ HWND WindowsUI::parentHWND()
 
 void WindowsUI::PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries)
+        bool retry, int tries)
 {
     ESTEID_DEBUG("WindowsUI::PromptForPinAsync()");
 
@@ -92,7 +92,7 @@ void WindowsUI::PromptForPinAsync(const std::string& subject,
 #ifdef SUPPORT_OLD_APIS
 std::string WindowsUI::PromptForPin(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries)
+        bool retry, int tries)
 {
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setRetry(retry);

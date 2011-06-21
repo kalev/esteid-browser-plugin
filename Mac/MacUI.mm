@@ -66,7 +66,7 @@ MacUI::~MacUI()
 
 void MacUI::PromptForPinAsync(const std::string& subject,
                               const std::string& docUrl, const std::string& docHash,
-                              int pinPadTimeout, bool retry, int tries)
+                              bool retry, int tries)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -74,7 +74,7 @@ void MacUI::PromptForPinAsync(const std::string& subject,
         MacPINPanel *panel = [[MacPINPanel alloc] init];
         NSString *result;
 
-        [panel setAllowsSecureEntry:(pinPadTimeout > 0) ? YES : NO];
+        [panel setAllowsSecureEntry:NO];
         [panel setHash:CPlusStringToNSString(docHash)];
         [panel setURL:CPlusStringToNSString(docUrl)];
         [panel setName:CPlusStringToNSString(subject)];
@@ -98,7 +98,7 @@ void MacUI::PromptForPinAsync(const std::string& subject,
 #ifdef SUPPORT_OLD_APIS
 std::string MacUI::PromptForPin(const std::string& subject,
                                 const std::string& docUrl, const std::string& docHash,
-                                int pinPadTimeout, bool retry, int tries)
+                                bool retry, int tries)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     std::string pin = "";
@@ -107,7 +107,7 @@ std::string MacUI::PromptForPin(const std::string& subject,
         MacPINPanel *panel = [[MacPINPanel alloc] init];
         NSString *result;
         
-        [panel setAllowsSecureEntry:(pinPadTimeout > 0) ? YES : NO];
+        [panel setAllowsSecureEntry:NO];
         [panel setHash:CPlusStringToNSString(docHash)];
         [panel setURL:CPlusStringToNSString(docUrl)];
         [panel setName:CPlusStringToNSString(subject)];

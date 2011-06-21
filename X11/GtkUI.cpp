@@ -87,7 +87,7 @@ GdkWindow* GtkUI::browserWindow()
 
 void GtkUI::PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries)
+        bool retry, int tries)
 {
     if (!m_pinInputDialog)
         throw std::runtime_error("PinInputDialog not loaded");
@@ -101,7 +101,6 @@ void GtkUI::PromptForPinAsync(const std::string& subject,
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setUrl(docUrl);
     m_pinInputDialog->setHash(docHash);
-    m_pinInputDialog->setPinPadTimeout(pinPadTimeout);
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
 
@@ -114,7 +113,7 @@ void GtkUI::PromptForPinAsync(const std::string& subject,
 #ifdef SUPPORT_OLD_APIS
 std::string GtkUI::PromptForPin(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries)
+        bool retry, int tries)
 {
     if (!m_pinInputDialog)
         throw std::runtime_error("PinInputDialog not loaded");
@@ -122,7 +121,6 @@ std::string GtkUI::PromptForPin(const std::string& subject,
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setUrl(docUrl);
     m_pinInputDialog->setHash(docHash);
-    m_pinInputDialog->setPinPadTimeout(pinPadTimeout);
     m_pinInputDialog->setRetry(retry);
     m_pinInputDialog->setTries(tries);
 

@@ -79,9 +79,6 @@ void PinInputDialog::setHash(const std::string& hash)
     m_hash->set_text(hash);
 }
 
-void PinInputDialog::setPinPadTimeout(int timeout)
-{}
-
 void PinInputDialog::setRetry(bool retry)
 {
     if (retry)

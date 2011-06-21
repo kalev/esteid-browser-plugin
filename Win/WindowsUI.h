@@ -33,12 +33,12 @@ public:
 
     void PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries);
+        bool retry, int tries);
     void ClosePinPrompt();
 #ifdef SUPPORT_OLD_APIS
     std::string PromptForPin(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries);
+        bool retry, int tries);
 #endif
     void ShowSettings(PluginSettings& settings, const std::string& pageUrl = "");
     void ShowPinBlockedMessage(int pin);

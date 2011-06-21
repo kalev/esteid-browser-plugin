@@ -403,7 +403,7 @@ void EsteidAPI::promptForPinAsync(bool retrying)
     }
 
     m_UI->PromptForPinAsync(m_subject, m_url, m_hash,
-                           m_pinpad, retrying, triesLeft);
+                            retrying, triesLeft);
 }
 
 
@@ -482,7 +482,7 @@ std::string EsteidAPI::promptForPin(bool retrying)
     }
 
     std::string pin = m_UI->PromptForPin(m_subject, m_url, m_hash,
-                                         m_pinpad, retrying, triesLeft);
+                                         retrying, triesLeft);
 
     if (pin.empty())
         throw std::runtime_error(CANCEL_MSG);

@@ -44,7 +44,7 @@ public:
     /** Prompt for Signature PIN */
     virtual void PromptForPinAsync(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries) = 0;
+        bool retry, int tries) = 0;
 
     /** Close Signature PIN prompt (used when user hits cancel on pinpad) */
     virtual void ClosePinPrompt() = 0;
@@ -52,7 +52,7 @@ public:
 #ifdef SUPPORT_OLD_APIS
     virtual std::string PromptForPin(const std::string& subject,
         const std::string& docUrl, const std::string& docHash,
-        int pinPadTimeout, bool retry, int tries) = 0;
+        bool retry, int tries) = 0;
 #endif
 
     /** Inform user that the PIN has been blocked */

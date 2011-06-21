@@ -34,7 +34,6 @@ public:
     void setSubject(const std::string& subject);
     void setUrl(const std::string& url);
     void setHash(const std::string& hash);
-    void setPinPadTimeout(int timeout);
     void setRetry(bool retry);
     void setTries(int tries);
     void setParent(GdkWindow* parent);
