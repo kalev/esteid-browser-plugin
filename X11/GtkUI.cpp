@@ -52,10 +52,14 @@ GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
 
     // connect signals
     if (m_pinInputDialog) {
+        m_pinInputDialog->signal_show().connect(sigc::bind(sigc::mem_fun(*this,
+                    &GtkUI::make_transient), m_pinInputDialog));
         m_pinInputConnection = m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
                     &GtkUI::on_pininputdialog_response) );
     }
     if (m_whitelistDialog) {
+        m_whitelistDialog->signal_show().connect(sigc::bind(sigc::mem_fun(*this,
+                    &GtkUI::make_transient), m_whitelistDialog));
         m_whitelistDialog->signal_response().connect( sigc::mem_fun(*this,
                     &GtkUI::on_whitelistdialog_response) );
     }
@@ -98,8 +102,6 @@ void GtkUI::pinDialog(const std::string& subject,
     m_pinInputDialog->setHash(docHash);
     m_pinInputDialog->setRetry(false);
     m_pinInputDialog->closeDetails();
-
-    m_pinInputDialog->setParent(browserWindow());
 
     m_pinInputDialog->show();
     m_dialog_up = true;
@@ -154,8 +156,6 @@ void GtkUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
     m_whitelistDialog->clear();
     m_whitelistDialog->addDefaultSites(m_settings->defaultWhitelist());
     m_whitelistDialog->addSites(m_settings->whitelist());
-
-    m_whitelistDialog->setParent(browserWindow());
 
     m_whitelistDialog->show_all();
     m_dialog_up = true;

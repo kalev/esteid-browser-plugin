@@ -37,7 +37,6 @@ public:
     void setRetry(bool retry);
     void setTries(int tries);
     void closeDetails();
-    void setParent(GdkWindow* parent);
     std::string getPin();
     void clearPin();
 
@@ -47,10 +46,8 @@ protected:
 
     // Signal handlers:
     void on_pin_changed();
-    void make_transient();
 
     Glib::RefPtr<Gtk::Builder> m_refGlade;
-    GdkWindow* m_parent;
 
     // Child widgets:
     Gtk::Button *m_okButton;
