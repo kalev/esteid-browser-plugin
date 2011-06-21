@@ -64,9 +64,10 @@ MacUI::~MacUI()
     ESTEID_DEBUG("~MacUI()");
 }
 
-void MacUI::PromptForPinAsync(const std::string& subject,
-                              const std::string& docUrl, const std::string& docHash,
-                              bool retry, int tries)
+void MacUI::pinDialog(const std::string& subject,
+                      const std::string& docUrl,
+                      const std::string& docHash,
+                      bool retry, int tries)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -128,7 +129,7 @@ std::string MacUI::PromptForPin(const std::string& subject,
 }
 #endif
 
-void MacUI::ClosePinPrompt()
+void MacUI::closePinDialog()
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
@@ -137,7 +138,7 @@ void MacUI::ClosePinPrompt()
     [pool release];
 }
 
-void MacUI::ShowPinBlockedMessage(int pin)
+void MacUI::pinBlockedMessage(int pin)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSBundle *bundle = [NSBundle bundleForClass:[(MacUIPrivate *)m_internal class]];
@@ -154,7 +155,7 @@ void MacUI::ShowPinBlockedMessage(int pin)
     [pool release];
 }
 
-void MacUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
+void MacUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     

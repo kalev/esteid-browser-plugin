@@ -85,9 +85,10 @@ GdkWindow* GtkUI::browserWindow()
 }
 
 
-void GtkUI::PromptForPinAsync(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries)
+void GtkUI::pinDialog(const std::string& subject,
+                      const std::string& docUrl,
+                      const std::string& docHash,
+                      bool retry, int tries)
 {
     if (!m_pinInputDialog)
         throw std::runtime_error("PinInputDialog not loaded");
@@ -110,12 +111,12 @@ void GtkUI::PromptForPinAsync(const std::string& subject,
     m_dialog_up = true;
 }
 
-void GtkUI::ClosePinPrompt()
+void GtkUI::closePinDialog()
 {
 }
 
 
-void GtkUI::ShowPinBlockedMessage(int pin)
+void GtkUI::pinBlockedMessage(int pin)
 {
     if (m_dialog_up)
         return;
@@ -131,7 +132,7 @@ void GtkUI::ShowPinBlockedMessage(int pin)
 }
 
 
-void GtkUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
+void GtkUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
 {
     m_settings = &settings;
 

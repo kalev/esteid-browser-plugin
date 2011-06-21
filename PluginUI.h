@@ -42,19 +42,20 @@ public:
     };
 
     /** Prompt for Signature PIN */
-    virtual void PromptForPinAsync(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries) = 0;
+    virtual void pinDialog(const std::string& subject,
+                           const std::string& docUrl,
+                           const std::string& docHash,
+                           bool retry, int tries) = 0;
 
-    /** Close Signature PIN prompt (used when user hits cancel on pinpad) */
-    virtual void ClosePinPrompt() = 0;
+    /** Close Signature PIN dialog */
+    virtual void closePinDialog() = 0;
 
     /** Inform user that the PIN has been blocked */
-    virtual void ShowPinBlockedMessage(int pin) = 0;
+    virtual void pinBlockedMessage(int pin) = 0;
 
     /** Open Settings dialog */
-    virtual void ShowSettings(PluginSettings& conf,
-                              const std::string& pageUrl = "") = 0;
+    virtual void settingsDialog(PluginSettings& conf,
+                                const std::string& pageUrl = "") = 0;
 
     /** Run a single iteration of the underlying platform's event loop */
     virtual void iteration() = 0;

@@ -174,7 +174,7 @@ private:
         SettingsCallback(FB::BrowserHostPtr host, EsteidAPI &eidp) :
             CallbackAPI(host), m_eidp(eidp) { }
         virtual bool eventHandler()
-            { m_eidp.ShowSettings(); return true; };
+            { m_eidp.settingsDialog(); return true; };
     private:
         EsteidAPI &m_eidp;
     };
@@ -202,10 +202,10 @@ private:
 
     std::string pageURL();
     void prepareSign(const std::string& hash, const std::string& url);
-    void promptForPinAsync(bool retrying = false);
+    void askPin(bool retrying = false);
     std::string signSHA1(std::string hash, const std::string& pin);
     int getPin2RetryCount();
-    void ShowSettings();
+    void settingsDialog();
     void DisplayNotification(const std::string& msg);
     void CreateNotificationBar();
     void OpenNotificationBar();

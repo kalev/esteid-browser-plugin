@@ -87,11 +87,12 @@ HWND WindowsUI::parentHWND()
 }
 
 
-void WindowsUI::PromptForPinAsync(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries)
+void WindowsUI::pinDialog(const std::string& subject,
+                          const std::string& docUrl,
+                          const std::string& docHash,
+                          bool retry, int tries)
 {
-    ESTEID_DEBUG("WindowsUI::PromptForPinAsync()");
+    ESTEID_DEBUG("WindowsUI::pinDialog()");
 
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->setRetry(retry);
@@ -100,23 +101,23 @@ void WindowsUI::PromptForPinAsync(const std::string& subject,
 }
 
 
-void WindowsUI::ClosePinPrompt()
+void WindowsUI::closePinDialog()
 {
-    ESTEID_DEBUG("WindowsUI::ClosePinPrompt()");
+    ESTEID_DEBUG("WindowsUI::closePinDialog()");
 }
 
 
-void WindowsUI::ShowPinBlockedMessage(int pin)
+void WindowsUI::pinBlockedMessage(int pin)
 {
-    ESTEID_DEBUG("WindowsUI::ShowPinBlockedMessage()");
+    ESTEID_DEBUG("WindowsUI::pinBlockedMessage()");
 
     m_pinInputDialog->showPinBlocked(parentHWND());
 }
 
 
-void WindowsUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
+void WindowsUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
 {
-    ESTEID_DEBUG("WindowsUI::ShowSettings()");
+    ESTEID_DEBUG("WindowsUI::settingsDialog()");
 
     m_settings = &settings;
 

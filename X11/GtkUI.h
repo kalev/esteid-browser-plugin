@@ -38,12 +38,13 @@ public:
     GtkUI(boost::shared_ptr<UICallbacks>);
     virtual ~GtkUI();
 
-    void PromptForPinAsync(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries);
-    void ClosePinPrompt();
-    void ShowSettings(PluginSettings& settings, const std::string& pageUrl = "");
-    void ShowPinBlockedMessage(int pin);
+    void pinDialog(const std::string& subject,
+                   const std::string& docUrl,
+                   const std::string& docHash,
+                   bool retry, int tries);
+    void closePinDialog();
+    void settingsDialog(PluginSettings& settings, const std::string& pageUrl = "");
+    void pinBlockedMessage(int pin);
     void iteration();
 
 protected:

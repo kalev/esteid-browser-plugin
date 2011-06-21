@@ -250,7 +250,7 @@ void EsteidAPI::showSettings()
     if (m_pageURL.protocol() == "file" ||
         m_pageURL.protocol() == "chrome") {
         try {
-            m_UI->ShowSettings(m_settings);
+            m_UI->settingsDialog(m_settings);
         } catch(const std::exception& e) {
             ESTEID_DEBUG("Unable to display whitelist editor: %s", e.what());
         }
@@ -259,13 +259,13 @@ void EsteidAPI::showSettings()
     }
 }
 
-void EsteidAPI::ShowSettings()
+void EsteidAPI::settingsDialog()
 {
     try {
         if (IsSecure())
-            m_UI->ShowSettings(m_settings, m_pageURL.hostname());
+            m_UI->settingsDialog(m_settings, m_pageURL.hostname());
         else
-            m_UI->ShowSettings(m_settings);
+            m_UI->settingsDialog(m_settings);
     } catch(const std::exception& e) {
         ESTEID_DEBUG("Unable to display whitelist editor: %s", e.what());
     }
@@ -361,7 +361,7 @@ void EsteidAPI::signAsync(const std::string& hash, const std::string& url, const
         whitelistRequired();
 
         prepareSign(hash, url);
-        promptForPinAsync();
+        askPin();
     } catch(const std::exception& e) {
         returnSignFailure(e.what());
         return;
@@ -394,16 +394,16 @@ void EsteidAPI::prepareSign(const std::string& hash, const std::string& url)
 }
 
 
-void EsteidAPI::promptForPinAsync(bool retrying)
+void EsteidAPI::askPin(bool retrying)
 {
     int triesLeft = getPin2RetryCount();
     if (triesLeft <= 0) {
-        m_UI->ShowPinBlockedMessage(2);
+        m_UI->pinBlockedMessage(2);
         throw std::runtime_error("PIN2 locked");
     }
 
-    m_UI->PromptForPinAsync(m_subject, m_url, m_hash,
-                            retrying, triesLeft);
+    m_UI->pinDialog(m_subject, m_url, m_hash,
+                    retrying, triesLeft);
 }
 
 
@@ -441,7 +441,7 @@ void EsteidAPI::onPinEntered(const std::string& pin)
 
         try {
             // ask again for PIN
-            promptForPinAsync(true);
+            askPin(true);
         } catch(const std::exception& e) {
             returnSignFailure(e.what());
         }
@@ -509,7 +509,7 @@ void EsteidAPI::throwIfSignFailure()
 std::string EsteidAPI::askPinAndSign(const std::string& hash, const std::string& url)
 {
     prepareSign(hash, url);
-    promptForPinAsync();
+    askPin();
 
     m_stoprequested = false;
     do {

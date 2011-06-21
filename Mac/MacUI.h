@@ -31,17 +31,18 @@ public:
     MacUI(boost::shared_ptr<UICallbacks>);
     virtual ~MacUI();
         
-    void PromptForPinAsync(const std::string& subject,
-                           const std::string& docUrl, const std::string& docHash,
-                           bool retry, int tries);
-    void ClosePinPrompt();
+    void pinDialog(const std::string& subject,
+                   const std::string& docUrl,
+                   const std::string& docHash,
+                   bool retry, int tries);
+    void closePinDialog();
 #ifdef SUPPORT_OLD_APIS
     std::string PromptForPin(const std::string& subject,
                              const std::string& docUrl, const std::string& docHash,
                              bool retry, int tries);
 #endif
-    void ShowPinBlockedMessage(int pin);
-    void ShowSettings(PluginSettings& settings, const std::string& pageUrl = "");
+    void pinBlockedMessage(int pin);
+    void settingsDialog(PluginSettings& settings, const std::string& pageUrl = "");
         
     static void SetWindow(void *window);
 private:
