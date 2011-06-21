@@ -49,18 +49,15 @@ public:
     /** Close Signature PIN prompt (used when user hits cancel on pinpad) */
     virtual void ClosePinPrompt() = 0;
 
-#ifdef SUPPORT_OLD_APIS
-    virtual std::string PromptForPin(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries) = 0;
-#endif
-
     /** Inform user that the PIN has been blocked */
     virtual void ShowPinBlockedMessage(int pin) = 0;
 
     /** Open Settings dialog */
     virtual void ShowSettings(PluginSettings& conf,
                               const std::string& pageUrl = "") = 0;
+
+    /** Run a single iteration of the underlying platform's event loop */
+    virtual void iteration() = 0;
 
     PluginUI(boost::shared_ptr<UICallbacks>);
     virtual ~PluginUI();

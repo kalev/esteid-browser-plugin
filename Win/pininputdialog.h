@@ -41,7 +41,6 @@ public:
     void clearPin();
 
     bool doDialog(HWND hParent = NULL);
-    int doModalDialog(HWND hParent = NULL);
 
 private:
     LRESULT on_initdialog(WPARAM wParam);

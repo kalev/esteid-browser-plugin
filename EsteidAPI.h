@@ -135,7 +135,7 @@ public:
     void signXML(const std::string&, const std::string&,
         const std::string&, const std::string&, const std::string&,
         const std::string&);
-    std::string promptForPin(bool retrying = false);
+    void throwIfSignFailure();
     std::string askPinAndSign(const std::string& hash, const std::string& url);
     std::string getInfo();
     std::string getSigningCertificate();
@@ -164,6 +164,9 @@ private:
     std::string m_mimeType; /* This is here for the future, current Firebreath
                              * (2010/03/11) always passes an empty string */
     bool m_pinpad;
+    volatile bool m_stoprequested;
+    std::string m_signedHash;
+    std::string m_signFailure;
     PluginSettings m_settings;
 
     class SettingsCallback : public CallbackAPI {

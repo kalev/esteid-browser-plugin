@@ -66,6 +66,17 @@ HWND WindowsUI::browserHWND()
 }
 
 
+HWND WindowsUI::pluginHWND()
+{
+    if (m_window) {
+        FB::PluginWindowWin* wnd = reinterpret_cast<FB::PluginWindowWin*>(m_window);
+        return wnd->getHWND();
+    } else {
+        return NULL;
+    }
+}
+
+
 HWND WindowsUI::parentHWND()
 {
     HWND hWnd = browserHWND();
@@ -87,26 +98,6 @@ void WindowsUI::PromptForPinAsync(const std::string& subject,
     m_pinInputDialog->setTries(tries);
     m_pinInputDialog->doDialog(parentHWND());
 }
-
-
-#ifdef SUPPORT_OLD_APIS
-std::string WindowsUI::PromptForPin(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries)
-{
-    m_pinInputDialog->setSubject(subject);
-    m_pinInputDialog->setRetry(retry);
-    m_pinInputDialog->setTries(tries);
-    m_pinInputDialog->doModalDialog(parentHWND());
-
-    std::string pin = m_pinInputDialog->getPin();
-
-    // make sure the dialog doesn't cache PIN
-    m_pinInputDialog->clearPin();
-
-    return pin;
-}
-#endif
 
 
 void WindowsUI::ClosePinPrompt()
@@ -135,6 +126,20 @@ void WindowsUI::ShowSettings(PluginSettings& settings, const std::string& pageUr
 
     if (pageUrl.length() > 0)
         m_whitelistDialog->setEntryText(pageUrl);
+}
+
+
+void WindowsUI::iteration()
+{
+    MSG msg;
+
+    if (!PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+        return;
+
+    if (!IsDialogMessage(pluginHWND(), &msg)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 }
 
 

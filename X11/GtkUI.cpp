@@ -110,43 +110,6 @@ void GtkUI::PromptForPinAsync(const std::string& subject,
     m_dialog_up = true;
 }
 
-#ifdef SUPPORT_OLD_APIS
-std::string GtkUI::PromptForPin(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries)
-{
-    if (!m_pinInputDialog)
-        throw std::runtime_error("PinInputDialog not loaded");
-
-    m_pinInputDialog->setSubject(subject);
-    m_pinInputDialog->setUrl(docUrl);
-    m_pinInputDialog->setHash(docHash);
-    m_pinInputDialog->setRetry(retry);
-    m_pinInputDialog->setTries(tries);
-
-    m_pinInputDialog->setParent(browserWindow());
-
-    // temporarily block asynchronous API signals
-    m_pinInputConnection.block();
-    // run dialog
-    int response_id = m_pinInputDialog->run();
-    m_pinInputDialog->hide();
-    // unblock the signal
-    m_pinInputConnection.unblock();
-
-    std::string pin;
-    if (response_id == Gtk::RESPONSE_OK)
-        pin = m_pinInputDialog->getPin();
-    else
-        pin = "";
-
-    // make sure the dialog doesn't cache PIN
-    m_pinInputDialog->clearPin();
-
-    return pin;
-}
-#endif
-
 void GtkUI::ClosePinPrompt()
 {
 }
@@ -192,6 +155,12 @@ void GtkUI::ShowSettings(PluginSettings& settings, const std::string& pageUrl)
 
     m_whitelistDialog->show_all();
     m_dialog_up = true;
+}
+
+
+void GtkUI::iteration()
+{
+    Glib::MainContext::get_default()->iteration(true);
 }
 
 

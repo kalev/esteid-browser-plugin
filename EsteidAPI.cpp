@@ -467,54 +467,57 @@ void EsteidAPI::invokeSignCallback(const std::string& callback, const std::strin
 
 void EsteidAPI::returnSignedData(const std::string& data)
 {
-    invokeSignCallback("onSuccess", data);
+    if (m_signCallback) {
+        // in case of async signing API, invoke the JS callback
+        invokeSignCallback("onSuccess", data);
+    } else {
+        // in case of sync signing API, signal for the blocking
+        // function to return
+        m_stoprequested = true;
+        m_signedHash = data;
+    }
 }
 
 void EsteidAPI::returnSignFailure(const std::string& msg)
 {
-    invokeSignCallback("onError", msg);
+    if (m_signCallback) {
+        // in case of async signing API, invoke the JS callback
+        invokeSignCallback("onError", msg);
+    } else {
+        // in case of sync signing API, signal for the blocking
+        // function to return
+        m_stoprequested = true;
+        m_signFailure = msg;
+    }
 }
 
 
 #ifdef SUPPORT_OLD_APIS
 #define COMPAT_URL "http://code.google.com/p/esteid/wiki/OldPluginCompatibilityMode"
 
-std::string EsteidAPI::promptForPin(bool retrying)
+void EsteidAPI::throwIfSignFailure()
 {
-    int triesLeft = getPin2RetryCount();
-    if (triesLeft <= 0) {
-        m_UI->ShowPinBlockedMessage(2);
-        throw std::runtime_error("PIN2 locked");
-    }
+    if (m_signFailure.empty())
+        return;
 
-    std::string pin = m_UI->PromptForPin(m_subject, m_url, m_hash,
-                                         retrying, triesLeft);
+    std::string errorMsg = m_signFailure;
+    m_signFailure.clear();
 
-    if (pin.empty())
-        throw std::runtime_error(CANCEL_MSG);
-
-    return pin;
+    throw std::runtime_error(errorMsg);
 }
 
 std::string EsteidAPI::askPinAndSign(const std::string& hash, const std::string& url)
 {
     prepareSign(hash, url);
+    promptForPinAsync();
 
-    bool retrying = false;
-    for (;;) {
-        std::string pin = promptForPin(retrying);
+    m_stoprequested = false;
+    do {
+        m_UI->iteration();
+    } while (!m_stoprequested);
 
-        try {
-            std::string signedHash = signSHA1(hash, pin);
-            return signedHash;
-        } catch(const AuthError& e) {
-            if (e.m_aborted) // pinpad
-                throw std::runtime_error("pinpad operation cancelled");
-
-            // ask again for PIN
-            retrying = true;
-        }
-    }
+    throwIfSignFailure();
+    return m_signedHash;
 }
 
 /* Old Mozilla plugin */

@@ -276,13 +276,9 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         m_pin = getPinInternal();
         SetDlgItemTextA(m_hWnd, IDC_PINEDIT, "");
 
-        if (m_modalDialog) {
-            EndDialog(m_hWnd, wParam);
-        } else {
-            DestroyWindow(m_hWnd);
-            releaseIEModalLock();
-            signalResponse(RESPONSE_OK);
-        }
+        DestroyWindow(m_hWnd);
+        releaseIEModalLock();
+        signalResponse(RESPONSE_OK);
         return TRUE;
         break;
 
@@ -290,13 +286,9 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
         m_pin = "";
         SetDlgItemTextA(m_hWnd, IDC_PINEDIT, "");
 
-        if (m_modalDialog) {
-            EndDialog(m_hWnd, wParam);
-        } else {
-            DestroyWindow(m_hWnd);
-            releaseIEModalLock();
-            signalResponse(RESPONSE_CANCEL);
-        }
+        DestroyWindow(m_hWnd);
+        releaseIEModalLock();
+        signalResponse(RESPONSE_CANCEL);
         return TRUE;
         break;
     }
@@ -308,13 +300,4 @@ LRESULT PinInputDialog::on_command(WPARAM wParam, LPARAM lParam)
 bool PinInputDialog::doDialog(HWND hParent)
 {
     return BaseDialog::doDialog(IDD_PINDIALOG, hParent);
-}
-
-int PinInputDialog::doModalDialog(HWND hParent)
-{
-    int rv = BaseDialog::doModalDialog(IDD_PINDIALOG, hParent);
-    if (rv == IDOK)
-        return RESPONSE_OK;
-    else
-        return RESPONSE_CANCEL;
 }

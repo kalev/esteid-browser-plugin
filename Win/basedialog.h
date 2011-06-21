@@ -43,13 +43,11 @@ public:
     Connection connect(const ResponseSignal::slot_type& subscriber);
     void disconnect(Connection subscriber);
     virtual bool doDialog(int resourceID, HWND hParent = NULL);
-    virtual int doModalDialog(int resourceID, HWND hParent = NULL);
 
 protected:
     HINSTANCE m_hInst;
     HWND m_hWnd;
     HANDLE m_hModalDialogLock;
-    bool m_modalDialog;
 
     static LRESULT CALLBACK dialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     virtual LRESULT on_message(UINT message, WPARAM wParam, LPARAM lParam);

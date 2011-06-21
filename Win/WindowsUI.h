@@ -35,19 +35,16 @@ public:
         const std::string& docUrl, const std::string& docHash,
         bool retry, int tries);
     void ClosePinPrompt();
-#ifdef SUPPORT_OLD_APIS
-    std::string PromptForPin(const std::string& subject,
-        const std::string& docUrl, const std::string& docHash,
-        bool retry, int tries);
-#endif
     void ShowSettings(PluginSettings& settings, const std::string& pageUrl = "");
     void ShowPinBlockedMessage(int pin);
+    void iteration();
 
 protected:
     void on_pininputdialog_response(int response);
     void on_whitelistdialog_response(int response);
 
     HWND browserHWND();
+    HWND pluginHWND();
     HWND parentHWND();
 
     PluginSettings *m_settings;

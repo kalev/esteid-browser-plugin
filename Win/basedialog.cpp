@@ -27,8 +27,7 @@ typedef BaseDialog::Connection Connection;
 
 BaseDialog::BaseDialog(HINSTANCE hInst)
     : m_hInst(hInst),
-      m_hWnd(NULL),
-      m_modalDialog(false)
+      m_hWnd(NULL)
 {
 }
 
@@ -104,13 +103,9 @@ LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
         return on_notify(wParam, lParam);
         break;
     case WM_CLOSE:
-        if (m_modalDialog) {
-            EndDialog(m_hWnd, wParam);
-        } else {
-            DestroyWindow(m_hWnd);
-            releaseIEModalLock();
-            signalResponse(RESPONSE_CANCEL);
-        }
+        DestroyWindow(m_hWnd);
+        releaseIEModalLock();
+        signalResponse(RESPONSE_CANCEL);
         return TRUE;
         break;
     case WM_DESTROY:
@@ -148,8 +143,6 @@ void BaseDialog::releaseIEModalLock()
 
 bool BaseDialog::doDialog(int resourceID, HWND hParent)
 {
-    m_modalDialog = false;
-
     m_hWnd = CreateDialogParam(m_hInst,
                                MAKEINTRESOURCE(resourceID),
                                getIEModalLock(hParent),
@@ -160,18 +153,4 @@ bool BaseDialog::doDialog(int resourceID, HWND hParent)
 
     ShowWindow(m_hWnd, SW_NORMAL);
     return true;
-}
-
-int BaseDialog::doModalDialog(int resourceID, HWND hParent)
-{
-    int ret;
-    m_modalDialog = true;
-
-    ret = DialogBoxParam(m_hInst,
-                         MAKEINTRESOURCE(resourceID),
-                         getIEModalLock(hParent),
-                         (DLGPROC)dialogProc,
-                         reinterpret_cast<LPARAM>(this));
-    releaseIEModalLock();
-    return ret;
 }
