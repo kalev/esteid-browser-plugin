@@ -1,3 +1,22 @@
+esteid-browser-plugin 1.2.1 (2011-06-27)
+========================================
+
+Plugin:
+- Added id.lhv.ee and www.politsei.ee to whitelist (Sander Lepik,
+  Antti Andreimann)
+- Fixed PIN2 dialog Cancel button handling to not send the PIN to card
+  (Kalev Lember) (#133)
+- Force boost filesystem version 2 to fix build with boost 1.46 (arc.mission)
+  (#154)
+- Don't display deprecated API warnings (Kalev Lember) (#116)
+
+Mozilla extension:
+- Firefox 5 and Thunderbird 5 compatibility (Kalev Lember)
+
+Many thanks to all the contributors:
+Sander Lepik, Antti Andreimann, Kalev Lember, arc.mission.
+
+
 esteid-browser-plugin 1.2.0 (2010-11-04)
 ========================================
 
