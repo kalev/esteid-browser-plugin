@@ -57,17 +57,6 @@ WindowsUI::~WindowsUI()
 }
 
 
-HWND WindowsUI::browserHWND()
-{
-    if (m_window) {
-        FB::PluginWindowWin* wnd = reinterpret_cast<FB::PluginWindowWin*>(m_window);
-        return wnd->getBrowserHWND();
-    } else {
-        return NULL;
-    }
-}
-
-
 HWND WindowsUI::pluginHWND()
 {
     if (m_window) {
@@ -81,11 +70,7 @@ HWND WindowsUI::pluginHWND()
 
 HWND WindowsUI::parentHWND()
 {
-    HWND hWnd = browserHWND();
-    if (hWnd)
-        return hWnd;
-    else
-        return GetForegroundWindow();
+    return GetForegroundWindow();
 }
 
 

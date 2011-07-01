@@ -27,7 +27,8 @@ typedef BaseDialog::Connection Connection;
 
 BaseDialog::BaseDialog(HINSTANCE hInst)
     : m_hInst(hInst),
-      m_hWnd(NULL)
+      m_hWnd(NULL),
+      m_hParent(NULL)
 {
 }
 
@@ -192,6 +193,7 @@ LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_DESTROY:
         UnhookWindowsHookEx(s_hHook);
+        enableParent();
         return on_destroy(wParam, lParam);
         break;
     }
@@ -225,6 +227,7 @@ void BaseDialog::releaseIEModalLock()
 
 void BaseDialog::close()
 {
+    enableParent();
     DestroyWindow(m_hWnd);
     releaseIEModalLock();
 }
@@ -234,8 +237,26 @@ bool BaseDialog::visible()
     return IsWindowVisible(m_hWnd);
 }
 
+void BaseDialog::enableParent()
+{
+    if (!m_hParent)
+        return;
+
+    EnableWindow(m_hParent, TRUE);
+    m_hParent = NULL;
+}
+
+void BaseDialog::disableParent()
+{
+    if (!m_hParent)
+        return;
+
+    EnableWindow(m_hParent, FALSE);
+}
+
 bool BaseDialog::doDialog(int resourceID, HWND hParent)
 {
+    m_hParent = hParent;
     m_hWnd = CreateDialogParam(m_hInst,
                                MAKEINTRESOURCE(resourceID),
                                getIEModalLock(hParent),
@@ -245,5 +266,6 @@ bool BaseDialog::doDialog(int resourceID, HWND hParent)
         return false;
 
     ShowWindow(m_hWnd, SW_NORMAL);
+    disableParent();
     return true;
 }

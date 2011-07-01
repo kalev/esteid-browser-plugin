@@ -51,7 +51,6 @@ protected:
     void on_pininputdialog_response(int response);
     void on_whitelistdialog_response(int response);
 
-    HWND browserHWND();
     HWND pluginHWND();
     HWND parentHWND();
 
