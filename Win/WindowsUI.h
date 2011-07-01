@@ -55,6 +55,8 @@ protected:
     HWND pluginHWND();
     HWND parentHWND();
 
+    bool dialogVisible();
+
     PluginSettings *m_settings;
     std::auto_ptr<PinInputDialog> m_pinInputDialog;
     std::auto_ptr<PinpadDialog> m_pinpadDialog;

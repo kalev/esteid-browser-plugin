@@ -89,11 +89,21 @@ HWND WindowsUI::parentHWND()
 }
 
 
+bool WindowsUI::dialogVisible()
+{
+    return (m_pinInputDialog->visible() ||
+            m_pinpadDialog->visible() ||
+            m_whitelistDialog->visible());
+}
+
 void WindowsUI::pinDialog(const std::string& subject,
                           const std::string& docUrl,
                           const std::string& docHash)
 {
     ESTEID_DEBUG("WindowsUI::pinDialog()");
+
+    if (dialogVisible())
+        return;
 
     m_pinInputDialog->setSubject(subject);
     m_pinInputDialog->doDialog(parentHWND());
@@ -105,6 +115,9 @@ void WindowsUI::pinpadDialog(const std::string& subject,
                              int timeout)
 {
     ESTEID_DEBUG("WindowsUI::pinpadDialog()");
+
+    if (dialogVisible())
+        return;
 
     m_pinpadDialog->setSubject(subject);
     m_pinpadDialog->hideRetry();
@@ -152,6 +165,9 @@ void WindowsUI::pinBlockedMessage(int pin)
 void WindowsUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
 {
     ESTEID_DEBUG("WindowsUI::settingsDialog()");
+
+    if (dialogVisible())
+        return;
 
     m_settings = &settings;
 

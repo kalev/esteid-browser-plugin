@@ -229,6 +229,11 @@ void BaseDialog::close()
     releaseIEModalLock();
 }
 
+bool BaseDialog::visible()
+{
+    return IsWindowVisible(m_hWnd);
+}
+
 bool BaseDialog::doDialog(int resourceID, HWND hParent)
 {
     m_hWnd = CreateDialogParam(m_hInst,
