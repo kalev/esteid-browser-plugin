@@ -23,6 +23,7 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+#include <smartcardpp/PCSCManager.h>
 
 /* Singleton instance variable */
 boost::weak_ptr<CardService> CardService::sCardService;
@@ -97,16 +98,16 @@ void CardService::monitor()
 }
 
 /*
- * SmartCardManager constructor throws if the pcsc daemon isn't running.
+ * PCSCManager constructor throws if the pcsc daemon isn't running.
  * CardService class however needs to start polling even if the pcsc daemon
- * isn't currently running. As a workaround, all calls to SmartCardManager are
- * proxied through cardManager() which attempts to start SmartCardManager if
+ * isn't currently running. As a workaround, all calls to PCSCManager are
+ * proxied through cardManager() which attempts to start PCSCManager if
  * needed.
  */
 ManagerInterface& CardService::cardManager()
 {
     if (!m_manager)
-        m_manager.reset(new SmartCardManager());
+        m_manager.reset(new PCSCManager());
 
     return *m_manager;
 }
@@ -298,7 +299,7 @@ void CardService::runSignSHA1(const std::string& hash,
     try {
         boost::mutex::scoped_lock l(m_cardMutex);
 
-        boost::scoped_ptr<ManagerInterface> manager(new SmartCardManager());
+        boost::scoped_ptr<ManagerInterface> manager(new PCSCManager());
         EstEidCard card(*manager, reader);
 
         std::string ret = toHex(card.calcSignSHA1(fromHex(hash), keyId, PinString(pin.c_str())));

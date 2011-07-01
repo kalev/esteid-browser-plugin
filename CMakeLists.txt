@@ -40,6 +40,9 @@ find_package(Gettext)
 find_package(Iconv REQUIRED)
 find_package(OpenSSLCrypto REQUIRED)
 find_package(SmartCardpp REQUIRED)
+if (UNIX)
+    find_package(PCSCLite)
+endif()
 
 if (WITH_SYSTEM_BOOST)
     # FindBoost.cmake isn't up to date wrt new boost versions
@@ -97,7 +100,8 @@ include_directories(
     ${GTKMM_INCLUDE_DIRS}
     ${ICONV_INCLUDE_DIR}
     ${OPENSSLCRYPTO_INCLUDE_DIR}
-    ${SMARTCARDPP_INCLUDE_DIR}
+    ${PCSCLITE_INCLUDE_DIR}
+    ${SMARTCARDPP_INCLUDE_DIRS}
     ${UTIL_DIR}
 )
 
