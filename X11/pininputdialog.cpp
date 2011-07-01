@@ -20,35 +20,18 @@
  */
 
 #include "pininputdialog.h"
-#include <cassert>
-#include <sstream>
 #include <gtkmm.h>
-#include <gtkmm/dialog.h>
-#include <gtkmm/stock.h>
-#include <gtkmmconfig.h>
-#include "debug.h"
 
 
 PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade)
-    : Gtk::Dialog(cobject),
-      m_refGlade(refGlade),
+    : BasePinDialog(cobject, refGlade),
       m_okButton(NULL),
       m_entry(NULL),
-      m_label(NULL),
-      m_warningLabel(NULL),
-      m_expander(NULL),
-      m_url(NULL),
-      m_hash(NULL),
       m_minPinLength(5)
 {
     // Get the Glade-instantiated widgets
     m_refGlade->get_widget("okButton", m_okButton);
     m_refGlade->get_widget("pin_entry", m_entry);
-    m_refGlade->get_widget("subject_label", m_label);
-    m_refGlade->get_widget("warning_label", m_warningLabel);
-    m_refGlade->get_widget("details_area", m_expander);
-    m_refGlade->get_widget("url_value", m_url);
-    m_refGlade->get_widget("hash_value", m_hash);
 
     m_entry->signal_changed().connect( sigc::mem_fun (*this,
                 &PinInputDialog::on_pin_changed) );
@@ -56,51 +39,6 @@ PinInputDialog::PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::
 
 PinInputDialog::~PinInputDialog()
 {
-}
-
-void PinInputDialog::setSubject(const std::string& subject)
-{
-    m_label->set_label("<b>" + subject + " (PIN2)</b>");
-}
-
-void PinInputDialog::setUrl(const std::string& url)
-{
-#if GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 18
-    m_url->set_text(url);
-#else
-    std::string escaped = Glib::Markup::escape_text(url);
-    m_url->set_label("<a href=\"" + escaped + "\">" + escaped + "</a>");
-#endif
-}
-
-void PinInputDialog::setHash(const std::string& hash)
-{
-    m_hash->set_text(hash);
-}
-
-void PinInputDialog::setRetry(bool retry)
-{
-    if (retry)
-        m_warningLabel->show();
-    else
-        m_warningLabel->hide();
-}
-
-void PinInputDialog::setTries(int tries)
-{
-    assert(tries > 0);
-
-    static const std::string text = _("<span color=\"red\">Wrong PIN!</span> Tries left: ");
-    std::stringstream out;
-    out << text << tries;
-
-    m_warningLabel->set_label(out.str());
-}
-
-void PinInputDialog::closeDetails()
-{
-    // close the details area
-    m_expander->set_expanded(false);
 }
 
 void PinInputDialog::on_map()

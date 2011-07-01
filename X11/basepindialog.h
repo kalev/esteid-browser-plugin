@@ -2,7 +2,7 @@
  * esteid-browser-plugin - a browser plugin for Estonian EID card
  *
  * Copyright (C) 2010  Estonian Informatics Centre
- * Copyright (C) 2010  Smartlink OÜ
+ * Copyright (C) 2010, 2011  Smartlink OÜ
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,33 +19,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ESTEID_PININPUTDIALOG_H
-#define ESTEID_PININPUTDIALOG_H
+#ifndef ESTEID_BASEPINDIALOG_H
+#define ESTEID_BASEPINDIALOG_H
 
-#include "basepindialog.h"
+#include <gtkmm.h>
+#include "localize.h"
 
-class PinInputDialog : public BasePinDialog
+class BasePinDialog : public Gtk::Dialog
 {
 public:
-    PinInputDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
-    virtual ~PinInputDialog();
+    BasePinDialog(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
+    virtual ~BasePinDialog();
 
-    std::string getPin();
-    void clearPin();
+    virtual void setSubject(const std::string& subject);
+    virtual void setUrl(const std::string& url);
+    virtual void setHash(const std::string& hash);
+    virtual void setRetry(bool retry);
+    virtual void setTries(int tries);
+    virtual void closeDetails();
 
 protected:
-    // reimplemented virtual functions
-    virtual void on_map();
-
-private:
-    // Signal handlers:
-    void on_pin_changed();
+    Glib::RefPtr<Gtk::Builder> m_refGlade;
 
     // Child widgets:
-    Gtk::Button *m_okButton;
-    Gtk::Entry *m_entry;
-
-    int m_minPinLength;
+    Gtk::Label *m_label;
+    Gtk::Label *m_warningLabel;
+    Gtk::Expander *m_expander;
+    Gtk::Label *m_url;
+    Gtk::Label *m_hash;
 };
 
-#endif //ESTEID_PININPUTDIALOG_H
+#endif //ESTEID_BASEPINDIALOG_H
