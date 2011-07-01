@@ -14,6 +14,7 @@ endif()
 
 set(WHITELISTDIALOG_UI ${GLADE_INSTALL_DIR}/whitelistdialog.ui)
 set(PININPUTDIALOG_UI ${GLADE_INSTALL_DIR}/pininputdialog.ui)
+set(PINPADDIALOG_UI ${GLADE_INSTALL_DIR}/pinpaddialog.ui)
 
 # remember that the current source dir is the project root; this file is in X11/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -29,6 +30,7 @@ add_definitions(
     -DFB_X11=1
     -DWHITELISTDIALOG_UI="${WHITELISTDIALOG_UI}"
     -DPININPUTDIALOG_UI="${PININPUTDIALOG_UI}"
+    -DPINPADDIALOG_UI="${PINPADDIALOG_UI}"
 )
 
 if(BUILD_TESTGTKUI)
@@ -77,3 +79,4 @@ target_link_libraries(${PROJECT_NAME}
 install(TARGETS ${PROJECT_NAME} DESTINATION ${LIB_INSTALL_DIR}/mozilla/plugins)
 install(FILES X11/whitelistdialog.ui DESTINATION ${GLADE_INSTALL_DIR})
 install(FILES X11/pininputdialog.ui DESTINATION ${GLADE_INSTALL_DIR})
+install(FILES X11/pinpaddialog.ui DESTINATION ${GLADE_INSTALL_DIR})

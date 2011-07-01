@@ -24,6 +24,7 @@
 
 #include "PluginUI.h"
 #include "Win/pininputdialog.h"
+#include "Win/pinpaddialog.h"
 #include "Win/whitelistdialog.h"
 
 class WindowsUI : public PluginUI {
@@ -34,8 +35,14 @@ public:
     void pinDialog(const std::string& subject,
                    const std::string& docUrl,
                    const std::string& docHash);
+    void pinpadDialog(const std::string& subject,
+                      const std::string& docUrl,
+                      const std::string& docHash,
+                      int timeout);
     void retryPinDialog(int triesLeft);
+    void retryPinpadDialog(int triesLeft);
     void closePinDialog();
+    void closePinpadDialog();
     void settingsDialog(PluginSettings& settings, const std::string& pageUrl = "");
     void pinBlockedMessage(int pin);
     void iteration();
@@ -50,6 +57,7 @@ protected:
 
     PluginSettings *m_settings;
     std::auto_ptr<PinInputDialog> m_pinInputDialog;
+    std::auto_ptr<PinpadDialog> m_pinpadDialog;
     std::auto_ptr<WhitelistDialog> m_whitelistDialog;
     PinInputDialog::Connection m_pinInputConnection;
     WhitelistDialog::Connection m_whitelistConnection;

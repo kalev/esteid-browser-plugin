@@ -38,12 +38,19 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
+#include <boost/function.hpp>
 
 #define PDATA_MIN EstEidCard::SURNAME
 #define PDATA_MAX EstEidCard::COMMENT4
 
 typedef unsigned int ReaderID;
 
+enum SignError {
+    SIGN_ERROR_BLOCKED,
+    SIGN_ERROR_WRONG_PIN,
+    SIGN_ERROR_ABORTED,
+    SIGN_ERROR_CARD_ERROR
+};
 
 class CardService
 {
@@ -117,6 +124,21 @@ public:
                          const std::string& pin,
                          ReaderID);
 
+    typedef boost::function<void (const std::string&)> SignCompletedFunc;
+    typedef boost::function<void (SignError, const std::string&)> SignFailedFunc;
+
+    void setSignCompletedCallback(SignCompletedFunc f);
+    void setSignFailedCallback(SignFailedFunc f);
+
+    void signSHA1Async(const std::string& hash,
+                       EstEidCard::KeyType keyId,
+                       const std::string& pin,
+                       ReaderID reader);
+
+    void signSHA1Async(const std::string& hash,
+                       EstEidCard::KeyType keyId,
+                       const std::string& pin);
+
     /* Message observer interface */
     enum MsgType {
         CARD_INSERTED,
@@ -165,12 +187,21 @@ private:
     void monitor();
     void poll();
     bool readerHasCard(EstEidCard& card, ReaderID i);
+    void runSignSHA1(const std::string& hash,
+                     EstEidCard::KeyType keyId,
+                     const std::string& pin,
+                     ReaderID reader);
+    static SignError decodeAuthError(const AuthError& e);
 
     boost::scoped_ptr<ManagerInterface> m_manager;
+
+    SignCompletedFunc signCompletedFunc;
+    SignFailedFunc signFailedFunc;
 
     boost::mutex m_cardMutex;
     boost::mutex m_messageMutex;
     boost::thread m_thread;
+    boost::thread m_signThread;
 };
 
 #endif /* CARDSERVICE_H_ */

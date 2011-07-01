@@ -54,6 +54,9 @@ protected:
     virtual LRESULT on_message(UINT message, WPARAM wParam, LPARAM lParam);
     virtual LRESULT on_initdialog(WPARAM wParam) = 0;
     virtual LRESULT on_command(WPARAM wParam, LPARAM lParam) = 0;
+    virtual LRESULT on_ctlcolorstatic(WPARAM wParam, LPARAM lParam) { return FALSE; }
+    virtual LRESULT on_timer(WPARAM wParam, LPARAM lParam) { return FALSE; }
+    virtual LRESULT on_destroy(WPARAM wParam, LPARAM lParam) { return FALSE; }
     virtual LRESULT on_notify(WPARAM wParam, LPARAM lParam);
     HWND getIEModalLock(HWND hWnd);
     void releaseIEModalLock();

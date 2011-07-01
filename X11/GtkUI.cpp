@@ -25,6 +25,7 @@
 #include <iostream>
 
 #include "X11/pininputdialog.h"
+#include "X11/pinpaddialog.h"
 #include "X11/PluginWindowX11.h"
 #include "X11/whitelistdialog.h"
 
@@ -45,6 +46,9 @@ GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
 
         builder = Gtk::Builder::create_from_file(PININPUTDIALOG_UI);
         builder->get_widget_derived("PinInputDialog", m_pinInputDialog);
+
+        builder = Gtk::Builder::create_from_file(PINPADDIALOG_UI);
+        builder->get_widget_derived("PinpadDialog", m_pinpadDialog);
     } catch(const Glib::Error& ex) {
         std::cerr << ex.what() << std::endl;
     }
@@ -55,6 +59,10 @@ GtkUI::GtkUI(boost::shared_ptr<UICallbacks> cb)
                     &GtkUI::make_transient), m_pinInputDialog));
         m_pinInputConnection = m_pinInputDialog->signal_response().connect( sigc::mem_fun(*this,
                     &GtkUI::on_pininputdialog_response) );
+    }
+    if (m_pinpadDialog) {
+        m_pinpadDialog->signal_show().connect(sigc::bind(sigc::mem_fun(*this,
+                    &GtkUI::make_transient), m_pinpadDialog));
     }
     if (m_whitelistDialog) {
         m_whitelistDialog->signal_show().connect(sigc::bind(sigc::mem_fun(*this,
@@ -69,6 +77,7 @@ GtkUI::~GtkUI()
 {
     delete m_whitelistDialog;
     delete m_pinInputDialog;
+    delete m_pinpadDialog;
 }
 
 
@@ -87,6 +96,9 @@ bool GtkUI::raiseVisiblePinDialog()
 {
     if (m_pinInputDialog && m_pinInputDialog->get_visible()) {
         m_pinInputDialog->present();
+        return true;
+    } else if (m_pinpadDialog && m_pinpadDialog->get_visible()) {
+        m_pinpadDialog->present();
         return true;
     }
 
@@ -113,11 +125,41 @@ void GtkUI::pinDialog(const std::string& subject,
     m_pinInputDialog->show();
 }
 
+void GtkUI::pinpadDialog(const std::string& subject,
+                         const std::string& docUrl,
+                         const std::string& docHash,
+                         int timeout)
+{
+    if (!m_pinpadDialog)
+        throw std::runtime_error("PinpadDialog not loaded");
+
+    if (raiseVisiblePinDialog())
+        return;
+
+    m_pinpadDialog->setSubject(subject);
+    m_pinpadDialog->setUrl(docUrl);
+    m_pinpadDialog->setHash(docHash);
+    m_pinpadDialog->setTimeout(timeout);
+    m_pinpadDialog->setRetry(false);
+    m_pinpadDialog->closeDetails();
+
+    m_pinpadDialog->show();
+}
+
 
 void GtkUI::retryPinDialog(int triesLeft)
 {
     m_pinInputDialog->setTries(triesLeft);
     m_pinInputDialog->setRetry(true);
+}
+
+
+void GtkUI::retryPinpadDialog(int triesLeft)
+{
+    m_pinpadDialog->setTries(triesLeft);
+    m_pinpadDialog->setRetry(true);
+
+    m_pinpadDialog->resetProgressbar();
 }
 
 
@@ -127,9 +169,16 @@ void GtkUI::closePinDialog()
 }
 
 
+void GtkUI::closePinpadDialog()
+{
+    m_pinpadDialog->hide();
+}
+
+
 void GtkUI::pinBlockedMessage(int pin)
 {
     closePinDialog();
+    closePinpadDialog();
 
     Gtk::MessageDialog dialog(_("PIN2 blocked"), false, Gtk::MESSAGE_WARNING);
     dialog.set_secondary_text(_("Please run ID card Utility to unlock the PIN."));

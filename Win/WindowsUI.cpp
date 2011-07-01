@@ -28,6 +28,7 @@
 
 #include "Win/PluginWindowWin.h"
 #include "Win/pininputdialog.h"
+#include "Win/pinpaddialog.h"
 #include "Win/whitelistdialog.h"
 
 #include "utf8_tools.h"
@@ -38,6 +39,7 @@
 WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
     : PluginUI(cb),
       m_pinInputDialog(new PinInputDialog(ATL::_AtlBaseModule.GetResourceInstance())),
+      m_pinpadDialog(new PinpadDialog(ATL::_AtlBaseModule.GetResourceInstance())),
       m_whitelistDialog(new WhitelistDialog(ATL::_AtlBaseModule.GetResourceInstance()))
 {
     ESTEID_DEBUG("WindowsUI initialized");
@@ -97,6 +99,17 @@ void WindowsUI::pinDialog(const std::string& subject,
     m_pinInputDialog->doDialog(parentHWND());
 }
 
+void WindowsUI::pinpadDialog(const std::string& subject,
+                             const std::string& docUrl,
+                             const std::string& docHash,
+                             int timeout)
+{
+    ESTEID_DEBUG("WindowsUI::pinpadDialog()");
+
+    m_pinpadDialog->setSubject(subject);
+    m_pinpadDialog->hideRetry();
+    m_pinpadDialog->doDialog(parentHWND());
+}
 
 void WindowsUI::retryPinDialog(int triesLeft)
 {
@@ -105,6 +118,13 @@ void WindowsUI::retryPinDialog(int triesLeft)
     m_pinInputDialog->showRetry(triesLeft);
 }
 
+void WindowsUI::retryPinpadDialog(int triesLeft)
+{
+    ESTEID_DEBUG("WindowsUI::retryPinpadDialog()");
+
+    m_pinpadDialog->showRetry(triesLeft);
+    m_pinpadDialog->resetProgressbar();
+}
 
 void WindowsUI::closePinDialog()
 {
@@ -113,12 +133,19 @@ void WindowsUI::closePinDialog()
     m_pinInputDialog->close();
 }
 
+void WindowsUI::closePinpadDialog()
+{
+    ESTEID_DEBUG("WindowsUI::closePinpadDialog()");
+
+    m_pinpadDialog->close();
+}
 
 void WindowsUI::pinBlockedMessage(int pin)
 {
     ESTEID_DEBUG("WindowsUI::pinBlockedMessage()");
 
-    m_pinInputDialog->showPinBlocked(parentHWND());
+    // XXX: pinpad?
+    m_pinInputDialog->pinBlockedMessage(parentHWND());
 }
 
 

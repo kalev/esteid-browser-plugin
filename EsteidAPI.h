@@ -204,6 +204,8 @@ private:
     void prepareSign(const std::string& hash, const std::string& url);
     void askPin(bool retrying = false);
     void pinDialog(bool retrying, int triesLeft);
+    void pinpadDialog(bool retrying, int triesLeft);
+    void pinpadSignSHA1(std::string hash);
     std::string signSHA1(std::string hash, const std::string& pin);
     int getPin2RetryCount();
     void settingsDialog();
@@ -218,6 +220,11 @@ private:
     void invokeSignCallback(const std::string& callback, const std::string& data);
     void returnSignedData(const std::string& data);
     void returnSignFailure(const std::string& msg);
+    void pinBlockedMessage();
+    void on_pinpadSignCompletedWrapper(const std::string& data);
+    void on_pinpadSignFailedWrapper(SignError error, const std::string& msg);
+    void on_pinpadSignCompleted(const std::string& data);
+    void on_pinpadSignFailed(SignError error, const std::string& msg);
 
     std::string EstEIDNotificationBarScript;
     static void filterWhitespace(std::string& s);

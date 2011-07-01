@@ -46,11 +46,18 @@ public:
                            const std::string& docUrl,
                            const std::string& docHash) = 0;
 
+    virtual void pinpadDialog(const std::string& subject,
+                              const std::string& docUrl,
+                              const std::string& docHash,
+                              int pinPadTimeout) = 0;
+
     /** Prompt for Signature PIN again */
     virtual void retryPinDialog(int triesLeft) = 0;
+    virtual void retryPinpadDialog(int triesLeft) = 0;
 
     /** Close Signature PIN dialog */
     virtual void closePinDialog() = 0;
+    virtual void closePinpadDialog() = 0;
 
     /** Inform user that the PIN has been blocked */
     virtual void pinBlockedMessage(int pin) = 0;

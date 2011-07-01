@@ -42,7 +42,7 @@ PinInputDialog::~PinInputDialog()
 }
 
 
-void PinInputDialog::showPinBlocked(HWND a_hWnd)
+void PinInputDialog::pinBlockedMessage(HWND a_hWnd)
 {
     HWND hParent;
     if (IsWindowVisible(m_hWnd))

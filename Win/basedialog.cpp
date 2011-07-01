@@ -99,6 +99,12 @@ LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         return on_command(wParam, lParam);
         break;
+    case WM_CTLCOLORSTATIC:
+        return on_ctlcolorstatic(wParam, lParam);
+        break;
+    case WM_TIMER:
+        return on_timer(wParam, lParam);
+        break;
     case WM_NOTIFY:
         return on_notify(wParam, lParam);
         break;
@@ -108,7 +114,7 @@ LRESULT BaseDialog::on_message(UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_DESTROY:
         UnhookWindowsHookEx(s_hHook);
-        return FALSE;
+        return on_destroy(wParam, lParam);
         break;
     }
 

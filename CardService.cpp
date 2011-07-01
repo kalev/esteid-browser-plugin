@@ -43,6 +43,7 @@ CardService::~CardService()
 {
     m_thread.interrupt();
     m_thread.join();
+    m_signThread.join();
 }
 
 /**
@@ -264,6 +265,66 @@ std::string CardService::signSHA1(const std::string& hash,
     // FIXME: Ugly, ugly hack! This needs to be implemented correctly
     //        in order to protect PIN codes in program memory.
     return toHex(card.calcSignSHA1(bhash, keyId, PinString(pin.c_str())));
+}
+
+void CardService::setSignCompletedCallback(SignCompletedFunc f)
+{
+    signCompletedFunc = f;
+}
+
+void CardService::setSignFailedCallback(SignFailedFunc f)
+{
+    signFailedFunc = f;
+}
+
+SignError CardService::decodeAuthError(const AuthError& e)
+{
+    SignError ret;
+    if (e.m_blocked)
+        ret = SIGN_ERROR_BLOCKED;
+    else if (e.m_aborted)
+        ret = SIGN_ERROR_ABORTED;
+    else
+        ret = SIGN_ERROR_WRONG_PIN;
+
+    return ret;
+}
+
+void CardService::runSignSHA1(const std::string& hash,
+                              EstEidCard::KeyType keyId,
+                              const std::string& pin,
+                              ReaderID reader)
+{
+    try {
+        boost::mutex::scoped_lock l(m_cardMutex);
+
+        boost::scoped_ptr<ManagerInterface> manager(new SmartCardManager());
+        EstEidCard card(*manager, reader);
+
+        std::string ret = toHex(card.calcSignSHA1(fromHex(hash), keyId, PinString(pin.c_str())));
+
+        signCompletedFunc(ret);
+    } catch(const AuthError& e) {
+        signFailedFunc(decodeAuthError(e), e.what());
+    } catch (const std::exception& e) {
+        signFailedFunc(SIGN_ERROR_CARD_ERROR, e.what());
+    }
+}
+
+void CardService::signSHA1Async(const std::string& hash,
+                                EstEidCard::KeyType keyId,
+                                const std::string& pin)
+{
+    signSHA1Async(hash, keyId, pin, findFirstEstEid());
+}
+
+void CardService::signSHA1Async(const std::string& hash,
+                                EstEidCard::KeyType keyId,
+                                const std::string& pin,
+                                ReaderID reader)
+{
+    // Run signing operation in a thread
+    m_signThread = boost::thread(boost::bind(&CardService::runSignSHA1, this, hash, keyId, pin, reader));
 }
 
 bool CardService::getRetryCounts(byte& puk, byte& pinAuth, byte& pinSign)

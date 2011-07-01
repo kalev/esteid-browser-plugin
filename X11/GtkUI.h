@@ -29,7 +29,9 @@
 #include "PluginUI.h"
 
 
+class BasePinDialog;
 class PinInputDialog;
+class PinpadDialog;
 class WhitelistDialog;
 class PluginSettings;
 
@@ -41,13 +43,19 @@ public:
     void pinDialog(const std::string& subject,
                    const std::string& docUrl,
                    const std::string& docHash);
+    void pinpadDialog(const std::string& subject,
+                      const std::string& docUrl,
+                      const std::string& docHash,
+                      int timeout);
     void retryPinDialog(int triesLeft);
+    void retryPinpadDialog(int triesLeft);
     void closePinDialog();
+    void closePinpadDialog();
     void settingsDialog(PluginSettings& settings, const std::string& pageUrl = "");
     void pinBlockedMessage(int pin);
     void iteration();
 
-protected:
+private:
     void on_pininputdialog_response(int response_id);
     void on_whitelistdialog_response(int response_id);
     void make_transient(Gtk::Window *window);
@@ -56,10 +64,10 @@ protected:
     GdkWindow* browserWindow();
 
     PinInputDialog *m_pinInputDialog;
+    PinpadDialog *m_pinpadDialog;
     WhitelistDialog *m_whitelistDialog;
     PluginSettings *m_settings;
 
-private:
     sigc::connection m_pinInputConnection;
 };
 

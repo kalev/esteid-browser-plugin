@@ -18,6 +18,8 @@
 
 #include "Win/pininputdialog_res.h"
 #include "Win/pininputdialog.rc"
+#include "Win/pinpaddialog_res.h"
+#include "Win/pinpaddialog.rc"
 #include "Win/whitelistdialog_res.h"
 #include "Win/whitelistdialog.rc"
 
@@ -51,6 +53,8 @@ BEGIN
     "#include ""winres.h""\r\n"
     "#include ""Win/pininputdialog_res.h""\r\n"
     "#include ""Win/pininputdialog.rc""\r\n"
+    "#include ""Win/pinpaddialog_res.h""\r\n"
+    "#include ""Win/pinpaddialog.rc""\r\n"
     "#include ""Win/whitelistdialog_res.h""\r\n"
     "#include ""Win/whitelistdialog.rc""\r\n\0"
 END

@@ -385,12 +385,7 @@ void EsteidAPI::prepareSign(const std::string& hash, const std::string& url)
     m_subject = subjectToHumanReadable(subjectRaw);
     m_hash = hash;
     m_url = url;
-
-#if 0
     m_pinpad = m_service->hasSecurePinEntry();
-#else
-    m_pinpad = false;
-#endif
 }
 
 void EsteidAPI::pinDialog(bool retrying, int triesLeft)
@@ -401,6 +396,14 @@ void EsteidAPI::pinDialog(bool retrying, int triesLeft)
         m_UI->pinDialog(m_subject, m_url, m_hash);
 }
 
+void EsteidAPI::pinpadDialog(bool retrying, int triesLeft)
+{
+    if (retrying)
+        m_UI->retryPinpadDialog(triesLeft);
+    else
+        m_UI->pinpadDialog(m_subject, m_url, m_hash, 30);
+}
+
 void EsteidAPI::askPin(bool retrying)
 {
     int triesLeft = getPin2RetryCount();
@@ -409,9 +412,70 @@ void EsteidAPI::askPin(bool retrying)
         throw std::runtime_error("PIN2 locked");
     }
 
-    pinDialog(retrying, triesLeft);
+    if (m_pinpad) {
+        pinpadDialog(retrying, triesLeft);
+        pinpadSignSHA1(m_hash);
+    } else {
+        pinDialog(retrying, triesLeft);
+    }
 }
 
+void EsteidAPI::on_pinpadSignCompletedWrapper(const std::string& data)
+{
+    try {
+        m_host->CallOnMainThread(boost::bind(&EsteidAPI::on_pinpadSignCompleted, this, data));
+    } catch (const FB::script_error&) {
+        // The call will throw this exception if the browser is shutting down and it cannot
+        // be completed.
+    }
+}
+
+void EsteidAPI::on_pinpadSignFailedWrapper(SignError error, const std::string& msg)
+{
+    try {
+        m_host->CallOnMainThread(boost::bind(&EsteidAPI::on_pinpadSignFailed, this, error, msg));
+    } catch (const FB::script_error&) {
+        // The call will throw this exception if the browser is shutting down and it cannot
+        // be completed.
+    }
+}
+
+void EsteidAPI::on_pinpadSignCompleted(const std::string& data)
+{
+    returnSignedData(data);
+}
+
+void EsteidAPI::on_pinpadSignFailed(SignError error, const std::string& msg)
+{
+    switch (error) {
+    case SIGN_ERROR_WRONG_PIN:
+        try {
+            // ask again for PIN
+            askPin(true);
+        } catch(const std::exception& e) {
+            returnSignFailure(e.what());
+        }
+        break;
+    case SIGN_ERROR_BLOCKED:
+        m_UI->pinBlockedMessage(2);
+        returnSignFailure("PIN2 locked");
+        break;
+    case SIGN_ERROR_ABORTED:
+        returnSignFailure(CANCEL_MSG);
+        break;
+    default:
+        returnSignFailure(msg);
+    }
+}
+
+void EsteidAPI::pinpadSignSHA1(std::string hash)
+{
+    filterWhitespace(hash);
+
+    m_service->setSignCompletedCallback(boost::bind(&EsteidAPI::on_pinpadSignCompletedWrapper, this, _1));
+    m_service->setSignFailedCallback(boost::bind(&EsteidAPI::on_pinpadSignFailedWrapper, this, _1, _2));
+    m_service->signSHA1Async(m_hash, EstEidCard::SIGN, "");
+}
 
 std::string EsteidAPI::signSHA1(std::string hash, const std::string& pin)
 {
@@ -440,11 +504,6 @@ void EsteidAPI::onPinEntered(const std::string& pin)
         std::string signedHash = signSHA1(m_hash, pin);
         returnSignedData(signedHash);
     } catch(const AuthError& e) {
-        if (e.m_aborted) { // pinpad
-            returnSignFailure("pinpad operation cancelled");
-            return;
-        }
-
         try {
             // ask again for PIN
             askPin(true);
@@ -474,6 +533,7 @@ void EsteidAPI::invokeSignCallback(const std::string& callback, const std::strin
 void EsteidAPI::returnSignedData(const std::string& data)
 {
     m_UI->closePinDialog();
+    m_UI->closePinpadDialog();
 
     if (m_signCallback) {
         // in case of async signing API, invoke the JS callback
@@ -489,6 +549,7 @@ void EsteidAPI::returnSignedData(const std::string& data)
 void EsteidAPI::returnSignFailure(const std::string& msg)
 {
     m_UI->closePinDialog();
+    m_UI->closePinpadDialog();
 
     if (m_signCallback) {
         // in case of async signing API, invoke the JS callback

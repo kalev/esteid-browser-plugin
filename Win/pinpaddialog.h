@@ -2,7 +2,7 @@
  * esteid-browser-plugin - a browser plugin for Estonian EID card
  *
  * Copyright (C) 2010  Estonian Informatics Centre
- * Copyright (C) 2010  Smartlink OÜ
+ * Copyright (C) 2010, 2011  Smartlink OÜ
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,35 +19,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ESTEID_PININPUTDIALOG_H
-#define ESTEID_PININPUTDIALOG_H
+#ifndef ESTEID_PINPADDIALOG_H
+#define ESTEID_PINPADDIALOG_H
 
 #include <windows.h>
 #include <string>
 
 #include "Win/basedialog.h"
 
-class PinInputDialog : public BaseDialog
+class PinpadDialog : public BaseDialog
 {
 public:
-    PinInputDialog(HINSTANCE hInst);
-    virtual ~PinInputDialog();
+    PinpadDialog(HINSTANCE hInst);
+    virtual ~PinpadDialog();
 
     void pinBlockedMessage(HWND hParent = NULL);
     void setSubject(const std::string& subject);
     void showRetry(int triesLeft);
-    std::string getPin();
-    void clearPin();
+    void hideRetry();
+    void resetProgressbar();
 
     bool doDialog(HWND hParent = NULL);
 
-private:
+protected:
     LRESULT on_initdialog(WPARAM wParam);
     LRESULT on_command(WPARAM wParam, LPARAM lParam);
+    LRESULT on_ctlcolorstatic(WPARAM wParam, LPARAM lParam);
+    LRESULT on_timer(WPARAM wParam, LPARAM lParam);
+    LRESULT on_destroy(WPARAM wParam, LPARAM lParam);
 
-    std::string getPinInternal();
-    HICON getCreduiIcon();
-    HICON getIcon();
+private:
+    HANDLE getImage();
     void setFontSize(HWND hText, int fontSize);
     int preferredWidth(HWND hWnd, const std::wstring& text);
     int currentWidth(HWND hWnd);
@@ -57,8 +59,8 @@ private:
     void showWrongPin(HWND hParent, int tries);
 
     std::wstring m_subject;
-    std::string m_pin;
-    size_t m_minPinLength;
+    int m_timeTotal;
+    int m_timeRemaining;
 };
 
-#endif //ESTEID_PININPUTDIALOG_H
+#endif //ESTEID_PINPADDIALOG_H
