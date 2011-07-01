@@ -45,6 +45,84 @@ void BaseDialog::disconnect(Connection subscriber)
     subscriber.disconnect();
 }
 
+void BaseDialog::setFontSize(HWND hText, int fontSize)
+{
+    HFONT hOldFont = (HFONT)SendMessage(hText, WM_GETFONT, 0, 0);
+    HDC hDC = GetDC(hText);
+    LOGFONT lf;
+    GetObject(hOldFont, sizeof(LOGFONT), &lf);
+    lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(hDC, LOGPIXELSY), 72);
+    HFONT hNewFont = CreateFontIndirect(&lf);
+    SendMessage(hText, WM_SETFONT, (WPARAM)hNewFont, MAKELPARAM(TRUE, 0));
+    ReleaseDC(hText, hDC);
+}
+
+// calculate control's width needed to fit text
+int BaseDialog::preferredWidth(HWND hWnd, const std::wstring& text)
+{
+    HDC hdc;
+    SIZE size;
+
+    hdc = GetDC(hWnd);
+    GetTextExtentPoint32(hdc, text.c_str(), (int)text.size(), &size);
+    ReleaseDC(hWnd, hdc);
+
+    return size.cx;
+}
+
+// get control's current width
+int BaseDialog::currentWidth(HWND hWnd)
+{
+    RECT rect;
+    POINT ptDiff;
+
+    GetClientRect(hWnd, &rect);
+    ptDiff.x = (rect.right - rect.left);
+    ptDiff.y = (rect.bottom - rect.top);
+
+    return ptDiff.x;
+}
+
+void BaseDialog::resizeWindow(HWND hWnd, int width, int height)
+{
+    RECT rect;
+    POINT ptDiff;
+
+    GetWindowRect(hWnd, &rect);
+    ptDiff.x = (rect.right - rect.left);
+    ptDiff.y = (rect.bottom - rect.top);
+
+    MoveWindow(hWnd, rect.left, rect.top, ptDiff.x + width, ptDiff.y + height, TRUE);
+}
+
+void BaseDialog::resizeControl(HWND hWnd, HWND hControl, int width, int height)
+{
+    RECT rect;
+    POINT point;
+
+    GetWindowRect(hControl, &rect);
+    point.x = rect.left;
+    point.y = rect.top;
+    ScreenToClient(hWnd, &point);
+    GetClientRect(hControl, &rect);
+
+    MoveWindow(hControl, point.x, point.y, (rect.right - rect.left) + width, (rect.bottom - rect.top) + height, TRUE);
+}
+
+void BaseDialog::moveControl(HWND hWnd, HWND hControl, int dx, int dy)
+{
+    RECT rect;
+    POINT point;
+
+    GetWindowRect(hControl, &rect);
+    point.x = rect.left;
+    point.y = rect.top;
+    ScreenToClient(hWnd, &point);
+    GetClientRect(hControl, &rect);
+
+    MoveWindow(hControl, point.x + dx, point.y + dy, rect.right - rect.left, rect.bottom - rect.top, TRUE);
+}
+
 /* static */ LRESULT CALLBACK BaseDialog::dialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     BaseDialog *dlg = reinterpret_cast<BaseDialog*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));

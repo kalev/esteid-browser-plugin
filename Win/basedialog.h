@@ -61,6 +61,13 @@ protected:
     HWND getIEModalLock(HWND hWnd);
     void releaseIEModalLock();
     ResponseSignal signalResponse;
+
+    void setFontSize(HWND hText, int fontSize);
+    int preferredWidth(HWND hWnd, const std::wstring& text);
+    int currentWidth(HWND hWnd);
+    void resizeWindow(HWND hWnd, int width, int height);
+    void resizeControl(HWND hWnd, HWND hControl, int width, int height);
+    void moveControl(HWND hWnd, HWND hControl, int dx, int dy);
 };
 
 #endif //ESTEID_BASEDIALOG_H

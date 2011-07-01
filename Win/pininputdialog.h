@@ -48,12 +48,6 @@ private:
     std::string getPinInternal();
     HICON getCreduiIcon();
     HICON getIcon();
-    void setFontSize(HWND hText, int fontSize);
-    int preferredWidth(HWND hWnd, const std::wstring& text);
-    int currentWidth(HWND hWnd);
-    void resizeWindow(HWND hWnd, int width, int height);
-    void resizeControl(HWND hWnd, HWND hControl, int width, int height);
-    void moveControl(HWND hWnd, HWND hControl, int dx, int dy);
     void showWrongPin(HWND hParent, int tries);
 
     std::wstring m_subject;
