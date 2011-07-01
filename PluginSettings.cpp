@@ -36,6 +36,9 @@
 #include "global/config.h"
 #include "debug.h"
 #include "esteid-config.h"
+#ifdef _WIN32
+#include "Win/registry.h"
+#endif
 
 using namespace boost::filesystem;
 
@@ -48,8 +51,7 @@ PluginSettings::PluginSettings()
 path PluginSettings::globalSettingsDir()
 {
 #ifdef _WIN32
-    // FIXME: lookup path from registry
-    return ESTEID_CONFIGDIR;
+    return Registry::readValue(HKEY_LOCAL_MACHINE, "Software\\Estonian ID Card", "Installed");
 #else // UNIX
     return ESTEID_CONFIGDIR;
 #endif
