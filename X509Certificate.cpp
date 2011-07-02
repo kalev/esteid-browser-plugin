@@ -68,12 +68,24 @@ std::string X509Certificate::getValidFrom() {
 std::string X509Certificate::getValidTo() {
     return X509TimeConvert(X509_get_notAfter(m_cert));
 }
-long X509Certificate::getSerial() {
-    long serial = ASN1_INTEGER_get(X509_get_serialNumber(m_cert));
-    if(serial <= 0) THROW_API_ERROR("Failed to read certificate serial");
 
-    return serial;
+std::string X509Certificate::getSerial() {
+    BIGNUM *serialBN = ASN1_INTEGER_to_BN(X509_get_serialNumber(m_cert), NULL);
+    if (!serialBN)
+        THROW_API_ERROR("Failed to read certificate serial");
+
+    char *serial = BN_bn2dec(serialBN);
+    if (!serial)
+        THROW_API_ERROR("Failed to read certificate serial");
+
+    std::string ret(serial);
+
+    OPENSSL_free(serial);
+    BN_free(serialBN);
+
+    return ret;
 }
+
 std::string X509Certificate::getPEM() {
     BIO *bio = BIO_new(BIO_s_mem());
     char *data;

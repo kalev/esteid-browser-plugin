@@ -777,7 +777,7 @@ void EsteidAPI::signXML(
         ByteVec bv = m_service->getSignCert();
         X509Certificate cert(bv);
 
-        certSerial = boost::lexical_cast<std::string>(cert.getSerial());
+        certSerial = cert.getSerial();
         certDigest = B64SHA1(bv);
         certData = base64_encode(bv);
     )} catch(...) {

@@ -48,7 +48,7 @@ public:
     std::string getPEM();
     /** Returns certificate as Hex encoded DER */
     std::string getHex();
-    long getSerial();
+    std::string getSerial();
     bool isValid();
 
 protected:

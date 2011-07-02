@@ -71,9 +71,7 @@ std::string CertificateAPI::get_cert() {
     RTERROR_TO_SCRIPT(return m_cert.getPEM());
 }
 std::string CertificateAPI::get_serial() { 
-    std::ostringstream os;
-    RTERROR_TO_SCRIPT(os << m_cert.getSerial());
-    return os.str();
+    RTERROR_TO_SCRIPT(return m_cert.getSerial());
 }
 bool CertificateAPI::get_isValid() { 
     RTERROR_TO_SCRIPT(return m_cert.isValid());
