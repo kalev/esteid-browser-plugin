@@ -51,7 +51,7 @@ WindowsUI::WindowsUI(boost::shared_ptr<UICallbacks> cb)
 
 WindowsUI::~WindowsUI()
 {
-    ESTEID_DEBUG("~WindowsUI()");
+    ESTEID_DEBUG_SCOPE();
     m_pinInputDialog->disconnect(m_pinInputConnection);
     m_whitelistDialog->disconnect(m_whitelistConnection);
 }
@@ -85,7 +85,7 @@ void WindowsUI::pinDialog(const std::string& subject,
                           const std::string& docUrl,
                           const std::string& docHash)
 {
-    ESTEID_DEBUG("WindowsUI::pinDialog()");
+    ESTEID_DEBUG_SCOPE();
 
     if (dialogVisible())
         return;
@@ -99,7 +99,7 @@ void WindowsUI::pinpadDialog(const std::string& subject,
                              const std::string& docHash,
                              int timeout)
 {
-    ESTEID_DEBUG("WindowsUI::pinpadDialog()");
+    ESTEID_DEBUG_SCOPE();
 
     if (dialogVisible())
         return;
@@ -111,14 +111,14 @@ void WindowsUI::pinpadDialog(const std::string& subject,
 
 void WindowsUI::retryPinDialog(int triesLeft)
 {
-    ESTEID_DEBUG("WindowsUI::retryPinDialog()");
+    ESTEID_DEBUG_SCOPE();
 
     m_pinInputDialog->showRetry(triesLeft);
 }
 
 void WindowsUI::retryPinpadDialog(int triesLeft)
 {
-    ESTEID_DEBUG("WindowsUI::retryPinpadDialog()");
+    ESTEID_DEBUG_SCOPE();
 
     m_pinpadDialog->showRetry(triesLeft);
     m_pinpadDialog->resetProgressbar();
@@ -126,21 +126,21 @@ void WindowsUI::retryPinpadDialog(int triesLeft)
 
 void WindowsUI::closePinDialog()
 {
-    ESTEID_DEBUG("WindowsUI::closePinDialog()");
+    ESTEID_DEBUG_SCOPE();
 
     m_pinInputDialog->close();
 }
 
 void WindowsUI::closePinpadDialog()
 {
-    ESTEID_DEBUG("WindowsUI::closePinpadDialog()");
+    ESTEID_DEBUG_SCOPE();
 
     m_pinpadDialog->close();
 }
 
 void WindowsUI::pinBlockedMessage(int pin)
 {
-    ESTEID_DEBUG("WindowsUI::pinBlockedMessage()");
+    ESTEID_DEBUG_SCOPE();
 
     // XXX: pinpad?
     m_pinInputDialog->pinBlockedMessage(parentHWND());
@@ -149,7 +149,7 @@ void WindowsUI::pinBlockedMessage(int pin)
 
 void WindowsUI::settingsDialog(PluginSettings& settings, const std::string& pageUrl)
 {
-    ESTEID_DEBUG("WindowsUI::settingsDialog()");
+    ESTEID_DEBUG_SCOPE();
 
     if (dialogVisible())
         return;

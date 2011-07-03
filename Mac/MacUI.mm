@@ -61,7 +61,7 @@ MacUI::~MacUI()
     [(id)m_internal release];
     [pool release];
     
-    ESTEID_DEBUG("~MacUI()");
+    ESTEID_DEBUG_SCOPE();
 }
 
 void MacUI::pinDialog(const std::string& subject,

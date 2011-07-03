@@ -74,7 +74,7 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype) :
     m_mimeType(mimetype),
     m_uiCallback(new UICallback(*this))
 {
-    ESTEID_DEBUG("EsteidAPI::EsteidAPI(%s)", m_mimeType.c_str());
+    ESTEID_DEBUG("MIME type: %s", m_mimeType.c_str());
 
 #ifdef HAVE_LIBINTL_H
     bindtextdomain("esteid-browser-plugin", ESTEID_LOCALEDIR);
@@ -154,7 +154,7 @@ EsteidAPI::EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype) :
 
 EsteidAPI::~EsteidAPI()
 {
-    ESTEID_DEBUG("EsteidAPI::~EsteidAPI()");
+    ESTEID_DEBUG_SCOPE();
 
     m_service->removeObserver(this);
 }

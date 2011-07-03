@@ -26,18 +26,26 @@
 #include <cstdio>
 #include "logging.h"
 
-#if WIN32 
+#ifdef _WIN32
 #define snprintf sprintf_s 
 #endif
 
-#define ESTEID_DEBUG(...) do { \
+#define ESTEID_DEBUG(...) do \
+{ \
     char msg[1024]; \
     snprintf(msg, 1024, __VA_ARGS__); \
     FBLOG_INFO("esteid-browser-plugin", msg); \
-    } while(0)
+} while(0)
+
+#define ESTEID_DEBUG_SCOPE() do \
+{ \
+    FBLOG_INFO("esteid-browser-plugin", ""); \
+} while(0)
+
 #else
 
 #define ESTEID_DEBUG(...)
+#define ESTEID_DEBUG_SCOPE()
 
 #endif //NDEBUG
 

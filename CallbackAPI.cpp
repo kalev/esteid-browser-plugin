@@ -40,12 +40,12 @@ bool CallbackAPI::handleEvent(const FB::JSObjectPtr& evt) {
 
 FB::variant CallbackAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
-    ESTEID_DEBUG("CallbackAPI::Invoke(%s, ... )\n", methodName.c_str());
+    ESTEID_DEBUG("Invoking %s", methodName.c_str());
     return FB::JSAPIAuto::Invoke(methodName, args);
 }
 
 bool CallbackAPI::HasMethod(const std::string& methodName)
 {
-    ESTEID_DEBUG("CallbackAPI::HasMethod(%s)\n", methodName.c_str());
+    ESTEID_DEBUG(methodName.c_str());
     return FB::JSAPIAuto::HasMethod(methodName);
 }
