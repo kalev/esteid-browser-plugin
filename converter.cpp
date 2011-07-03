@@ -81,9 +81,10 @@ std::string Converter::bytes_to_hex(const std::vector<unsigned char>& v)
     typedef std::vector<unsigned char>::const_iterator iter;
 
     std::ostringstream ret;
-    ret << std::setw(2) << std::setfill('0') << std::hex;
-    for (iter it = v.begin(); it != v.end(); ++it)
-        ret << static_cast<int>(*it);
+    for (iter it = v.begin(); it != v.end(); ++it) {
+        ret << std::setw(2) << std::setfill('0') << std::hex
+            << static_cast<int>(*it);
+    }
 
     return ret.str();
 }
