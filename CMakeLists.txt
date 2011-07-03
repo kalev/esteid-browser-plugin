@@ -74,7 +74,6 @@ endif(UNIX AND NOT APPLE)
 set(UTIL_DIR utility)
 set(UTILITY_SOURCES
     ${UTIL_DIR}/converters.cpp
-    ${UTIL_DIR}/logger.cpp
 )
 
 if(ICONV_SECOND_ARGUMENT_IS_CONST)
@@ -83,8 +82,9 @@ endif(ICONV_SECOND_ARGUMENT_IS_CONST)
 
 if(ENABLE_DEBUG)
     message(STATUS "Debug print statements are enabled")
-    add_definitions(-DDEBUG)
-endif(ENABLE_DEBUG)
+else()
+    add_definitions(-DNDEBUG)
+endif()
 
 if(ENABLE_OLD_APIS)
     message(STATUS "Support for OLD API-s is enabled")

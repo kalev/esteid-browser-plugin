@@ -71,3 +71,7 @@ set (FBMAC_USE_COCOA         0)
 set (FBMAC_USE_QUICKDRAW     0)
 set (FBMAC_USE_COREGRAPHICS  0)
 set (FBMAC_USE_COREANIMATION 0)
+
+if(ENABLE_DEBUG)
+    add_firebreath_library(log4cplus)
+endif()

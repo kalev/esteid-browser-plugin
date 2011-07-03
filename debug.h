@@ -21,12 +21,10 @@
 #ifndef ESTEIDDEBUG_H
 #define ESTEIDDEBUG_H
 
-#include <iostream>
+#ifndef NDEBUG
 
-#ifdef DEBUG
 #include <cstdio>
-#include <cstring>
-#include "EsteidPlugin.h"
+#include "logging.h"
 
 #if WIN32 
 #define snprintf sprintf_s 
@@ -35,13 +33,12 @@
 #define ESTEID_DEBUG(...) do { \
     char msg[1024]; \
     snprintf(msg, 1024, __VA_ARGS__); \
-    eidlog << "DEBUG [" << __FILE__ << ":" << __LINE__ << "] - " << \
-        msg << std::endl; \
+    FBLOG_INFO("esteid-browser-plugin", msg); \
     } while(0)
 #else
 
 #define ESTEID_DEBUG(...)
 
-#endif
+#endif //NDEBUG
 
 #endif //ESTEIDDEBUG_H

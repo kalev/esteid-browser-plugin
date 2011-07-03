@@ -23,8 +23,6 @@
 #include "EsteidAPI.h"
 #include "EsteidPlugin.h"
 
-logger eidlog("npesteid");
-
 void EsteidPlugin::StaticInitialize()
 {
     // Place one-time initialization stuff here; note that there isn't an absolute guarantee that

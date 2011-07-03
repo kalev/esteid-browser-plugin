@@ -22,8 +22,6 @@
 #ifndef H_esteidPLUGIN
 #define H_esteidPLUGIN
 
-#include "utility/logger.h"
-
 #include "PluginWindow.h"
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/AttachedEvent.h"
@@ -61,7 +59,5 @@ private:
     FB::PluginWindow* m_window;
     std::string m_mimeType;
 };
-
-extern logger eidlog;
 
 #endif

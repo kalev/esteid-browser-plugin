@@ -39,6 +39,13 @@ public:
     {
         EsteidPlugin::StaticDeinitialize();
     }
+
+    void getLoggingMethods(FB::Log::LogMethodList& outMethods)
+    {
+#ifndef NDEBUG
+        outMethods.push_back(std::make_pair(FB::Log::LogMethod_Console, std::string()));
+#endif
+    }
 };
 
 FB::FactoryBasePtr getFactoryInstance()
