@@ -70,12 +70,6 @@ if(UNIX AND NOT APPLE)
     endif()
 endif(UNIX AND NOT APPLE)
 
-# Utility classes (FIXME: Move those to smartcardpp)
-set(UTIL_DIR utility)
-set(UTILITY_SOURCES
-    ${UTIL_DIR}/converters.cpp
-)
-
 if(ICONV_SECOND_ARGUMENT_IS_CONST)
     add_definitions( -DICONV_SECOND_ARGUMENT_IS_CONST )
 endif(ICONV_SECOND_ARGUMENT_IS_CONST)
@@ -129,7 +123,6 @@ SOURCE_GROUP(Generated FILES
 SET( SOURCES
     ${GENERAL}
     ${GENERATED}
-    ${UTILITY_SOURCES}
     )
 
 if (ENABLE_RUN_IN_SOURCE_TREE)

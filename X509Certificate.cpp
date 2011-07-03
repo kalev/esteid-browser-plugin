@@ -20,7 +20,7 @@
  */
 
 #include "X509Certificate.h"
-#include "utility/converters.h"
+#include "converter.h"
 
 #define THROW_API_ERROR(a) { \
     std::string msg(a); \
@@ -34,6 +34,8 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
+
+using namespace Converter;
 
 X509Certificate::X509Certificate(ByteVec bv) : m_cert(NULL), m_rawcert(bv) {
     if(bv.empty())
@@ -108,7 +110,7 @@ bool X509Certificate::isValid() {
     return X509_cmp_current_time(t1) < 0 && X509_cmp_current_time(t2) > 0;
 }
 std::string X509Certificate::getHex() {
-    return toHex(m_rawcert);
+    return bytes_to_hex(m_rawcert);
 }
 
 std::string X509Certificate::getKeyUsage() {

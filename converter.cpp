@@ -22,6 +22,8 @@
 #include "converter.h"
 #include "debug.h"
 #include <iconv.h>
+#include <iomanip>
+#include <sstream>
 
 #ifdef ICONV_SECOND_ARGUMENT_IS_CONST
     #define ICONV_CONST const
@@ -71,4 +73,32 @@ std::string Converter::iconvConvert(const std::string & str_in, const char *toco
 std::string Converter::CP1252_to_UTF8(const std::string & str_in)
 {
     return iconvConvert(str_in, "UTF-8", "CP1252");
+}
+
+
+std::string Converter::bytes_to_hex(const std::vector<unsigned char>& v)
+{
+    typedef std::vector<unsigned char>::const_iterator iter;
+
+    std::ostringstream ret;
+    ret << std::setw(2) << std::setfill('0') << std::hex;
+    for (iter it = v.begin(); it != v.end(); ++it)
+        ret << static_cast<int>(*it);
+
+    return ret.str();
+}
+
+
+std::vector<unsigned char> Converter::hex_to_bytes(const std::string& hex)
+{
+    std::vector<unsigned char> bytes;
+    bytes.reserve(hex.size() / 2);
+    for (std::string::size_type i = 0; i < hex.size(); i += 2) {
+        int byte;
+        std::istringstream hex_byte(hex.substr(i, 2));
+        hex_byte >> std::hex >> byte;
+        bytes.push_back(static_cast<unsigned char>(byte));
+    }
+
+    return bytes;
 }

@@ -19,11 +19,13 @@
  */
 
 #include "CardService.h"
-#include "converters.h"
+#include "converter.h"
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <smartcardpp/PCSCManager.h>
+
+using namespace Converter;
 
 /* Singleton instance variable */
 boost::weak_ptr<CardService> CardService::sCardService;
@@ -255,7 +257,7 @@ std::string CardService::signSHA1(const std::string& hash,
                                   const std::string& pin,
                                   ReaderID reader)
 {
-    ByteVec bhash = fromHex(hash);
+    ByteVec bhash = hex_to_bytes(hash);
     if (bhash.size() != 20) {
         throw std::runtime_error("Invalid SHA1 hash");
     }
@@ -265,7 +267,7 @@ std::string CardService::signSHA1(const std::string& hash,
 
     // FIXME: Ugly, ugly hack! This needs to be implemented correctly
     //        in order to protect PIN codes in program memory.
-    return toHex(card.calcSignSHA1(bhash, keyId, PinString(pin.c_str())));
+    return bytes_to_hex(card.calcSignSHA1(bhash, keyId, PinString(pin.c_str())));
 }
 
 void CardService::setSignCompletedCallback(SignCompletedFunc f)
@@ -302,7 +304,7 @@ void CardService::runSignSHA1(const std::string& hash,
         boost::scoped_ptr<ManagerInterface> manager(new PCSCManager());
         EstEidCard card(*manager, reader);
 
-        std::string ret = toHex(card.calcSignSHA1(fromHex(hash), keyId, PinString(pin.c_str())));
+        std::string ret = bytes_to_hex(card.calcSignSHA1(hex_to_bytes(hash), keyId, PinString(pin.c_str())));
 
         signCompletedFunc(ret);
     } catch(const AuthError& e) {

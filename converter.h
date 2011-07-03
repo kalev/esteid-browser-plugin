@@ -23,11 +23,15 @@
 #define CONVERTER_H
 
 #include <string>
+#include <vector>
 
 namespace Converter
 {
     std::string iconvConvert(const std::string&, const char*, const char*);
     std::string CP1252_to_UTF8(const std::string&);
+
+    std::string bytes_to_hex(const std::vector<unsigned char>& v);
+    std::vector<unsigned char> hex_to_bytes(const std::string& hex);
 };
 
 #endif //CONVERTER_H

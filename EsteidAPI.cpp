@@ -29,7 +29,7 @@
 
 #ifdef SUPPORT_OLD_APIS
 #include "Base64.h"
-#include "utility/converters.h"
+#include "converter.h"
 #include "CompatAPIs.h"
 #endif
 
@@ -64,6 +64,8 @@
 
 #define REGISTER_METHOD(a)      JS_REGISTER_METHOD(EsteidAPI, a)
 #define REGISTER_RO_PROPERTY(a) JS_REGISTER_RO_PROPERTY(EsteidAPI, a)
+
+using namespace Converter;
 
 EsteidAPI::EsteidAPI(FB::BrowserHostPtr host, const std::string& mimetype) :
     m_host(host),
@@ -859,7 +861,7 @@ void EsteidAPI::signXML(
     try {
         std::string signedHash = 
             askPinAndSign(HEXSHA1(sigInfoXml), std::string(COMPAT_URL));
-        sigValue = base64_encode(fromHex(signedHash));
+        sigValue = base64_encode(hex_to_bytes(signedHash));
     } catch(const std::runtime_error& e) {
         m_host->evaluateJavaScript(onCancel + "();");
         return;
