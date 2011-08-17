@@ -1,3 +1,27 @@
+esteid-browser-plugin 1.3.0 (2011-08-17)
+========================================
+
+This release adds support for pinpad smart card readers and switches to a new,
+XML-based configuration file format. The required version of firebreath is now
+1.5.
+
+Plugin:
+ - Various improvements to PIN dialogs
+ - Support for pinpad smart card readers
+ - Build with Firebreath 1.5
+ - Switch to XML-based configuration files, with support for separate
+   system-wide and user config files
+ - Fixed a crash with parsing very long serial numbers used by the new
+   esteid 2011 card
+ - Misc. code cleanup
+
+Mozilla extension:
+ - Firefox 7, Thunderbird 7, SeaMonkey 2.4 compatibility
+
+Many thanks to all the contributors:
+Antti Andreimann, boamaod, Erkko Kebbinau, Kalev Lember, Sander Lepik.
+
+
 esteid-browser-plugin 1.2.1 (2011-06-27)
 ========================================
 
