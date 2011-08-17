@@ -29,7 +29,7 @@ set(MOZILLA_PLUGINID "@esteid.googlecode.com/esteid-browser-plugin")
 
 # strings
 set(FBSTRING_CompanyName "Estonian Informatics Centre")
-set(_VERSION "1.2.90")
+set(_VERSION "1.3.0")
 if(SVN_REV)
    set(FBSTRING_PLUGIN_VERSION "${_VERSION}.${SVN_REV}")
 else()
