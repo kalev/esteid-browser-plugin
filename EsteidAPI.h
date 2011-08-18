@@ -35,7 +35,6 @@
 #include "CallbackAPI.h"
 #include "urlparser.h"
 
-// FIXME: Find a sane way to deal with error messages
 #define CANCEL_MSG _("User cancelled operation")
 
 class EsteidAPI : public FB::JSAPIAuto, CardService::MessageObserver

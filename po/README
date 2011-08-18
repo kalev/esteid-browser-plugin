@@ -3,8 +3,8 @@ LOCALIZATION FOR LINUX SYSTEMS
 
 1. Generate po files from source code
 
-	find .. -name "*.cpp" -o -name "*.h" | xargs xgettext --keyword=_ --language=C++ -o esteid-browser-plugin.pot
-	find .. -name "*.ui" | xargs xgettext --language=Glade -j -o esteid-browser-plugin.pot
+	find .. -name "*.cpp" -o -name "*.h" | xargs xgettext --keyword=_ -c --language=C++ -s -o esteid-browser-plugin.pot
+	find .. -name "*.ui" | xargs xgettext --language=Glade -s -j -o esteid-browser-plugin.pot
 
 	If you are generating the file for the language *for the first time*:
 		msginit -l et_EE --no-translator -o et.po -i esteid-browser-plugin.pot

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: et\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-28 21:15+0900\n"
+"POT-Creation-Date: 2011-08-18 21:39+0300\n"
 "PO-Revision-Date: 2010-11-28 20:14+0900\n"
 "Last-Translator: Guido Tabbernuk <boamaod@gmail.com>\n"
 "Language-Team: Estonian <firefox-et@googlegroups.com>\n"
@@ -21,22 +21,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 1.1\n"
 
-#: ../EsteidAPI.cpp:501
-msgid "\" target=\"_blank\" style=\"color: blue;\">here</a> for details."
-msgstr "\" target=\"_blank\" style=\"color: blue;\">siin</a>."
-
-#: ../X11/pininputdialog.cpp:97
+#: ../X11/basepindialog.cpp:82
 msgid "<span color=\"red\">Wrong PIN!</span> Tries left: "
 msgstr "<span color=\"red\">Vale PIN!</span> Katseid järel: "
 
-#: ../EsteidAPI.cpp:64
+#: ../EsteidAPI.cpp:63
 msgid ""
 "Access to ID card was denied because the connection to the server is not "
 "secure."
 msgstr ""
 "Ligipääs ID-kaardile keelati, kuna ühendus selle serveriga pole turvaline."
 
-#: ../EsteidAPI.cpp:62
+#. UI Messages
+#: ../EsteidAPI.cpp:61
 msgid "Allow"
 msgstr "Luba"
 
@@ -44,45 +41,43 @@ msgstr "Luba"
 msgid "Allowed Sites"
 msgstr "Lubatud veebisaidid"
 
-#: ../X11/pininputdialog.ui:113
+#: ../X11/pinpaddialog.ui:179 ../X11/pininputdialog.ui:113
 msgid "Do_cument:"
 msgstr "Do_kument:"
 
-#: ../X11/pininputdialog.ui:7
+#: ../X11/pinpaddialog.ui:7 ../X11/pininputdialog.ui:7
 msgid "Enter PIN"
+msgstr "PIN-koodi sisestamine"
+
+#: ../X11/pinpaddialog.ui:132
+#, fuzzy
+msgid "Enter PIN on pinpad"
 msgstr "PIN-koodi sisestamine"
 
 #: ../X11/whitelistdialog.ui:39
 msgid "Enter a site to add to whitelist:"
 msgstr "Sisesta veebisait, mille soovid nimekirja lisada:"
 
-#: ../X11/GtkUI.cpp:227
-msgid "Error saving configuration"
+#: ../X11/GtkUI.cpp:244
+#, fuzzy
+msgid "Error saving settings"
 msgstr "Viga seadete salvestamisel"
 
-#: ../X11/GtkUI.cpp:166
+#: ../X11/GtkUI.cpp:183
 msgid "PIN2 blocked"
 msgstr "PIN2 blokitud"
 
-#: ../X11/GtkUI.cpp:167
+#: ../X11/GtkUI.cpp:184
 msgid "Please run ID card Utility to unlock the PIN."
 msgstr "PIN-i avamiseks kasuta ID-kaardi haldusvahendit!"
 
-#: ../EsteidAPI.cpp:63
+#: ../EsteidAPI.cpp:62
 msgid "This site is trying to obtain access to your ID card."
 msgstr "See veebisait soovib kasutada sinu ID-kaarti."
 
-#: ../EsteidAPI.h:39
+#: ../EsteidAPI.h:38
 msgid "User cancelled operation"
 msgstr "Kasutaja katkestas toimingu"
-
-#: ../EsteidAPI.cpp:500
-msgid ""
-"Website is using old signature APIs. Please contact site owner. Click <a "
-"href=\""
-msgstr ""
-"See veebisait kasutab vana allkirjastamise liidest. Palun, võta ühendust "
-"saidi omanikuga! Üksikasjadega saad tutvuda <a href=\""
 
 #: ../X11/whitelistdialog.ui:23
 msgid ""
@@ -93,20 +88,15 @@ msgstr ""
 "kasutada. Lisa siia ainult neid saite, millele julged oma isiklikke andmeid "
 "usaldada!"
 
-#: ../X11/pininputdialog.ui:175
+#: ../X11/pinpaddialog.ui:256 ../X11/pininputdialog.ui:175
 msgid "_Details"
 msgstr "Üksikasja_d"
 
-#: ../X11/pininputdialog.ui:145
+#: ../X11/pinpaddialog.ui:219 ../X11/pininputdialog.ui:145
 msgid "_Hash:"
 msgstr "_Räsi:"
 
-#~ msgid ""
-#~ "In order to use your ID card on newly added site, it may be needed to "
-#~ "start the desired operation from the beginning or reload the page."
-#~ msgstr ""
-#~ "ID-kaardi kasutamiseks äsja lisatud veebisaidil võib olla vajalik "
-#~ "alustada pooleliolevat toimingut otsast peale või laadida leht uuesti."
-
-#~ msgid "Settings"
-#~ msgstr "Luba"
+#. TRANLATORS: 's' is seconds
+#: ../X11/pinpaddialog.cpp:70
+msgid "s"
+msgstr ""

@@ -66,6 +66,7 @@ void PinpadDialog::resetProgressbar()
 std::string PinpadDialog::format_seconds(int seconds)
 {
     std::ostringstream os;
+    /* TRANLATORS: 's' is seconds */
     os << seconds << _("s");
     return os.str();
 }
