@@ -50,16 +50,14 @@ msgid "Enter PIN"
 msgstr "PIN-koodi sisestamine"
 
 #: ../X11/pinpaddialog.ui:132
-#, fuzzy
 msgid "Enter PIN on pinpad"
-msgstr "PIN-koodi sisestamine"
+msgstr "Sisesta PIN kaardilugeja sõrmistikult"
 
 #: ../X11/whitelistdialog.ui:39
 msgid "Enter a site to add to whitelist:"
 msgstr "Sisesta veebisait, mille soovid nimekirja lisada:"
 
 #: ../X11/GtkUI.cpp:244
-#, fuzzy
 msgid "Error saving settings"
 msgstr "Viga seadete salvestamisel"
 
@@ -99,4 +97,4 @@ msgstr "_Räsi:"
 #. TRANLATORS: 's' is seconds
 #: ../X11/pinpaddialog.cpp:70
 msgid "s"
-msgstr ""
+msgstr "s"
